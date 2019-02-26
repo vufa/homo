@@ -100,9 +100,9 @@ func NewVoiceClient(apiKey, apiSecret string) *VoiceClient {
 }
 
 // Voice Composition
-func TextToSpeech() error {
+func TextToSpeech(text string) error {
 	client := NewVoiceClient(APIKEY, APISECRET)
-	file, err := client.TextToSpeech("你好，我是homo")
+	file, err := client.TextToSpeech(text)
 	if err != nil {
 		return err
 	}

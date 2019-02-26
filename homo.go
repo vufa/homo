@@ -15,7 +15,7 @@ func main() {
 	customFormatter.FullTimestamp = true
 
 	logrus.Infof("Homo v0.0.1")
-	err := baidu.TextToSpeech()
+	err := baidu.TextToSpeech("测试")
 	if err != nil {
 		logrus.Warnf("baidu tts failed: %s", err.Error())
 	}
