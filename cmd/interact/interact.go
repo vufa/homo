@@ -2,7 +2,9 @@ package main
 
 import (
 	"fmt"
+	"github.com/countstarlight/homo/module/baidu"
 	"github.com/countstarlight/homo/module/nlu"
+	"github.com/countstarlight/homo/module/setting"
 	"github.com/marcusolsson/tui-go"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
@@ -30,6 +32,7 @@ func interact(ctx *cli.Context) error {
 	if ctx.Bool("debug") {
 		logrus.Infof("Running in debug mode")
 	}
+	setting.NewContext()
 	//
 	//tui begin
 	//
@@ -92,6 +95,19 @@ func interact(ctx *cli.Context) error {
 				tui.NewLabel(reply),
 				tui.NewSpacer(),
 			))
+			//Play voice
+			go func() {
+				err = baidu.TextToSpeech(reply)
+				if err != nil {
+					reply = "语音合成出错: " + err.Error()
+					history.Append(tui.NewHBox(
+						tui.NewLabel(time.Now().Format("15:04")),
+						tui.NewPadder(1, 0, tui.NewLabel(fmt.Sprintf("%s:", "homo"))),
+						tui.NewLabel(reply),
+						tui.NewSpacer(),
+					))
+				}
+			}()
 			input.SetText("")
 		}
 	})

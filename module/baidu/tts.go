@@ -1,13 +1,18 @@
 package baidu
 
 import (
+	"bytes"
+	"encoding/binary"
 	"fmt"
+	"github.com/bobertlo/go-mpg123/mpg123"
 	"github.com/countstarlight/homo/module/com"
+	"github.com/gordonklaus/portaudio"
+	"github.com/sirupsen/logrus"
+	"io/ioutil"
 	"net/http"
 	"net/url"
 	"os"
-
-	"io/ioutil"
+	"os/signal"
 
 	"net"
 )
@@ -102,18 +107,86 @@ func NewVoiceClient(apiKey, apiSecret string) *VoiceClient {
 // Voice Composition
 func TextToSpeech(text string) error {
 	client := NewVoiceClient(APIKEY, APISECRET)
-	file, err := client.TextToSpeech(text)
+	voiceData, err := client.TextToSpeech(text)
 	if err != nil {
 		return err
 	}
 
-	f, err := os.OpenFile("tmp/tts/hello.mp3", os.O_CREATE|os.O_WRONLY, 0644)
+	//Remove previous file
+	if com.IsFile("tmp/tts/tmp.mp3") {
+		err = os.Remove("tmp/tts/tmp.mp3")
+		if err != nil {
+			return err
+		}
+	}
+
+	f, err := os.OpenFile("tmp/tts/tmp.mp3", os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
 		return err
 	}
 	defer com.IOClose("Save baidu tts to file", f)
-	if _, err := f.Write(file); err != nil {
+	if _, err := f.Write(voiceData); err != nil {
 		return err
+	}
+
+	//
+	//decode mp3 voice data
+	//
+	sig := make(chan os.Signal, 1)
+	signal.Notify(sig, os.Interrupt, os.Kill)
+	decoder, err := mpg123.NewDecoder("")
+	err = decoder.Open("tmp/tts/tmp.mp3")
+	if err != nil {
+		return err
+	}
+	defer com.IOClose("mpg123 decoder", decoder)
+	// get audio format information
+	rate, channels, _ := decoder.GetFormat()
+
+	// make sure output format does not change
+	decoder.FormatNone()
+	decoder.Format(rate, channels, mpg123.ENC_SIGNED_16)
+
+	out := make([]int16, 8192)
+	stream, err := portaudio.OpenDefaultStream(0, channels, float64(rate), len(out), &out)
+	if err != nil {
+		return err
+	}
+	defer com.IOClose("portaudio stream", stream)
+	err = stream.Start()
+	if err != nil {
+		return err
+	}
+	defer func() {
+		err = stream.Stop()
+		if err != nil {
+			logrus.Warnf("Close portaudio stream failed: %s", err.Error())
+		}
+	}()
+
+	for {
+		audio := make([]byte, 2*len(out))
+		_, err = decoder.Read(audio)
+		if err == mpg123.EOF {
+			break
+		}
+		if err != nil {
+			return err
+		}
+
+		err = binary.Read(bytes.NewBuffer(audio), binary.LittleEndian, out)
+		if err != nil {
+			return err
+		}
+		err = stream.Write()
+		if err != nil {
+			return err
+		}
+		select {
+		case <-sig:
+			return nil
+		default:
+		}
 	}
 	return nil
 }

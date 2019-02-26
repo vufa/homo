@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/countstarlight/homo/module/setting"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
 	"os"
@@ -20,6 +21,7 @@ func main() {
 	app.Action = interact
 	app.Flags = flags
 	app.Before = before
+	app.After = setting.Terminal
 	if err := app.Run(os.Args); err != nil {
 		logrus.Fatalf("[homo-interact]%s", err.Error())
 	}
