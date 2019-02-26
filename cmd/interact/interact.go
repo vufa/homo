@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/countstarlight/homo/module/nlu"
 	"github.com/marcusolsson/tui-go"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
@@ -73,13 +74,26 @@ func interact(ctx *cli.Context) error {
 	chat.SetSizePolicy(tui.Expanding, tui.Expanding)
 
 	input.OnSubmit(func(e *tui.Entry) {
-		history.Append(tui.NewHBox(
-			tui.NewLabel(time.Now().Format("15:04")),
-			tui.NewPadder(1, 0, tui.NewLabel(fmt.Sprintf("%s:", "你"))),
-			tui.NewLabel(e.Text()),
-			tui.NewSpacer(),
-		))
-		input.SetText("")
+		if len(e.Text()) > 0 {
+			history.Append(tui.NewHBox(
+				tui.NewLabel(time.Now().Format("15:04")),
+				tui.NewPadder(1, 0, tui.NewLabel(fmt.Sprintf("%s:", "你"))),
+				tui.NewLabel(e.Text()),
+				tui.NewSpacer(),
+			))
+			//Send text to homo core
+			reply, err := nlu.ChatWithCore(e.Text())
+			if err != nil {
+				reply = "连接到Homo Core出错: " + err.Error()
+			}
+			history.Append(tui.NewHBox(
+				tui.NewLabel(time.Now().Format("15:04")),
+				tui.NewPadder(1, 0, tui.NewLabel(fmt.Sprintf("%s:", "homo"))),
+				tui.NewLabel(reply),
+				tui.NewSpacer(),
+			))
+			input.SetText("")
+		}
 	})
 
 	root := tui.NewHBox(sidebar, chat)

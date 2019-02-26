@@ -1,4 +1,5 @@
 /.idea/
 
-/tmp/
-/homo
+/tmp/*
+/homo-interact
+/homo-server
