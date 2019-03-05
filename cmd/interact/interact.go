@@ -97,13 +97,13 @@ func interact(ctx *cli.Context) error {
 			))
 			//Play voice
 			go func() {
-				err = baidu.TextToSpeech(reply)
-				if err != nil {
-					reply = "语音合成出错: " + err.Error()
+				er := baidu.TextToSpeech(reply)
+				if er != nil {
+					rep := "语音合成出错: " + er.Error()
 					history.Append(tui.NewHBox(
 						tui.NewLabel(time.Now().Format("15:04")),
 						tui.NewPadder(1, 0, tui.NewLabel(fmt.Sprintf("%s:", "homo"))),
-						tui.NewLabel(reply),
+						tui.NewLabel(rep),
 						tui.NewSpacer(),
 					))
 				}

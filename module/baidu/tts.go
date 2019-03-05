@@ -1,20 +1,14 @@
 package baidu
 
 import (
-	"bytes"
-	"encoding/binary"
 	"fmt"
-	"github.com/bobertlo/go-mpg123/mpg123"
+	"github.com/countstarlight/homo/module/audio"
 	"github.com/countstarlight/homo/module/com"
-	"github.com/gordonklaus/portaudio"
-	"github.com/sirupsen/logrus"
 	"io/ioutil"
+	"net"
 	"net/http"
 	"net/url"
 	"os"
-	"os/signal"
-
-	"net"
 )
 
 const TTS_URL = "http://tsn.baidu.com/text2audio"
@@ -51,8 +45,8 @@ func (vc *VoiceClient) TextToSpeech(txt string) ([]byte, error) {
 		"spd":  {"5"},
 		"pit":  {"5"},
 		"vol":  {"5"},
-		"per":  {"0"},
-		"aue":  {"3"}, //mp3 format
+		"per":  {"0"}, //0: default female, 1: default male, 4: girl
+		"aue":  {"6"}, //3: mp3 format 6: wav
 	})
 	if err != nil {
 		return nil, err
@@ -70,7 +64,14 @@ func (vc *VoiceClient) TextToSpeech(txt string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	if contentType[0] == "audio/mp3" {
+	/*
+		if contentType[0] == "audio/mp3" {
+			return respBody, nil
+		} else {
+			return nil, fmt.Errorf("调用服务失败：%s", string(respBody))
+		}
+	*/
+	if contentType[0] == "audio/wav" {
 		return respBody, nil
 	} else {
 		return nil, fmt.Errorf("调用服务失败：%s", string(respBody))
@@ -113,14 +114,14 @@ func TextToSpeech(text string) error {
 	}
 
 	//Remove previous file
-	if com.IsFile("tmp/tts/tmp.mp3") {
-		err = os.Remove("tmp/tts/tmp.mp3")
+	if com.IsFile("tmp/tts/tmp.wav") {
+		err = os.Remove("tmp/tts/tmp.wav")
 		if err != nil {
 			return err
 		}
 	}
 
-	f, err := os.OpenFile("tmp/tts/tmp.mp3", os.O_CREATE|os.O_WRONLY, 0644)
+	f, err := os.OpenFile("tmp/tts/tmp.wav", os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
 		return err
 	}
@@ -128,65 +129,7 @@ func TextToSpeech(text string) error {
 	if _, err := f.Write(voiceData); err != nil {
 		return err
 	}
-
-	//
-	//decode mp3 voice data
-	//
-	sig := make(chan os.Signal, 1)
-	signal.Notify(sig, os.Interrupt, os.Kill)
-	decoder, err := mpg123.NewDecoder("")
-	err = decoder.Open("tmp/tts/tmp.mp3")
-	if err != nil {
-		return err
-	}
-	defer com.IOClose("mpg123 decoder", decoder)
-	// get audio format information
-	rate, channels, _ := decoder.GetFormat()
-
-	// make sure output format does not change
-	decoder.FormatNone()
-	decoder.Format(rate, channels, mpg123.ENC_SIGNED_16)
-
-	out := make([]int16, 8192)
-	stream, err := portaudio.OpenDefaultStream(0, channels, float64(rate), len(out), &out)
-	if err != nil {
-		return err
-	}
-	defer com.IOClose("portaudio stream", stream)
-	err = stream.Start()
-	if err != nil {
-		return err
-	}
-	defer func() {
-		err = stream.Stop()
-		if err != nil {
-			logrus.Warnf("Close portaudio stream failed: %s", err.Error())
-		}
-	}()
-
-	for {
-		audio := make([]byte, 2*len(out))
-		_, err = decoder.Read(audio)
-		if err == mpg123.EOF {
-			break
-		}
-		if err != nil {
-			return err
-		}
-
-		err = binary.Read(bytes.NewBuffer(audio), binary.LittleEndian, out)
-		if err != nil {
-			return err
-		}
-		err = stream.Write()
-		if err != nil {
-			return err
-		}
-		select {
-		case <-sig:
-			return nil
-		default:
-		}
-	}
-	return nil
+	//PortAudio
+	//err = audio.PortAudioPlayMp3("tmp/tts/tmp.mp3")
+	return audio.BeepPlayWav("tmp/tts/tmp.wav")
 }
