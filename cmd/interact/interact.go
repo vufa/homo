@@ -8,6 +8,7 @@ import (
 	"github.com/marcusolsson/tui-go"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
+	"sync"
 	"time"
 )
 
@@ -16,6 +17,11 @@ var flags = []cli.Flag{
 		EnvVar: "HOMO_INTERACT_DEBUG",
 		Name:   "debug, d",
 		Usage:  "start homo in debug mode",
+	},
+	cli.BoolFlag{
+		EnvVar: "HOMO_INTENT_ONLY",
+		Name:   "intent, i",
+		Usage:  "start homo in intent only mode",
 	},
 }
 
@@ -31,6 +37,10 @@ func interact(ctx *cli.Context) error {
 	logrus.Infof("Homo Interact v0.0.1")
 	if ctx.Bool("debug") {
 		logrus.Infof("Running in debug mode")
+		setting.DebugMode = true
+	} else if ctx.Bool("intent") {
+		logrus.Infof("Running homo in intent only mode")
+		setting.IntentOnlyMode = true
 	}
 	setting.NewContext()
 	//
@@ -47,6 +57,10 @@ func interact(ctx *cli.Context) error {
 	if ctx.Bool("debug") {
 		sidebar.Append(
 			tui.NewLabel("DEBUG MODE"),
+		)
+	} else if ctx.Bool("intent") {
+		sidebar.Append(
+			tui.NewLabel("INTENT-ONLY MODE"),
 		)
 	}
 	sidebar.Append(
@@ -85,9 +99,45 @@ func interact(ctx *cli.Context) error {
 				tui.NewSpacer(),
 			))
 			//Send text to homo core
-			reply, err := nlu.ChatWithCore(e.Text())
-			if err != nil {
-				reply = "连接到Homo Core出错: " + err.Error()
+			var (
+				reply string
+				err   error
+			)
+			playMutex := &sync.Mutex{}
+			if setting.IntentOnlyMode {
+				replyMessage, err := nlu.ActionLocal(e.Text())
+				if err != nil {
+					reply = "错误: " + err.Error()
+				} else {
+					//display rank
+					history.Append(tui.NewHBox(
+						tui.NewLabel(time.Now().Format("15:04")),
+						tui.NewPadder(1, 0, tui.NewLabel(fmt.Sprintf("%s:", "homo"))),
+						tui.NewLabel(replyMessage[0]),
+						tui.NewSpacer(),
+					))
+					//Play voice
+					go func() {
+						playMutex.Lock()
+						er := baidu.TextToSpeech(replyMessage[0])
+						playMutex.Unlock()
+						if er != nil {
+							rep := "语音合成出错: " + er.Error()
+							history.Append(tui.NewHBox(
+								tui.NewLabel(time.Now().Format("15:04")),
+								tui.NewPadder(1, 0, tui.NewLabel(fmt.Sprintf("%s:", "homo"))),
+								tui.NewLabel(rep),
+								tui.NewSpacer(),
+							))
+						}
+					}()
+					reply = replyMessage[1]
+				}
+			} else {
+				reply, err = nlu.ChatWithCore(e.Text())
+				if err != nil {
+					reply = "连接到Homo Core出错: " + err.Error()
+				}
 			}
 			history.Append(tui.NewHBox(
 				tui.NewLabel(time.Now().Format("15:04")),
@@ -97,7 +147,9 @@ func interact(ctx *cli.Context) error {
 			))
 			//Play voice
 			go func() {
+				playMutex.Lock()
 				er := baidu.TextToSpeech(reply)
+				playMutex.Unlock()
 				if er != nil {
 					rep := "语音合成出错: " + er.Error()
 					history.Append(tui.NewHBox(

@@ -7,7 +7,15 @@ import (
 
 var (
 	BeepSpeakerInited bool
+	DebugMode         bool
+	IntentOnlyMode    bool
 )
+
+func init() {
+	BeepSpeakerInited = false
+	DebugMode = false
+	IntentOnlyMode = false
+}
 
 func NewContext() {
 	//Initial portaudio
@@ -15,7 +23,6 @@ func NewContext() {
 	if err != nil {
 		logrus.Fatalf("Initial portaudio failed: %s", err.Error())
 	}*/
-	BeepSpeakerInited = false
 }
 
 func Terminal(c *cli.Context) error {
