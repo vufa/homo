@@ -131,7 +131,29 @@ func interact(ctx *cli.Context) error {
 							))
 						}
 					}()
-					reply = replyMessage[1]
+					//display entities
+					history.Append(tui.NewHBox(
+						tui.NewLabel(time.Now().Format("15:04")),
+						tui.NewPadder(1, 0, tui.NewLabel(fmt.Sprintf("%s:", "homo"))),
+						tui.NewLabel(replyMessage[1]),
+						tui.NewSpacer(),
+					))
+					//Play voice
+					go func() {
+						playMutex.Lock()
+						er := baidu.TextToSpeech(replyMessage[1])
+						playMutex.Unlock()
+						if er != nil {
+							rep := "语音合成出错: " + er.Error()
+							history.Append(tui.NewHBox(
+								tui.NewLabel(time.Now().Format("15:04")),
+								tui.NewPadder(1, 0, tui.NewLabel(fmt.Sprintf("%s:", "homo"))),
+								tui.NewLabel(rep),
+								tui.NewSpacer(),
+							))
+						}
+					}()
+					reply = replyMessage[2]
 				}
 			} else {
 				reply, err = nlu.ChatWithCore(e.Text())

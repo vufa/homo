@@ -37,16 +37,21 @@ func greet() (string, error) {
 func informTime() (string, error) {
 	return "现在是" + time.Now().Format("2006-01-02 15:04:05"), nil
 }
+
+func medical() (string, error) {
+	return "多喝热水", nil
+}
 func thanks() (string, error) {
 	return "不用谢", nil
 }
 
 var RunActions = map[string]func() (string, error){
-	"affirm":   affirm,
-	"ask_name": askName,
-	"deny":     deny,
-	"goodbye":  goodbye,
-	"greet":    greet,
+	"affirm":      affirm,
+	"ask_name":    askName,
+	"deny":        deny,
+	"goodbye":     goodbye,
+	"greet":       greet,
 	"inform_time": informTime,
-	"thanks":   thanks,
+	"thanks":      thanks,
+	"medical":     medical,
 }
