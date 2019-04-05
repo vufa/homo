@@ -1,5 +1,5 @@
 /.idea/
 
 /tmp/*
-/homo-interact
-/homo-server
+/homo-*
+/cmd/native/bindata.go

@@ -20,16 +20,19 @@ func init() {
 	//setting.MaxConcurrency = runtime.NumCPU() * 2
 }
 
+const AppName = "Homo Webview"
+const AppVersion = "0.0.1"
+
 func main() {
 	app := cli.NewApp()
-	app.Name = "homo-interact"
-	app.Version = "0.0.1"
-	app.Usage = "Homo interact"
-	app.Action = interact
+	app.Name = AppName
+	app.Version = AppVersion
+	app.Usage = "Help"
+	app.Action = lanchWebview
 	app.Flags = flags
 	app.Before = before
 	app.After = setting.Terminal
 	if err := app.Run(os.Args); err != nil {
-		logrus.Fatalf("[homo-interact]%s", err.Error())
+		logrus.Fatalf("[homo-webview]%s", err.Error())
 	}
 }
