@@ -1,5 +1,5 @@
 // core function
-function Bubbles(container, self, options) {
+function Homo(container, self, options) {
   // options
   options = typeof options !== "undefined" ? options : {}
   animationTime = options.animationTime || 200 // how long it takes to animate chat bubble, also set in CSS
@@ -76,7 +76,7 @@ function Bubbles(container, self, options) {
     var inputWrap = document.createElement("div")
     inputWrap.className = "input-wrap"
     var inputText = document.createElement("textarea")
-    inputText.setAttribute("placeholder", "Ask me anything...")
+    inputText.setAttribute("placeholder", "输入消息...")
     inputWrap.appendChild(inputText)
     inputText.addEventListener("keypress", function(e) {
       // register user input
@@ -94,6 +94,7 @@ function Bubbles(container, self, options) {
           function() {},
           "reply reply-freeform"
         )
+        external.invoke('message:' + this.value)
         // callback
         typeof callbackFn === "function"
           ? callbackFn({

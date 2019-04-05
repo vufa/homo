@@ -54,12 +54,12 @@ clean:
 	rm -f $(EXECUTABLE_NATIVE)
 	rm -f $(EXECUTABLE_WEBVIEW)
 	#qt
-	cd cmd/qt && \
-	rm -f moc* && \
-	rm -rf deploy && \
-	rm -f rcc*
-	rm -rf bin
-	mkdir bin
+	#cd cmd/qt && \
+	#rm -f moc* && \
+	#rm -rf deploy && \
+	#rm -f rcc*
+	#rm -rf bin
+	#mkdir bin
 
 .PHONY: fmt
 fmt:

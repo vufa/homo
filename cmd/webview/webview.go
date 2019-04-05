@@ -19,6 +19,7 @@ import (
 	"net"
 	"net/http"
 	"path/filepath"
+	"strings"
 
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
@@ -84,53 +85,9 @@ func render(w webview.WebView, tasks []Task) {
 }
 
 func handleRPC(w webview.WebView, data string) {
-	cmd := struct {
-		Name string `json:"cmd"`
-	}{}
-	if err := json.Unmarshal([]byte(data), &cmd); err != nil {
-		log.Println(err)
-		return
-	}
-	switch cmd.Name {
-	case "init":
-		render(w, Tasks)
-	case "log":
-		logInfo := struct {
-			Text string `json:"text"`
-		}{}
-		if err := json.Unmarshal([]byte(data), &logInfo); err != nil {
-			log.Println(err)
-		} else {
-			log.Println(logInfo.Text)
-		}
-	case "addTask":
-		task := Task{}
-		if err := json.Unmarshal([]byte(data), &task); err != nil {
-			log.Println(err)
-		} else if len(task.Name) > 0 {
-			Tasks = append(Tasks, task)
-			render(w, Tasks)
-		}
-	case "markTask":
-		taskInfo := struct {
-			Index int  `json:"index"`
-			Done  bool `json:"done"`
-		}{}
-		if err := json.Unmarshal([]byte(data), &taskInfo); err != nil {
-			log.Println(err)
-		} else if taskInfo.Index >= 0 && taskInfo.Index < len(Tasks) {
-			Tasks[taskInfo.Index].Done = taskInfo.Done
-			render(w, Tasks)
-		}
-	case "clearDoneTasks":
-		newTasks := []Task{}
-		for _, task := range Tasks {
-			if !task.Done {
-				newTasks = append(newTasks, task)
-			}
-		}
-		Tasks = newTasks
-		render(w, Tasks)
+	switch {
+	case strings.HasPrefix(data, "message:"):
+		fmt.Printf("发送的消息: %s\n", strings.TrimPrefix(data, "message:"))
 	}
 }
 
@@ -144,26 +101,18 @@ func lanchWebview(ctx *cli.Context) {
 	logrus.SetFormatter(customFormatter)
 	customFormatter.FullTimestamp = true
 	url := startServer()
-	var w webview.WebView
 	if ctx.Bool("debug") {
 		logrus.Infof("Running in debug mode")
-		w = webview.New(webview.Settings{
-			Width:                  400,
-			Height:                 600,
-			Title:                  AppName,
-			URL:                    url,
-			Debug:                  true,
-			ExternalInvokeCallback: handleRPC,
-		})
-	} else {
-		w = webview.New(webview.Settings{
-			Width:                  400,
-			Height:                 600,
-			Title:                  AppName,
-			URL:                    url,
-			ExternalInvokeCallback: handleRPC,
-		})
 	}
+
+	w := webview.New(webview.Settings{
+		Width:                  400,
+		Height:                 600,
+		Title:                  AppName,
+		URL:                    url,
+		Debug:                  ctx.Bool("debug"),
+		ExternalInvokeCallback: handleRPC,
+	})
 	defer w.Exit()
 	w.Run()
 }
