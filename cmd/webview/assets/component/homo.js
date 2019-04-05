@@ -85,7 +85,7 @@ function Homo(container, self, options) {
         typeof bubbleQueue !== false ? clearTimeout(bubbleQueue) : false // allow user to interrupt the bot
         var lastBubble = document.querySelectorAll(".bubble.say")
         lastBubble = lastBubble[lastBubble.length - 1]
-        lastBubble.classList.contains("reply") &&
+        lastBubble && lastBubble.classList.contains("reply") &&
         !lastBubble.classList.contains("reply-freeform")
           ? lastBubble.classList.add("bubble-hidden")
           : false

@@ -13,6 +13,9 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/sirupsen/logrus"
+	"github.com/urfave/cli"
+	"github.com/zserge/webview"
 	"io"
 	"log"
 	"mime"
@@ -20,10 +23,6 @@ import (
 	"net/http"
 	"path/filepath"
 	"strings"
-
-	"github.com/sirupsen/logrus"
-	"github.com/urfave/cli"
-	"github.com/zserge/webview"
 )
 
 var flags = []cli.Flag{
@@ -65,22 +64,25 @@ func startServer() string {
 	return "http://" + ln.Addr().String()
 }
 
-// Task is a data model type, it contains information about task name and status (done/not done).
-type Task struct {
-	Name string `json:"name"`
-	Done bool   `json:"done"`
+type Message struct {
+	Says []string `json:"says"`
+}
+type HomoReply struct {
+	Msg Message `json:"message"`
 }
 
-// Tasks is a global data model, to keep things simple.
-var Tasks = []Task{}
-
-func render(w webview.WebView, tasks []Task) {
-	b, err := json.Marshal(tasks)
-	if err == nil {
-		err = w.Eval(fmt.Sprintf("rpc.render(%s)", string(b)))
-		if err != nil {
-			panic(err)
-		}
+func sendReply(w webview.WebView, message []string) {
+	b, err := json.Marshal(HomoReply{
+		Msg:Message{
+			Says: message,
+		},
+	})
+	if err != nil {
+		logrus.Warning("sendReply: json.Marshal failed: %s", err.Error())
+	}
+	err = w.Eval(fmt.Sprintf("chatWindow.talk(%s, \"message\")", string(b)))
+	if err != nil {
+		logrus.Warning("sendReply: w.Eval failed: %s", err.Error())
 	}
 }
 
@@ -88,6 +90,7 @@ func handleRPC(w webview.WebView, data string) {
 	switch {
 	case strings.HasPrefix(data, "message:"):
 		fmt.Printf("发送的消息: %s\n", strings.TrimPrefix(data, "message:"))
+		sendReply(w, []string{"你好"})
 	}
 }
 
