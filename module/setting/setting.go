@@ -10,12 +10,14 @@ package setting
 import (
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
+	"sync"
 )
 
 var (
 	BeepSpeakerInited bool
 	DebugMode         bool
 	IntentOnlyMode    bool
+	VoicePlayMutex    sync.Mutex
 )
 
 func init() {

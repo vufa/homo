@@ -13,7 +13,9 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/countstarlight/homo/module/baidu"
 	"github.com/countstarlight/homo/module/nlu"
+	"github.com/countstarlight/homo/module/setting"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
 	"github.com/zserge/webview"
@@ -24,6 +26,7 @@ import (
 	"net/http"
 	"path/filepath"
 	"strings"
+	"time"
 )
 
 var flags = []cli.Flag{
@@ -111,7 +114,19 @@ func handleRPC(w webview.WebView, data string) {
 				//sendReply(w, []string{"你好", "今天天气不错", "不是吗"})
 				sendReply(w, reply)
 			})
-
+			//Play voice
+			time.Sleep(time.Second)
+			for _, sent := range replyMessage {
+				setting.VoicePlayMutex.Lock()
+				err = baidu.TextToSpeech(sent)
+				setting.VoicePlayMutex.Unlock()
+				if err != nil {
+					w.Dispatch(func() {
+						//sendReply(w, []string{"你好", "今天天气不错", "不是吗"})
+						sendReply(w, []string{"语音合成出错: " + err.Error()})
+					})
+				}
+			}
 		}()
 	}
 }
