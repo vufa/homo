@@ -13,6 +13,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/countstarlight/homo/module/nlu"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
 	"github.com/zserge/webview"
@@ -71,9 +72,15 @@ type HomoReply struct {
 	Msg Message `json:"message"`
 }
 
+func typingAnimate(w webview.WebView) {
+	err := w.Eval("chatWindow.think()")
+	if err != nil {
+		logrus.Warning("botTypingAnimate w.Eval failed: %s", err.Error())
+	}
+}
 func sendReply(w webview.WebView, message []string) {
 	b, err := json.Marshal(HomoReply{
-		Msg:Message{
+		Msg: Message{
 			Says: message,
 		},
 	})
@@ -89,8 +96,23 @@ func sendReply(w webview.WebView, message []string) {
 func handleRPC(w webview.WebView, data string) {
 	switch {
 	case strings.HasPrefix(data, "message:"):
-		fmt.Printf("发送的消息: %s\n", strings.TrimPrefix(data, "message:"))
-		sendReply(w, []string{"你好"})
+		msg := strings.TrimPrefix(data, "message:")
+		//fmt.Printf("发送的消息: %s\n", msg)
+		//typingAnimate(w)
+		go func() {
+			var reply []string
+			replyMessage, err := nlu.ActionLocal(msg)
+			if err != nil {
+				reply = []string{"错误: " + err.Error()}
+			} else {
+				reply = replyMessage
+			}
+			w.Dispatch(func() {
+				//sendReply(w, []string{"你好", "今天天气不错", "不是吗"})
+				sendReply(w, reply)
+			})
+
+		}()
 	}
 }
 
@@ -109,8 +131,8 @@ func lanchWebview(ctx *cli.Context) {
 	}
 
 	w := webview.New(webview.Settings{
-		Width:                  400,
-		Height:                 600,
+		Width:                  900,
+		Height:                 700,
 		Title:                  AppName,
 		URL:                    url,
 		Debug:                  ctx.Bool("debug"),

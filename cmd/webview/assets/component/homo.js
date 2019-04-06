@@ -92,7 +92,8 @@ function Homo(container, self, options) {
         addBubble(
           '<span class="bubble-button bubble-pick">' + this.value + "</span>",
           function() {},
-          "reply reply-freeform"
+          "reply reply-freeform",
+            true
         )
         external.invoke('message:' + this.value)
         // callback
@@ -123,20 +124,18 @@ function Homo(container, self, options) {
   bubbleWrap.appendChild(bubbleTyping)
 
   // accept JSON & create bubbles
-  this.talk = function(convo, here) {
+  this.talk = function(convo) {
     // all further .talk() calls will append the conversation with additional blocks defined in convo parameter
     _convo = Object.assign(_convo, convo) // POLYFILL REQUIRED FOR OLDER BROWSERS
 
-    this.reply(_convo[here])
-    here ? (standingAnswer = here) : false
+    this.reply(_convo["message"])
   }
 
   var iceBreaker = false // this variable holds answer to whether this is the initative bot interaction or not
   this.reply = function(turn) {
-    iceBreaker = typeof turn === "undefined"
-    turn = !iceBreaker ? turn : _convo.ice
     questionsHTML = ""
     if (!turn) return
+    // Give choose
     if (turn.reply !== undefined) {
       turn.reply.reverse()
       for (var i = 0; i < turn.reply.length; i++) {
@@ -213,10 +212,16 @@ function Homo(container, self, options) {
 
   // create a bubble
   var bubbleQueue = false
-  var addBubble = function(say, posted, reply, live) {
+  var addBubble = function(say, posted, reply, human, live) {
     reply = typeof reply !== "undefined" ? reply : ""
     live = typeof live !== "undefined" ? live : true // bubbles that are not "live" are not animated and displayed differently
-    var animationTime = live ? this.animationTime : 0
+    //var animationTime = live ? this.animationTime : 0
+    var animationTime
+    if(human) {
+      animationTime = 0
+    } else {
+      animationTime = live ? this.animationTime : 0
+    }
     var typeSpeed = live ? this.typeSpeed : 0
     // create bubble element
     var bubble = document.createElement("div")
@@ -298,7 +303,8 @@ function Homo(container, self, options) {
       interactionsHistory[i].say,
       function() {},
       interactionsHistory[i].reply,
-      false
+      false,
+        false
     )
   }
 }

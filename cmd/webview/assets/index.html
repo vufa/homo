@@ -36,10 +36,6 @@
 // initialize by constructing a named function...
 var chatWindow = new Homo(document.getElementById("chat"), "chatWindow", {
   inputCallbackFn: function(o) {
-	  // sanitize text for search function
-	  var strip = function(text) {
-		  return text.toLowerCase().replace(/[\s.,\/#!$%\^&\*;:{}=\-_'"`~()]/g, "")
-	  }
   }
 })
 </script>

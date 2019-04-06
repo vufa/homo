@@ -83,7 +83,7 @@ func (l IntentRankingList) Swap(i, j int) {
 		l[i]
 }
 
-func ActionLocal(text string) ([3]string, error) {
+func ActionLocal(text string) ([]string, error) {
 	postM := &intentRequest{
 		Query:   text,
 		Project: project,
@@ -91,56 +91,67 @@ func ActionLocal(text string) ([3]string, error) {
 	}
 	var postJson, err = json.Marshal(postM)
 	if err != nil {
-		return [3]string{"", ""}, err
+		return nil, err
 	}
 	req, err := http.NewRequest("POST", nluURL, bytes.NewBuffer(postJson))
 	if err != nil {
-		return [3]string{"", ""}, err
+		return nil, err
 	}
 	req.Header.Set("Content-Type", "application/json")
 
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		return [3]string{"", ""}, err
+		return nil, err
 	}
 	defer com.IOClose("", resp.Body)
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return [3]string{"", ""}, err
+		return nil, err
 	}
 	reply := nluReply{}
 	err = json.Unmarshal(body, &reply)
 	if err != nil {
-		return [3]string{"", ""}, err
+		return nil, err
 	}
 	if !com.IfStringInArray(reply.Intent.Name, actions) {
-		return [3]string{"", ""}, fmt.Errorf("意图[%s]没有对应的行为", reply.Intent.Name)
+		return nil, fmt.Errorf("意图[%s]没有对应的行为", reply.Intent.Name)
 	}
-	var replyMessage [3]string
-	replyMessage[2], err = RunActions[reply.Intent.Name]()
-	//Get intent rank
+	var (
+		replyMessage []string
+		result       string
+	)
+	//1.Get intent rank
 	sort.Sort(reply.IntentRanking)
 	rankList := reply.IntentRanking[:3]
-	replyMessage[0] = "意图分析: "
+	result = "意图分析: "
 	for _, r := range rankList {
 		if !com.IfStringInArray(r.Name, intentList) {
-			replyMessage[0] = replyMessage[0] + fmt.Sprintf("[%s]: %.4f%% ", "未知", r.Confidence*100)
+			result = result + fmt.Sprintf("[%s]: %.4f%% ", "未知", r.Confidence*100)
 		} else {
-			replyMessage[0] = replyMessage[0] + fmt.Sprintf("[%s]: %.4f%% ", intents[r.Name], r.Confidence*100)
+			result = result + fmt.Sprintf("[%s]: %.4f%% ", intents[r.Name], r.Confidence*100)
 		}
 	}
-	replyMessage[1] = "实体分析: "
+	replyMessage = append(replyMessage, result)
+	//2.Get entities
+	result = "实体分析: "
 	if len(reply.Entities) > 0 {
 		for _, e := range reply.Entities {
 			v, ok := e.(map[string]interface{})
 			if !ok {
-				return [3]string{"", ""}, fmt.Errorf("获取实体失败")
+				return nil, fmt.Errorf("获取实体失败")
 			}
-			replyMessage[1] = replyMessage[1] + fmt.Sprintf("[%s]: %s ", entities[v["entity"].(string)], v["value"].(string))
+			result = result + fmt.Sprintf("[%s]: %s ", entities[v["entity"].(string)], v["value"].(string))
 		}
 	} else {
-		replyMessage[1] = replyMessage[1] + "无实体"
+		result = result + "无实体"
 	}
+	replyMessage = append(replyMessage, result)
+	//3.Run action
+	result, err = RunActions[reply.Intent.Name]()
+	if err != nil {
+		return nil, err
+	}
+	replyMessage = append(replyMessage, result)
 	return replyMessage, err
 }

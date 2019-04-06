@@ -81,6 +81,10 @@ native: $(EXECUTABLE_NATIVE)
 .PHONY: webview
 webview: $(EXECUTABLE_WEBVIEW)
 
+.PHONY: watch
+watch: gen $(EXECUTABLE_WEBVIEW)
+	./$(EXECUTABLE_WEBVIEW) -d
+
 .PHONY: qt
 qt:
 	rm -rf bin/qt; \
