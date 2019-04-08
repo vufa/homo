@@ -185,10 +185,10 @@ function Homo(container, self, options) {
     // api for typing bubble
     this.think = function () {
         bubbleTyping.classList.remove("imagine");
-        this.stop = function () {
-            bubbleTyping.classList.add("imagine")
-        }
     };
+    this.thinkStop = function () {
+        bubbleTyping.classList.add("imagine")
+    }
 
     // "type" each message within the group
     var orderBubbles = function (q, callback) {

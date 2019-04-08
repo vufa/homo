@@ -76,10 +76,12 @@ type HomoReply struct {
 }
 
 func typingAnimate(w webview.WebView) {
-	err := w.Eval("chatWindow.think()")
-	if err != nil {
-		logrus.Warning("botTypingAnimate w.Eval failed: %s", err.Error())
-	}
+	w.Dispatch(func() {
+		err := w.Eval("chatWindow.think()")
+		if err != nil {
+			logrus.Warning("botTypingAnimate w.Eval failed: %s", err.Error())
+		}
+	})
 }
 func sendReply(w webview.WebView, message []string) {
 	b, err := json.Marshal(HomoReply{
@@ -101,7 +103,6 @@ func handleRPC(w webview.WebView, data string) {
 	case strings.HasPrefix(data, "message:"):
 		msg := strings.TrimPrefix(data, "message:")
 		//fmt.Printf("发送的消息: %s\n", msg)
-		//typingAnimate(w)
 		go func() {
 			var reply []string
 			replyMessage, err := nlu.ActionLocal(msg)
