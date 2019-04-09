@@ -1,5 +1,5 @@
 /.idea/
-
+/log/
 /tmp/*
 /homo-*
 /cmd/native/bindata.go

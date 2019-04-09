@@ -8,15 +8,9 @@
 package audio
 
 import (
+	"fmt"
 	"github.com/sirupsen/logrus"
 	"github.com/xlab/portaudio-go/portaudio"
-)
-
-const (
-	samplesPerChannel = 512
-	sampleRate        = 16000
-	channels          = 1
-	sampleFormat      = portaudio.PaInt16
 )
 
 func init() {
@@ -31,4 +25,11 @@ func PaError(err portaudio.Error) bool {
 
 func PaErrorText(err portaudio.Error) string {
 	return portaudio.GetErrorText(err)
+}
+
+func PaTerminate() error {
+	if err := portaudio.Terminate(); PaError(err) {
+		return fmt.Errorf("PortAudio term failed: %s", PaErrorText(err))
+	}
+	return nil
 }

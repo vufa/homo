@@ -15,7 +15,9 @@ import (
 	"fmt"
 	"github.com/countstarlight/homo/cmd/webview/config"
 	"github.com/countstarlight/homo/module/baidu"
+	"github.com/countstarlight/homo/module/com"
 	"github.com/countstarlight/homo/module/nlu"
+	"github.com/countstarlight/homo/module/wakeup"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
 	"github.com/zserge/webview"
@@ -43,7 +45,7 @@ func startServer() string {
 		log.Fatal(err)
 	}
 	go func() {
-		defer ln.Close()
+		defer com.IOClose("webview ln", ln)
 		http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 			path := r.URL.Path
 			if len(path) > 0 && path[0] == '/' {
@@ -141,19 +143,20 @@ func lanchWebview(ctx *cli.Context) {
 	customFormatter.ForceColors = true
 	logrus.SetFormatter(customFormatter)
 	customFormatter.FullTimestamp = true
-	url := startServer()
 	if ctx.Bool("debug") {
 		logrus.Infof("Running in debug mode")
 	}
 	//
 	// Prepare wake up function
 	//
+	wakeup.LoadCMUSphinx()
+
 
 	w := webview.New(webview.Settings{
 		Width:                  900,
 		Height:                 700,
 		Title:                  AppName,
-		URL:                    url,
+		URL:                    startServer(),
 		Debug:                  ctx.Bool("debug"),
 		ExternalInvokeCallback: handleRPC,
 	})
