@@ -5,7 +5,7 @@
 // Written by Codist <i@codist.me>, March 2019
 //
 
-package setting
+package config
 
 import (
 	"github.com/sirupsen/logrus"

@@ -13,9 +13,9 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/countstarlight/homo/cmd/webview/config"
 	"github.com/countstarlight/homo/module/baidu"
 	"github.com/countstarlight/homo/module/nlu"
-	"github.com/countstarlight/homo/module/setting"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
 	"github.com/zserge/webview"
@@ -118,9 +118,9 @@ func handleRPC(w webview.WebView, data string) {
 			//Play voice
 			time.Sleep(time.Second)
 			for _, sent := range replyMessage {
-				setting.VoicePlayMutex.Lock()
+				config.VoicePlayMutex.Lock()
 				err = baidu.TextToSpeech(sent)
-				setting.VoicePlayMutex.Unlock()
+				config.VoicePlayMutex.Unlock()
 				if err != nil {
 					w.Dispatch(func() {
 						//sendReply(w, []string{"你好", "今天天气不错", "不是吗"})
@@ -145,6 +145,9 @@ func lanchWebview(ctx *cli.Context) {
 	if ctx.Bool("debug") {
 		logrus.Infof("Running in debug mode")
 	}
+	//
+	// Prepare wake up function
+	//
 
 	w := webview.New(webview.Settings{
 		Width:                  900,

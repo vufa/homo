@@ -8,7 +8,7 @@
 package main
 
 import (
-	"github.com/countstarlight/homo/module/setting"
+	"github.com/countstarlight/homo/cmd/webview/config"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
 	"os"
@@ -31,7 +31,7 @@ func main() {
 	app.Action = lanchWebview
 	app.Flags = flags
 	app.Before = before
-	app.After = setting.Terminal
+	app.After = config.Terminal
 	if err := app.Run(os.Args); err != nil {
 		logrus.Fatalf("[homo-webview]%s", err.Error())
 	}

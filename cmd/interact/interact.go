@@ -9,9 +9,9 @@ package main
 
 import (
 	"fmt"
+	"github.com/countstarlight/homo/cmd/interact/config"
 	"github.com/countstarlight/homo/module/baidu"
 	"github.com/countstarlight/homo/module/nlu"
-	"github.com/countstarlight/homo/module/setting"
 	"github.com/marcusolsson/tui-go"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
@@ -44,12 +44,12 @@ func interact(ctx *cli.Context) error {
 	logrus.Infof("Homo Interact v0.0.1")
 	if ctx.Bool("debug") {
 		logrus.Infof("Running in debug mode")
-		setting.DebugMode = true
+		config.DebugMode = true
 	} else if ctx.Bool("intent") {
 		logrus.Infof("Running homo in intent only mode")
-		setting.IntentOnlyMode = true
+		config.IntentOnlyMode = true
 	}
-	setting.NewContext()
+	config.NewContext()
 	//
 	//tui begin
 	//
@@ -111,7 +111,7 @@ func interact(ctx *cli.Context) error {
 				err   error
 			)
 			playMutex := &sync.Mutex{}
-			if setting.IntentOnlyMode {
+			if config.IntentOnlyMode {
 				replyMessage, err := nlu.ActionLocal(e.Text())
 				if err != nil {
 					reply = "错误: " + err.Error()

@@ -8,7 +8,6 @@
 package audio
 
 import (
-	"github.com/countstarlight/homo/module/setting"
 	"github.com/faiface/beep"
 	"github.com/faiface/beep/mp3"
 	"github.com/faiface/beep/speaker"
@@ -17,6 +16,13 @@ import (
 	"time"
 )
 
+var (
+	BeepSpeakerInited bool
+)
+
+func init() {
+	BeepSpeakerInited = false
+}
 func BeepPlayMp3(fileName string) error {
 	f, err := os.Open(fileName)
 	if err != nil {
@@ -52,12 +58,12 @@ func BeepPlayWav(fileName string) error {
 	s, format, _ := wav.Decode(f)
 
 	// Init the Speaker with the SampleRate of the format and a buffer size of 1/10s
-	if !setting.BeepSpeakerInited {
+	if !BeepSpeakerInited {
 		err = speaker.Init(format.SampleRate, format.SampleRate.N(time.Second/10))
 		if err != nil {
 			return err
 		}
-		setting.BeepSpeakerInited = true
+		BeepSpeakerInited = true
 	}
 
 	// Channel, which will signal the end of the playback.
