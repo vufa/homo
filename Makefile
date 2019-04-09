@@ -8,14 +8,12 @@ EXTRA_GOFLAGS ?=
 ifeq ($(OS), Windows_NT)
 	EXECUTABLE_INTERACT := homo-interact.exe
 	EXECUTABLE_SERVER := homo-server.exe
-	EXECUTABLE_NATIVE := homo-native.exe
 	EXECUTABLE_WEBVIEW := homo-webview.exe
 	EXECUTABLE_QT := homo-qt.exe
 	#EXTRA_GOFLAGS = -tags netgo -ldflags '-H=windowsgui -extldflags "-static" -s'
 else
 	EXECUTABLE_INTERACT := homo-interact
 	EXECUTABLE_SERVER := homo-server
-	EXECUTABLE_NATIVE := homo-native
 	EXECUTABLE_WEBVIEW := homo-webview
 	EXECUTABLE_QT := homo-qt
 	UNAME_S := $(shell uname -s)
@@ -51,7 +49,6 @@ clean:
 	$(GO) clean -i ./...
 	rm -f $(EXECUTABLE_INTERACT)
 	rm -f $(EXECUTABLE_SERVER)
-	rm -f $(EXECUTABLE_NATIVE)
 	rm -f $(EXECUTABLE_WEBVIEW)
 	#qt
 	#cd cmd/qt && \
@@ -75,9 +72,6 @@ fmt-check:
 		exit 1; \
 	fi;
 
-.PHONY: native
-native: $(EXECUTABLE_NATIVE)
-
 .PHONY: webview
 webview: $(EXECUTABLE_WEBVIEW)
 
@@ -94,7 +88,7 @@ qt:
 	mv cmd/qt/deploy/* bin/qt/
 
 .PHONY: build
-build: $(EXECUTABLE_INTERACT) $(EXECUTABLE_SERVER) $(EXECUTABLE_NATIVE) $(EXECUTABLE_WEBVIEW)
+build: $(EXECUTABLE_INTERACT) $(EXECUTABLE_SERVER) $(EXECUTABLE_WEBVIEW)
 
 $(EXECUTABLE_INTERACT): $(SOURCES)
 	cd ./cmd/interact; \
@@ -103,11 +97,6 @@ $(EXECUTABLE_INTERACT): $(SOURCES)
 
 $(EXECUTABLE_SERVER): $(SOURCES)
 	cd ./cmd/server; \
-	$(GO) build $(GOFLAGS) $(EXTRA_GOFLAGS) -o $@; \
-	mv $@ ../../
-
-$(EXECUTABLE_NATIVE): $(SOURCES)
-	cd ./cmd/native; \
 	$(GO) build $(GOFLAGS) $(EXTRA_GOFLAGS) -o $@; \
 	mv $@ ../../
 
