@@ -181,7 +181,7 @@ sudo make install
 创建文件`homo.txt`，输入如下内容，记住结尾不可留“\n”(实验证明了这一点)。每个utterances由 `<s>` 和 `</s>`来分隔：
 
 ```bash
-<s> Homo </s>
+<s> 天气 </s>
 
 <s> 有雨 </s>
 
@@ -244,10 +244,10 @@ idngram2lm -vocab_type 0 -idngram homo.idngram -vocab homo.vocab -arpa homo.arpa
 如果你的语言模型比较大的话，最好就转换为CMU的二进制格式 (DMP)，这样可以加快加载语言模型的速度，减少解码器初始化的时间。但对于小模型来说，就没有这个必要，因为sphinx3能处理这两种后缀名的语言模型文件。
 
 ```bash
-sphinx_lm_convert -i homo.arpa -o homo.lm.DMP
+sphinx_lm_convert -i homo.arpa -o homo.lm.bin
 ```
 
-生成了语言模型文件`homo.lm.DMP`，此文件为解码器端所需要的文件格式。
+生成了语言模型文件`homo.lm.bin`，此文件为解码器端所需要的文件格式。
 
 ### 2.3.6 创建对应的字典文件
 
@@ -265,9 +265,21 @@ sphinx_lm_convert -i homo.arpa -o homo.lm.DMP
 
 ```bash
 gortana --hmm "cmusphinx-zh-cn-5.2/zh_cn.cd_cont_5000" \
-        --dict "cmusphinx-zh-cn-5.2/zh_cn.dic" \
-        --lm "cmusphinx-zh-cn-5.2/zh_cn.lm.bin"
+        --dict "homo.dic" \
+        --lm "homo.lm.bin"
 ```
 
+## 2.4 语音唤醒优化
 
+假设给机器人起名字：“小贝”
+
+确定一个唤醒词，最好用四字词，如 小贝同学
+
+然后用手机语音识别软件测试，如语音识别输入法，对着手机说：“小贝”和“小贝同学”，看手机上识别出的结果，可能的结果有：“小为”、“交杯”、“小类”、“小贝”“小白” 和 “小贝同学”、“小飞同学”、“小薇同学”、“这位同学”等
+
+记录这些词到`keyword.txt`文件中，重新生成语言模型
+
+重新运行`gortana`，在嘈杂的环境中测试，统计识别出最多的结果，绝大部分都是二字词，而该系统只有识别到含有名字 “小贝” 或者 “小贝**” 的结果才能唤醒
+
+假设嘈杂环境识别到最多的是“小为”，把“小为”写入`keyword.txt`，对应调整`dic`文件
 
