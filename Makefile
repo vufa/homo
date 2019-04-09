@@ -7,15 +7,11 @@ EXTRA_GOFLAGS ?=
 
 ifeq ($(OS), Windows_NT)
 	EXECUTABLE_INTERACT := homo-interact.exe
-	EXECUTABLE_SERVER := homo-server.exe
 	EXECUTABLE_WEBVIEW := homo-webview.exe
-	EXECUTABLE_QT := homo-qt.exe
 	#EXTRA_GOFLAGS = -tags netgo -ldflags '-H=windowsgui -extldflags "-static" -s'
 else
 	EXECUTABLE_INTERACT := homo-interact
-	EXECUTABLE_SERVER := homo-server
 	EXECUTABLE_WEBVIEW := homo-webview
-	EXECUTABLE_QT := homo-qt
 	UNAME_S := $(shell uname -s)
 	ifeq ($(UNAME_S),Darwin)
 		SED_INPLACE := sed -i ''
@@ -48,15 +44,7 @@ gen:
 clean:
 	$(GO) clean -i ./...
 	rm -f $(EXECUTABLE_INTERACT)
-	rm -f $(EXECUTABLE_SERVER)
 	rm -f $(EXECUTABLE_WEBVIEW)
-	#qt
-	#cd cmd/qt && \
-	#rm -f moc* && \
-	#rm -rf deploy && \
-	#rm -f rcc*
-	#rm -rf bin
-	#mkdir bin
 
 .PHONY: fmt
 fmt:
@@ -79,24 +67,11 @@ webview: $(EXECUTABLE_WEBVIEW)
 watch: gen $(EXECUTABLE_WEBVIEW)
 	./$(EXECUTABLE_WEBVIEW) -d
 
-.PHONY: qt
-qt:
-	rm -rf bin/qt; \
-	mkdir bin/qt; \
-	qtdeploy build desktop github.com/countstarlight/homo/cmd/qt; \
-	rm -rf bin/linux; \
-	mv cmd/qt/deploy/* bin/qt/
-
 .PHONY: build
-build: $(EXECUTABLE_INTERACT) $(EXECUTABLE_SERVER) $(EXECUTABLE_WEBVIEW)
+build: $(EXECUTABLE_INTERACT) $(EXECUTABLE_WEBVIEW)
 
 $(EXECUTABLE_INTERACT): $(SOURCES)
 	cd ./cmd/interact; \
-	$(GO) build $(GOFLAGS) $(EXTRA_GOFLAGS) -o $@; \
-	mv $@ ../../
-
-$(EXECUTABLE_SERVER): $(SOURCES)
-	cd ./cmd/server; \
 	$(GO) build $(GOFLAGS) $(EXTRA_GOFLAGS) -o $@; \
 	mv $@ ../../
 
