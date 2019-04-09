@@ -3,3 +3,5 @@
 /tmp/*
 /homo-*
 /cmd/native/bindata.go
+
+/data/
