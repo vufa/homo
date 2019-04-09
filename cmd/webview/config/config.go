@@ -19,8 +19,12 @@ var (
 	DebugMode      bool
 	VoicePlayMutex sync.Mutex
 	WakeUpWait     sync.WaitGroup
+	//WebViewWait     sync.WaitGroup
 )
 
+func init() {
+	WakeUpd = false
+}
 func Terminal(c *cli.Context) error {
 	logrus.Infof("退出，开始结束PortAudio...")
 	return audio.PaTerminate()

@@ -17,9 +17,7 @@ import (
 	"github.com/countstarlight/homo/module/baidu"
 	"github.com/countstarlight/homo/module/com"
 	"github.com/countstarlight/homo/module/nlu"
-	"github.com/countstarlight/homo/module/wakeup"
 	"github.com/sirupsen/logrus"
-	"github.com/urfave/cli"
 	"github.com/zserge/webview"
 	"io"
 	"log"
@@ -30,14 +28,6 @@ import (
 	"strings"
 	"time"
 )
-
-var flags = []cli.Flag{
-	cli.BoolFlag{
-		EnvVar: "HOMO_WEBVIEW_DEBUG",
-		Name:   "debug, d",
-		Usage:  "start homo webview in debug mode",
-	},
-}
 
 func startServer() string {
 	ln, err := net.Listen("tcp", "127.0.0.1:0")
@@ -94,10 +84,12 @@ func sendReply(w webview.WebView, message []string) {
 	if err != nil {
 		logrus.Warning("sendReply: json.Marshal failed: %s", err.Error())
 	}
-	err = w.Eval(fmt.Sprintf("chatWindow.talk(%s, \"message\")", string(b)))
-	if err != nil {
-		logrus.Warning("sendReply: w.Eval failed: %s", err.Error())
-	}
+	w.Dispatch(func() {
+		err = w.Eval(fmt.Sprintf("chatWindow.talk(%s, \"message\")", string(b)))
+		if err != nil {
+			logrus.Warning("sendReply: w.Eval failed: %s", err.Error())
+		}
+	})
 }
 
 func handleRPC(w webview.WebView, data string) {
@@ -125,7 +117,6 @@ func handleRPC(w webview.WebView, data string) {
 				config.VoicePlayMutex.Unlock()
 				if err != nil {
 					w.Dispatch(func() {
-						//sendReply(w, []string{"你好", "今天天气不错", "不是吗"})
 						sendReply(w, []string{"语音合成出错: " + err.Error()})
 					})
 				}
@@ -133,35 +124,3 @@ func handleRPC(w webview.WebView, data string) {
 		}()
 	}
 }
-
-func lanchWebview(ctx *cli.Context) {
-
-	// Set logrus format
-	customFormatter := new(logrus.TextFormatter)
-	customFormatter.TimestampFormat = "15:04:05"
-	// Show colorful on windows
-	customFormatter.ForceColors = true
-	logrus.SetFormatter(customFormatter)
-	customFormatter.FullTimestamp = true
-	if ctx.Bool("debug") {
-		logrus.Infof("Running in debug mode")
-	}
-	//
-	// Prepare wake up function
-	//
-	wakeup.LoadCMUSphinx()
-
-
-	w := webview.New(webview.Settings{
-		Width:                  900,
-		Height:                 700,
-		Title:                  AppName,
-		URL:                    startServer(),
-		Debug:                  ctx.Bool("debug"),
-		ExternalInvokeCallback: handleRPC,
-	})
-	defer w.Exit()
-	w.Run()
-}
-
-func before(c *cli.Context) error { return nil }

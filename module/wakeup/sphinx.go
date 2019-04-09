@@ -76,7 +76,9 @@ func LoadCMUSphinx() {
 	if !dec.StartUtt() {
 		logrus.Fatalln("Sphinx failed to start utterance")
 	}
+	logrus.Infof("开始从麦克风检测唤醒词，采样率[%d]", sampleRate)
 	config.WakeUpWait.Wait()
+	config.WakeUpd = true
 }
 
 // paCallback: for simplicity reasons we process raw audio with sphinx in the this stream callback,

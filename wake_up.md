@@ -83,6 +83,12 @@ gortana --hmm "cmusphinx-zh-cn-5.2/zh_cn.cd_cont_5000" \
         --lm "cmusphinx-zh-cn-5.2/zh_cn.lm.bin"
 ```
 
+要播放录制的音频：
+
+```bash
+ffplay -f s16le -ar 16000 -ac 1 -i 000000000.raw
+```
+
 # 2. 中文唤醒词识别
 
 ## 2.1 创建语料库
