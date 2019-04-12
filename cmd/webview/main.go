@@ -8,6 +8,7 @@
 package main
 
 import (
+	"fmt"
 	"github.com/countstarlight/homo/cmd/webview/config"
 	"github.com/countstarlight/homo/module/baidu"
 	"github.com/countstarlight/homo/module/wakeup"
@@ -16,6 +17,7 @@ import (
 	"github.com/zserge/webview"
 	"os"
 	"runtime"
+	"strings"
 	"time"
 )
 
@@ -52,18 +54,30 @@ func main() {
 }
 
 func lanchWebview(ctx *cli.Context) {
-
-	// Set logrus format
-	// Print file name and line code
-	logrus.SetReportCaller(ctx.Bool("debug"))
-	logrus.SetFormatter(&logrus.TextFormatter{
-		TimestampFormat: "15:04:05",
-		// Show colorful on windows
-		ForceColors: true,
-		FullTimestamp: true,
-	})
 	if ctx.Bool("debug") {
+		config.DebugMode = true
+		// Set logrus format
+		// Print file name and line code
+		logrus.SetReportCaller(true)
+		logrus.SetFormatter(&logrus.TextFormatter{
+			TimestampFormat: "15:04:05",
+			// Show colorful on windows
+			ForceColors:   true,
+			FullTimestamp: true,
+			CallerPrettyfier: func(f *runtime.Frame) (string, string) {
+				repopath := fmt.Sprintf("%s/src/github.com/countstarlight/homo/", os.Getenv("GOPATH"))
+				filename := strings.Replace(f.File, repopath, "", -1)
+				r := strings.Split(f.Function, ".")
+				return fmt.Sprintf("%s()", r[len(r)-1]), fmt.Sprintf("%s:%d", filename, f.Line)
+			},
+		})
 		logrus.Infof("Running in debug mode")
+	} else {
+		logrus.SetFormatter(&logrus.TextFormatter{
+			TimestampFormat: "15:04:05",
+			// Show colorful on windows
+			ForceColors: true,
+		})
 	}
 	w := webview.New(webview.Settings{
 		Width:                  900,

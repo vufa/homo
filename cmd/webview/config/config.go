@@ -24,7 +24,9 @@ var (
 
 func init() {
 	WakeUpd = false
+	DebugMode = false
 }
+
 func Terminal(c *cli.Context) error {
 	logrus.Infof("退出，开始结束PortAudio...")
 	return audio.PaTerminate()
