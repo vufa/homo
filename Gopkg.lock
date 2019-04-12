@@ -2,6 +2,19 @@
 
 
 [[projects]]
+  branch = "master"
+  digest = "1:3e65f65953a27af26cbaff6fc6b46b0f729dc720ca4bf154b07b3a2ec2996f62"
+  name = "github.com/faiface/beep"
+  packages = [
+    ".",
+    "mp3",
+    "speaker",
+    "wav",
+  ]
+  pruneopts = "UT"
+  revision = "e59a7440241ac37c8debc0c36d69a6a489850a1f"
+
+[[projects]]
   digest = "1:0e16b03c72bd42739ca68d055c10369e60d17838428f512f3b29ae115ba788e0"
   name = "github.com/gdamore/encoding"
   packages = ["."]
@@ -21,20 +34,65 @@
   version = "v1.1.1"
 
 [[projects]]
-  digest = "1:0a69a1c0db3591fcefb47f115b224592c8dfa4368b7ba9fae509d5e16cdc95c8"
+  branch = "master"
+  digest = "1:f14d1b50e0075fb00177f12a96dd7addf93d1e2883c25befd17285b779549795"
+  name = "github.com/gopherjs/gopherjs"
+  packages = ["js"]
+  pruneopts = "UT"
+  revision = "bd77b112433e999447bf4bc599e36214ba494a99"
+
+[[projects]]
+  digest = "1:94f6a77a051b8e2c6e8c280ce298dcd1028ed345f2209e630cdc606d59767f97"
+  name = "github.com/gopherjs/gopherwasm"
+  packages = ["js"]
+  pruneopts = "UT"
+  revision = "f5a54963d451109f20622db5b6a055569ec6b4c6"
+  version = "v1.1.0"
+
+[[projects]]
+  digest = "1:8356f79b959319599c6c94d9b3aa85975da3fcc2fb29989bcbd357ee8a7fa037"
+  name = "github.com/hajimehoshi/go-mp3"
+  packages = [
+    ".",
+    "internal/bits",
+    "internal/consts",
+    "internal/frame",
+    "internal/frameheader",
+    "internal/huffman",
+    "internal/imdct",
+    "internal/maindata",
+    "internal/sideinfo",
+  ]
+  pruneopts = "UT"
+  revision = "14af46a99b16fe1e285e22e032579d8b075c71f4"
+  version = "v0.2.0"
+
+[[projects]]
+  digest = "1:063882eea39d6c8fb8a80d3acea94b0d0e9115d8b8ecf5e011fb0ef12e307d81"
+  name = "github.com/hajimehoshi/oto"
+  packages = [
+    ".",
+    "internal/mux",
+  ]
+  pruneopts = "UT"
+  revision = "ea42285388c25364e85ee5808f5ef9e6b5045584"
+  version = "v0.3.3"
+
+[[projects]]
+  digest = "1:31e761d97c76151dde79e9d28964a812c46efc5baee4085b86f68f0c654450de"
   name = "github.com/konsorten/go-windows-terminal-sequences"
   packages = ["."]
   pruneopts = "UT"
-  revision = "5c8c8bd35d3832f5d134ae1e1e375b69a4d25242"
-  version = "v1.0.1"
+  revision = "f55edac94c9bbba5d6182a4be46d86a2c9b5b50e"
+  version = "v1.0.2"
 
 [[projects]]
-  digest = "1:c65a16ac77d0b1aefc7009cabb6ac5ad05def02025f5be85f450c03f52cc6f86"
+  digest = "1:39de67207027b7374272d5ec9b1bf85457714150ba1263e8d236316629dad570"
   name = "github.com/lucasb-eyer/go-colorful"
   packages = ["."]
   pruneopts = "UT"
-  revision = "345fbb3dbcdb252d9985ee899a84963c0fa24c82"
-  version = "v1.0"
+  revision = "30298f24079860c4dee452fdef6519b362a4a026"
+  version = "v1.0.2"
 
 [[projects]]
   digest = "1:d96cb3ed0e90e9f15a50a9fe2dc49a30eef739648547e1b664868ea73fbf294b"
@@ -64,12 +122,20 @@
   version = "v1.0.0"
 
 [[projects]]
-  digest = "1:87c2e02fb01c27060ccc5ba7c5a407cc91147726f8f40b70cceeedbc52b1f3a8"
+  digest = "1:cf31692c14422fa27c83a05292eb5cbe0fb2775972e8f1f8446a71549bd8980b"
+  name = "github.com/pkg/errors"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "ba968bfe8b2f7e042a574c888954fccecfa385b4"
+  version = "v0.8.1"
+
+[[projects]]
+  digest = "1:fd61cf4ae1953d55df708acb6b91492d538f49c305b364a014049914495db426"
   name = "github.com/sirupsen/logrus"
   packages = ["."]
   pruneopts = "UT"
-  revision = "e1e72e9de974bd926e5c56f83753fba2df402ce5"
-  version = "v1.3.0"
+  revision = "8bdbc7bcc01dcbb8ec23dc8a28e332258d25251f"
+  version = "v1.4.1"
 
 [[projects]]
   digest = "1:b24d38b282bacf9791408a080f606370efa3d364e4b5fd9ba0f7b87786d3b679"
@@ -81,22 +147,86 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:fde12c4da6237363bf36b81b59aa36a43d28061167ec4acb0d41fc49464e28b9"
-  name = "golang.org/x/crypto"
-  packages = ["ssh/terminal"]
+  digest = "1:8591f271d7fbc05b771aa2f11b980abb94718700b4d27e6bcc9acb8ba2f9eaec"
+  name = "github.com/xlab/pocketsphinx-go"
+  packages = [
+    "pocketsphinx",
+    "sphinx",
+  ]
   pruneopts = "UT"
-  revision = "7f87c0fbb88b590338857bcb720678c2583d4dea"
+  revision = "8abf820ce691a2923d6e53486bcc1cd56b8d8396"
 
 [[projects]]
   branch = "master"
-  digest = "1:80200f57d482f61334a482a046ddedbad77c04dbec6ab81a4e1b3c6adbdfadef"
+  digest = "1:2923895a038e819681604ae6a7ecf70b040587bb5a9405f2bd4927afd1d1c30e"
+  name = "github.com/xlab/portaudio-go"
+  packages = ["portaudio"]
+  pruneopts = "UT"
+  revision = "132d041879db3b263391fa7c4109f218a9441a34"
+
+[[projects]]
+  branch = "master"
+  digest = "1:5841f3c3130f6bb4f4c6d2947677cc81632fead32d769bc79d8809b7a8245e52"
+  name = "github.com/zserge/webview"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "16c93bcaeaeb6aa7bb5a1432de3bef0b9ecc44f3"
+
+[[projects]]
+  branch = "master"
+  digest = "1:3e1b3f9a449216ec5410c6a788fe73c8cfd86f5c2362fd3910b6af8479d2acc5"
+  name = "golang.org/x/exp"
+  packages = [
+    "shiny/driver/gldriver",
+    "shiny/driver/internal/drawer",
+    "shiny/driver/internal/errscreen",
+    "shiny/driver/internal/event",
+    "shiny/driver/internal/lifecycler",
+    "shiny/driver/internal/win32",
+    "shiny/driver/internal/x11key",
+    "shiny/screen",
+  ]
+  pruneopts = "UT"
+  revision = "0480eff6dd7c106a642ab79ed08300700cb6bb3a"
+
+[[projects]]
+  branch = "master"
+  digest = "1:b92d5f74778f4766055011db9abc4bba54edbe5e690a544e6dbfe4dd90824719"
+  name = "golang.org/x/image"
+  packages = ["math/f64"]
+  pruneopts = "UT"
+  revision = "3fc05d484e9f77dd51816890e05f2602e4ca4d65"
+
+[[projects]]
+  branch = "master"
+  digest = "1:eede0a3b9f8c6b6c0f26dc90933adf9162978d65461ceecebfb9e454164c02e0"
+  name = "golang.org/x/mobile"
+  packages = [
+    "app",
+    "app/internal/callfn",
+    "event/key",
+    "event/lifecycle",
+    "event/mouse",
+    "event/paint",
+    "event/size",
+    "event/touch",
+    "geom",
+    "gl",
+    "internal/mobileinit",
+  ]
+  pruneopts = "UT"
+  revision = "167ebed0ec6dd457a6b24a4f61db913f0af11f70"
+
+[[projects]]
+  branch = "master"
+  digest = "1:ae913c44e70b411817f8d4d352dc10e595d6b970ba23f2f1e668c95901f8a46a"
   name = "golang.org/x/sys"
   packages = [
     "unix",
     "windows",
   ]
   pruneopts = "UT"
-  revision = "cc5685c2db1239775905f3911f0067c0fa74762f"
+  revision = "b44545bcd369ef9ff9bebcfebf5f3370ef9b1932"
 
 [[projects]]
   digest = "1:37672ad5821719e2df8509c2edd4ba5ae192463237c73c3a2d24ef8b2bc9e36f"
@@ -116,9 +246,16 @@
   analyzer-name = "dep"
   analyzer-version = 1
   input-imports = [
+    "github.com/faiface/beep",
+    "github.com/faiface/beep/mp3",
+    "github.com/faiface/beep/speaker",
+    "github.com/faiface/beep/wav",
     "github.com/marcusolsson/tui-go",
     "github.com/sirupsen/logrus",
     "github.com/urfave/cli",
+    "github.com/xlab/pocketsphinx-go/sphinx",
+    "github.com/xlab/portaudio-go/portaudio",
+    "github.com/zserge/webview",
   ]
   solver-name = "gps-cdcl"
   solver-version = 1

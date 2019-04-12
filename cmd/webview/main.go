@@ -35,6 +35,8 @@ var flags = []cli.Flag{
 	},
 }
 
+const Greeting = "我在听，请说"
+
 func main() {
 	app := cli.NewApp()
 	app.Name = AppName
@@ -52,12 +54,14 @@ func main() {
 func lanchWebview(ctx *cli.Context) {
 
 	// Set logrus format
-	customFormatter := new(logrus.TextFormatter)
-	customFormatter.TimestampFormat = "15:04:05"
-	// Show colorful on windows
-	customFormatter.ForceColors = true
-	logrus.SetFormatter(customFormatter)
-	customFormatter.FullTimestamp = true
+	// Print file name and line code
+	logrus.SetReportCaller(ctx.Bool("debug"))
+	logrus.SetFormatter(&logrus.TextFormatter{
+		TimestampFormat: "15:04:05",
+		// Show colorful on windows
+		ForceColors: true,
+		FullTimestamp: true,
+	})
 	if ctx.Bool("debug") {
 		logrus.Infof("Running in debug mode")
 	}
@@ -76,10 +80,10 @@ func lanchWebview(ctx *cli.Context) {
 	//
 	wakeup.LoadCMUSphinx()
 	go func() {
-		sendReply(w, []string{"我在听，请说"})
+		sendReply(w, []string{Greeting})
 		time.Sleep(time.Second)
 		config.VoicePlayMutex.Lock()
-		err := baidu.TextToSpeech("我在听，请说")
+		err := baidu.TextToSpeech(Greeting)
 		config.VoicePlayMutex.Unlock()
 		if err != nil {
 			w.Dispatch(func() {
