@@ -9,15 +9,21 @@ package audio
 
 import (
 	"fmt"
+	"github.com/countstarlight/homo/module/com"
 	"github.com/sirupsen/logrus"
 	"github.com/xlab/portaudio-go/portaudio"
 )
 
 func init() {
 	// Initial PortAudio
-	if err := portaudio.Initialize(); PaError(err) {
-		logrus.Fatalf("PortAudio init failed: %s", PaErrorText(err))
+	if _, err := com.CaptureWithCGo(func() {
+		if err := portaudio.Initialize(); PaError(err) {
+			logrus.Fatalf("PortAudio init failed: %s", PaErrorText(err))
+		}
+	}); err != nil {
+		logrus.Fatalf("Capture PortAudio initial output failed: %s", err.Error())
 	}
+
 }
 func PaError(err portaudio.Error) bool {
 	return portaudio.ErrorCode(err) != portaudio.PaNoError
