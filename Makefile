@@ -25,7 +25,7 @@ GOFILES := $(shell find . -name "*.go" -type f ! -path "./vendor/*")
 GOBINS := ${GOPATH}/bin
 GOFMT ?= gofmt -s
 
-GOFLAGS := -v
+GOFLAGS := -mod=vendor -v
 
 PACKAGES ?= $(shell $(GO) list ./... | grep -v /vendor/)
 SOURCES ?= $(shell find . -name "*.go" -type f)
