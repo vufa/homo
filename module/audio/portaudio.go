@@ -18,7 +18,9 @@ func init() {
 	// Initial PortAudio
 	if _, err := com.CaptureWithCGo(func() {
 		if err := portaudio.Initialize(); PaError(err) {
-			logrus.Fatalf("PortAudio init failed: %s", PaErrorText(err))
+			//logrus.Fatalf("PortAudio init failed: %s", PaErrorText(err))
+			//logrus print will be captured
+			panic(fmt.Errorf("PortAudio init failed: %s", PaErrorText(err)))
 		}
 	}); err != nil {
 		logrus.Fatalf("Capture PortAudio initial output failed: %s", err.Error())

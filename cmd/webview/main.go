@@ -76,7 +76,8 @@ func lanchWebview(ctx *cli.Context) {
 		logrus.SetFormatter(&logrus.TextFormatter{
 			TimestampFormat: "15:04:05",
 			// Show colorful on windows
-			ForceColors: true,
+			ForceColors:   true,
+			FullTimestamp: true,
 		})
 	}
 	w := webview.New(webview.Settings{
