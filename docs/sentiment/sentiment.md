@@ -20,20 +20,25 @@
         - [1.2.3 外卖评价数据2](#123-外卖评价数据2)
 - [2.分析算法](#2分析算法)
     - [1.1 基于情感词典的情感极性分析](#11-基于情感词典的情感极性分析)
-        - [1.1.1 数据集](#111-数据集)
-        - [1.1.2 分析算法1](#112-分析算法1)
-        - [1.1.3 分析算法2](#113-分析算法2)
+        - [1.1.1 分析算法1](#111-分析算法1)
+        - [1.1.2 分析算法2](#112-分析算法2)
     - [1.2 基于K最近邻的情感极性分析](#12-基于k最近邻的情感极性分析)
-        - [1.2.1 数据集](#121-数据集)
+        - [1.2.1 训练数据集](#121-训练数据集)
         - [1.2.2 情感分析](#122-情感分析)
     - [1.3 基于朴素贝叶斯的情感极性分析](#13-基于朴素贝叶斯的情感极性分析)
         - [1.3.1 训练数据集](#131-训练数据集)
         - [1.3.2 情感分析](#132-情感分析)
     - [1.4 基于最大熵的情感极性分析](#14-基于最大熵的情感极性分析)
-    - [1.5 基于SVM的情感极性分析](#15-基于svm的情感极性分析)
-        - [1.5.1 训练数据集](#151-训练数据集)
-        - [1.5.2 情感分析](#152-情感分析)
-    - [1.6 算法比较](#16-算法比较)
+    - [1.5 基于支持向量机的情感极性分析](#15-基于支持向量机的情感极性分析)
+        - [1.5.1 去除停用词](#151-去除停用词)
+        - [1.5.2 训练词向量](#152-训练词向量)
+        - [1.5.3 标准化](#153-标准化)
+        - [1.5.4 向量降维](#154-向量降维)
+        - [1.5.5 模型构建](#155-模型构建)
+    - [1.6 基于多层感知器的情感极性分析](#16-基于多层感知器的情感极性分析)
+        - [1.6.1 语料处理](#161-语料处理)
+        - [1.6.2 模型构建](#162-模型构建)
+    - [1.7 算法比较](#17-算法比较)
 - [2.数据处理](#2数据处理)
 - [3.运行测试](#3运行测试)
 
@@ -333,11 +338,7 @@ pos	挺	精致	的	午餐	、	百度	快递	不错	、	很快	！
 
 ## 1.1 基于情感词典的情感极性分析
 
-### 1.1.1 数据集
-
-使用
-
-### 1.1.2 分析算法1
+### 1.1.1 分析算法1
 
 **1.首先对数据进行分句**
 
@@ -357,13 +358,13 @@ pos	挺	精致	的	午餐	、	百度	快递	不错	、	很快	！
 
 将所有分句的`score`相加，正表示积极，否则为消极
 
-### 1.1.3 分析算法2
+### 1.1.2 分析算法2
 
 ## 1.2 基于K最近邻的情感极性分析
 
 K最近邻(kNN, K-Nearest Neighbours)分类算法，如果一个样本在特征空间中的k个最相似(即特征空间中最邻近)的样本中的大多数属于某一个类别，则该样本也属于这个类别。
 
-### 1.2.1 数据集
+### 1.2.1 训练数据集
 
 使用[酒店评价数据](#121-酒店评价数据)，[外卖评价数据1](#122-外卖评价数据1)和[外卖评价数据2](#123-外卖评价数据2)
 
@@ -429,15 +430,15 @@ $P(C)P(F1|C)P(F2|C)...P(Fn|C)$
 
 ## 1.4 基于最大熵的情感极性分析
 
-## 1.5 基于SVM的情感极性分析
+## 1.5 基于支持向量机的情感极性分析
 
 支持向量机（Support Vector Machine, SVM）是一类按监督学习（supervised learning）方式对数据进行二元分类（binary classification）的广义线性分类器（generalized linear classifier），其决策边界是对学习样本求解的最大边距超平面（maximum-margin hyperplane）
 
-### 1.5.1 训练数据集
+使用[酒店评价数据](#121-酒店评价数据)，[外卖评价数据1](#122-外卖评价数据1)和[外卖评价数据2](#123-外卖评价数据2)
 
-使用和基于K最近邻的情感极性分析相同的，已分词的积极和消极情感数据以及程度副词情感
+### 1.5.1 去除停用词
 
-去除停用词，停用词主要指的是一些对情感分析没有太多帮助的常见的无实际意义的词，比如说“的”。
+停用词主要指的是一些对情感分析没有太多帮助的常见的无实际意义的词，比如说“的”。
 
 ```python
     def clean_detected_words(self,cutted_list):
@@ -462,38 +463,199 @@ $P(C)P(F1|C)P(F2|C)...P(Fn|C)$
         return result
 ```
 
+### 1.5.2 训练词向量
 
-
-### 1.5.2 情感分析
-
-1.训练词向量
-
-这里使用Word2Vec算法进行向量化的操作：
+采用Word2Vec算法进行向量化的操作
 
 ```python
-    def words2vector(self, all_data):
-        vectors = []
-
-        best_words_index = {}
-        for i, word in enumerate(self.best_words):
-            best_words_index[word] = i
-
-        for data in all_data:
-            vector = [0 for x in range(len(self.best_words))]
-            for word in data:
-                i = best_words_index.get(word)
-                if i is not None:
-                    vector[i] = vector[i] + 1
-            vectors.append(vector)
-
-        vectors = np.array(vectors)
-        return vectors
+def buildVecs(filename, model,debug):  
+    """
+    输入文件名，首先进行数据清洗，然后利用word2vec获得他们的向量化表示，
+    :param filename:
+    :param model:
+    :return:
+    """
+    with open(filename, 'r',encoding='utf-8',errors='ignore') as f:
+        # print txtfile
+        content = f.read().replace("\n", '').strip()
+        cleaner = CleanDatas.CleanDatas()
+        content = cleaner.clean(content)
+        seg = jieba.cut(content, cut_all=False)
+        s = '-'.join(seg)
+        seg_list = s.split('-')
+        if len(cleaner.clean_detected_words(seg_list)) > 0:
+            seg_list = cleaner.clean_detected_words(seg_list)
+        result = []
+        for i in seg_list:
+            if i in model:
+                result.append(model[i])
+        array_mean=0.0
+        if len(result) != 0:
+            array_mean = sum(np.array(result))/len(result)
+        else:
+            print(debug)
+        return array_mean
 ```
 
+### 1.5.3 标准化
+
+```python
+# standardization
+X = scale(X)  
+```
+
+### 1.5.4 向量降维
+
+我们使用word2vec算法训练出的向量都是400维的，其实这其中有很多维度对于最终的结果影响并不大，我们可以适当的删除一些从而提高效率和准确率。这里使用的方法是PCA（主成分分析法）,这里使用的是sklearn工具包中的PCA组件。
+
+```python
+#无监督使用PCA训练X
+pca = PCA(n_components=400)  
+pca.fit(X)  
+#创建图表并指定图表大小
+# figsize: w,h tuple in inches
+plt.figure(1, figsize=(4, 3))  
+plt.clf()  
+plt.axes([.2, .2, .7, .7])  
+plt.plot(pca.explained_variance_, linewidth=2)  
+plt.axis('tight')  
+plt.xlabel('n_components')  
+plt.ylabel('explained_variance_')  
+plt.show()
+```
+
+可以得到下图：
+
+![向量降维](images/4.png)
+
+PCA算法会自动根据特征的重要性重新排序，我们可以看到重新排序之后的前100维度数据基本可以涵盖所有的信息了，所以我们就可以降维到100维：
+
+```python
+#由图知我们保留前100维的数据
+X_reduced = PCA(n_components = 100).fit_transform(X)  
+```
+### 1.5.5 模型构建
 
 
+在训练前我们需要简单的将数据分成训练集和测试集。
 
-## 1.6 算法比较
+```python
+#分割训练集和测试集,选取500负和1000正作为测试集
+X_reduced_train = X_reduced[0:2500]  
+X_reduced_train = np.concatenate((X_reduced_train,X_reduced[3000:9000]))  
+y_reduced_train = Y[0:2500]  
+y_reduced_train = np.concatenate((y_reduced_train,Y[3000:9000]))  
+X_reduced_test = X_reduced[2500:3000]  
+X_reduced_test = np.concatenate((X_reduced_test,X_reduced[9000:10000]))  
+y_reduced_test = Y[2500:3000]  
+y_reduced_test = np.concatenate((y_reduced_test,Y[9000:10000]))  
+```
+
+使用sklearn中是SVM模块，核函数选用线性函数。
+
+```python
+#构建SVM模型
+clf = SVC(C = 2, probability = True, kernel='linear')
+
+clf.fit(X_reduced_train, y_reduced_train)  
+print('Test Accuracy: %.5f'% clf.score(X_reduced_test, y_reduced_test))
+
+print("test:")  
+print(clf.predict(X_reduced_test))  
+print("value:")  
+print(y_reduced_test)  
+```
+
+这样一来我们的程序便可以运行，最后会输出准确率。
+
+**SVM (RBF) + PCA**
+
+SVM (RBF)分类表现更为宽松，且使用**PCA**降维后的模型表现有明显提升，misclassified多为负向文本被分类为正向文本，其中`AUC = 0.92`，`KSValue = 0.7`。
+ 关于SVM的调参可以参考笔者的另一篇文章[Python利用Gausian Process对Hyper-parameter进行调参](https://www.jianshu.com/p/90e6abdeb4f2)
+
+```python
+"""
+2.1 SVM (RBF)
+    using training data with 100 dimensions
+"""
+
+clf = SVC(C = 2, probability = True)
+clf.fit(X_reduced_train, y_reduced_train)
+
+print 'Test Accuracy: %.2f'% clf.score(X_reduced_test, y_reduced_test)
+
+pred_probas = clf.predict_proba(X_reduced_test)[:,1]
+print "KS value: %f" % KSmetric(y_reduced_test, pred_probas)[0]
+
+# plot ROC curve
+# AUC = 0.92
+# KS = 0.7
+fpr,tpr,_ = roc_curve(y_reduced_test, pred_probas)
+roc_auc = auc(fpr,tpr)
+plt.plot(fpr, tpr, label = 'area = %.2f' % roc_auc)
+plt.plot([0, 1], [0, 1], 'k--')
+plt.xlim([0.0, 1.0])
+plt.ylim([0.0, 1.05])
+plt.legend(loc = 'lower right')
+plt.show()
+
+joblib.dump(clf, "SVC.pkl")
+```
+
+## 1.6 基于多层感知器的情感极性分析
+
+多层感知器（Multilayer Perceptron, MLP）是一种前向结构的人工神经网络，映射一组输入向量到一组输出向量。MLP可以被看做是一个有向图，由多个节点层组成，每一层全连接到下一层。除了输入节点，每个节点都是一个带有非线性激活函数的神经元（或称处理单元）。
+
+MLP相比于SVM (RBF)，分类更为严格，PCA降维后对模型准确率影响不大，misclassified多为正向文本被分类为负向，其实是更容易overfitting，原因是语料过少，其实用神经网络未免有些小题大做，`AUC = 0.91`。
+
+### 1.6.1 语料处理
+
+语料处理和词向量训练过程和[基于SVM的情感极性分析](#15-基于svm的情感极性分析)相同
+
+### 1.6.2 模型构建
+
+```python
+"""
+2.2 MLP
+    using original training data with 400 dimensions
+"""
+model = Sequential()
+model.add(Dense(512, input_dim = 400, init = 'uniform', activation = 'tanh'))
+model.add(Dropout(0.5))
+model.add(Dense(256, activation = 'relu'))
+model.add(Dropout(0.5))
+model.add(Dense(128, activation = 'relu'))
+model.add(Dropout(0.5))
+model.add(Dense(64, activation = 'relu'))
+model.add(Dropout(0.5))
+model.add(Dense(32, activation = 'relu'))
+model.add(Dropout(0.5))
+model.add(Dense(1, activation = 'sigmoid'))
+
+model.compile(loss = 'binary_crossentropy',
+              optimizer = 'adam',
+              metrics = ['accuracy'])
+
+model.fit(X_train, y_train, nb_epoch = 20, batch_size = 16)
+score = model.evaluate(X_test, y_test, batch_size = 16)
+print ('Test accuracy: ', score[1])
+
+pred_probas = model.predict(X_test)
+# print "KS value: %f" % KSmetric(y_reduced_test, pred_probas)[0]
+
+# plot ROC curve
+# AUC = 0.91
+fpr,tpr,_ = roc_curve(y_test, pred_probas)
+roc_auc = auc(fpr,tpr)
+plt.plot(fpr, tpr, label = 'area = %.2f' % roc_auc)
+plt.plot([0, 1], [0, 1], 'k--')
+plt.xlim([0.0, 1.0])
+plt.ylim([0.0, 1.05])
+plt.legend(loc = 'lower right')
+plt.show()
+```
+
+## 1.7 算法比较
 
 |    算法    | 准确率  |               优点               |           缺点           |
 | :--------: | :-----: | :------------------------------: | :----------------------: |
