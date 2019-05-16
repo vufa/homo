@@ -58,6 +58,7 @@ make webview
   * `com`：通用模块
 * `sentiment`：文本情感分析模块，包括数据集及模型构建，Python实现
 * `sphinx`：离线唤醒模块，包括数据集及模块构建，Shell脚本
+* `docs`：项目详细设计文档
 
 # 开发文档
 
