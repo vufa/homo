@@ -63,8 +63,10 @@ make webview
 
 ## 1.离线唤醒实现
 
-参见文档：[wake_up.md](docs/wake_up.md)
+参见文档：[wake_up.md](docs/sphinx/wake_up.md)
 
 ## 2.文本情感分析实现
 
-用语音识别得到的文本进行情感分析：[sentiment.md](docs/sentiment/sentiment.md)
+用语音识别得到的文本进行情感分析
+
+参见文档：[sentiment.md](docs/sentiment/sentiment.md)
