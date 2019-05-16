@@ -11,7 +11,7 @@ import (
 	"fmt"
 	"github.com/countstarlight/homo/cmd/webview/config"
 	"github.com/countstarlight/homo/module/baidu"
-	"github.com/countstarlight/homo/module/wakeup"
+	"github.com/countstarlight/homo/module/sphinx"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
 	"github.com/zserge/webview"
@@ -93,7 +93,7 @@ func lanchWebview(ctx *cli.Context) {
 	//
 	// Prepare wake up function
 	//
-	wakeup.LoadCMUSphinx()
+	sphinx.LoadCMUSphinx()
 	go func() {
 		sendReply(w, []string{Greeting})
 		time.Sleep(time.Second)

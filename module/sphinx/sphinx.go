@@ -5,7 +5,7 @@
 // Written by Codist <i@codist.me>, March 2019
 //
 
-package wakeup
+package sphinx
 
 import (
 	"github.com/countstarlight/homo/cmd/webview/config"
@@ -33,9 +33,9 @@ func LoadCMUSphinx() {
 	config.WakeUpWait.Add(1)
 	// Init CMUSphinx
 	cfg := sphinx.NewConfig(
-		sphinx.HMMDirOption("data/wake_up/en-us/en-us"),
-		sphinx.DictFileOption("data/wake_up/homo/homo.dic"),
-		sphinx.LMFileOption("data/wake_up/homo/homo.lm.bin"),
+		sphinx.HMMDirOption("sphinx/en-us/en-us"),
+		sphinx.DictFileOption("sphinx/homo/homo.dic"),
+		sphinx.LMFileOption("sphinx/homo/homo.lm.bin"),
 		sphinx.SampleRateOption(sampleRate),
 	)
 	//Specify output dir for RAW recorded sound files (s16le). Directory must exist.
