@@ -1,6 +1,6 @@
 import os
 import re
-import string
+
 
 class Corpus:
     """
@@ -10,6 +10,7 @@ class Corpus:
     train_num: corpus numbers used for training
     test_num: corpus numbers used for check(test)
     """
+
     def __init__(self, file_path):
         root_path = os.path.dirname(os.path.abspath(__file__))
         file_path = os.path.normpath(os.path.join(root_path, file_path))
@@ -19,11 +20,9 @@ class Corpus:
 
         self.pos_list = []
         self.neg_list = []
-        self.all_symbol = str.maketrans({key: None for key in string.punctuation})
 
         # Load detected file first
         print("Loading %s" % detected_file_path)
-        detected_list = []
         with open(detected_file_path, 'r', encoding='utf-8', errors='ignore') as f:
             detected_list = f.readlines()
 
@@ -40,17 +39,19 @@ class Corpus:
                 # strip: remove space before and after a string
                 line = line.strip()
                 # remove all symbols
-                line = self.remove_symbol(line)
+                # line = self.remove_symbol(line)
                 # split: split string to list
                 splits = re_split.split(line)
+                # extract Chinese words
+                chi_word_list = re.findall('[\u4e00-\u9fa5]+', line)
                 if splits[0] == "pos":
                     # append list after 'pos' to pos_list
                     # Remove detected words
-                    self.pos_list.append(self.clean_detected_words(self.list_clean(splits[1:])))
+                    self.pos_list.append(self.clean_detected_words(chi_word_list))
                 elif splits[0] == "neg":
-                    self.neg_list.append(self.clean_detected_words(self.list_clean(splits[1:])))
+                    self.neg_list.append(self.clean_detected_words(chi_word_list))
                 else:
-                    raise ValueError("Read corpus from %s failed, not have 'pos' or 'neg'\n" % filepath)
+                    raise ValueError("Read corpus from %s failed, not have 'pos' or 'neg'\n" % file_path)
             f.close()
         self.pos_list_len = len(self.pos_list)
         self.neg_list_len = len(self.neg_list)
@@ -66,27 +67,29 @@ class Corpus:
                       (self.pos_list_len, self.neg_list_len)
         print(output_msg)
 
-    def remove_symbol(self,sentence):
+    def remove_symbol(self, sentence):
         """
         Remove all symbol from sentence
         :param sentence:
         :return:
         """
-        result = sentence.translate(self.all_symbol)
+        result = re.sub("[\s+\.\!\/_,$%^*(+\"\']+|[+——！，。？、~@#￥%……&*（）；：．{}０１２３４８９]", " ", sentence)
         return result
 
     def list_clean(self, strings):
         """
-        Same as string_clean, but for list
+        Remove all letters and numbers
         :param strings:
         :return: result
         """
         result = []
         for s in strings:
             cleaned = re.sub("[\s+|[A-Z]+|[a-z]+|[0-9]", "", s)
+            # cleaned.replace("\n", "")
             if cleaned != "":
                 result.append(cleaned)
         return result
+
     def clean_detected_words(self, cutted_list):
         """
         Remove detected words
@@ -104,9 +107,11 @@ class WaimaiCorpus(Corpus):
     def __init__(self):
         Corpus.__init__(self, "data/corpus/ch_waimai_corpus.txt")
 
+
 class Waimai2Corpus(Corpus):
     def __init__(self):
         Corpus.__init__(self, "data/corpus/ch_waimai2_corpus.txt")
+
 
 class HotelCorpus(Corpus):
     def __init__(self):
