@@ -37,7 +37,8 @@
         - [1.5.5 标准化](#155-标准化)
         - [1.5.6 向量降维](#156-向量降维)
         - [1.5.7 模型构建](#157-模型构建)
-    - [1.6 基于多层感知器的情感极性分析](#16-基于多层感知器的情感极性分析)
+    - [1.6 基于逻辑回归的情感极性分析](#16-基于逻辑回归的情感极性分析)
+    - [1.7 基于多层感知器的情感极性分析](#17-基于多层感知器的情感极性分析)
         - [1.6.1 语料处理](#161-语料处理)
         - [1.6.2 模型构建](#162-模型构建)
     - [1.7 算法比较](#17-算法比较)
@@ -564,42 +565,49 @@ X_reduced = PCA(n_components = 50).fit_transform(X)
 
 ### 1.5.7 模型构建
 
+采用SVM作为分类器算法，通过计算测试集的预测精度和ROC曲线来验证分类器的有效性，一般来说ROC曲线的面积（AUC）越大模型的表现越好。
 
-在训练前我们需要简单的将数据分成训练集和测试集。
-
-```python
-#分割训练集和测试集,选取500负和1000正作为测试集
-X_reduced_train = X_reduced[0:2500]  
-X_reduced_train = np.concatenate((X_reduced_train,X_reduced[3000:9000]))  
-y_reduced_train = Y[0:2500]  
-y_reduced_train = np.concatenate((y_reduced_train,Y[3000:9000]))  
-X_reduced_test = X_reduced[2500:3000]  
-X_reduced_test = np.concatenate((X_reduced_test,X_reduced[9000:10000]))  
-y_reduced_test = Y[2500:3000]  
-y_reduced_test = np.concatenate((y_reduced_test,Y[9000:10000]))  
-```
-
-使用sklearn中是SVM模块，核函数选用线性函数。
+使用`sklearn`提供的`SVM`
 
 ```python
-#构建SVM模型
-clf = SVC(C = 2, probability = True, kernel='linear')
+def buildModel():
+    df = pd.read_csv('models/all_vector.csv')
+    # first column is index, second column is label
+    Y = df.iloc[:, 1]
+    # 3th and all latter columns is word vectors
+    X = df.iloc[:, 2:]
+    # standardization
+    X = scale(X)
 
-clf.fit(X_reduced_train, y_reduced_train)  
-print('Test Accuracy: %.5f'% clf.score(X_reduced_test, y_reduced_test))
+    # Plot the PCA spectrum
+    # drawX(X, 400)
 
-print("test:")  
-print(clf.predict(X_reduced_test))  
-print("value:")  
-print(y_reduced_test)  
+    # Reduce to 50 dimension
+    # len(X_reduced) = 21978 == len(X)
+    x_pca = PCA(n_components=50).fit_transform(X)
+    # drawX(X_reduced, 50)
+
+    # SVM (RBF)
+    # using training data with 100 dimensions
+    clf = SVC(C=2, probability=True)
+    clf.fit(x_pca, Y)
+    print('Test Accuracy: %.2f' % clf.score(x_pca, Y))
+    displayRoc(clf, x_pca, Y)
 ```
 
-这样一来我们的程序便可以运行，最后会输出准确率。
+准确率为`95%`，ROC曲线如图
 
-**SVM (RBF) + PCA**
+![ROC曲线](images/7.png)
 
-SVM (RBF)分类表现更为宽松，且使用**PCA**降维后的模型表现有明显提升，misclassified多为负向文本被分类为正向文本，其中`AUC = 0.92`，`KSValue = 0.7`。
+将数据集进行拆分，**test_size**设置为`0.25`，
  关于SVM的调参可以参考笔者的另一篇文章[Python利用Gausian Process对Hyper-parameter进行调参](https://www.jianshu.com/p/90e6abdeb4f2)
+
+拆分使用`sklearn`提供的`train_test_split`：
+
+```python
+# test_size = 0.25
+X_train, X_test, y_train, y_test = train_test_split(x_pca, Y, test_size=0.25, random_state=0)
+```
 
 ```python
 """
@@ -629,8 +637,55 @@ plt.show()
 
 joblib.dump(clf, "SVC.pkl")
 ```
+## 1.6 基于逻辑回归的情感极性分析
 
-## 1.6 基于多层感知器的情感极性分析
+语料处理和词向量训练过程和[基于SVM的情感极性分析](#15-基于svm的情感极性分析)相同
+
+对拆分后的test进行预测：
+
+```python
+def LR(X_train, X_test, y_train, y_test):
+    """
+    Using LogisticRegression
+    :param X_train:
+    :param X_test:
+    :param y_train:
+    :param y_test:
+    :return:
+    """
+    param_grid = {'C': [0.01, 0.1, 1, 10, 100, 1000, ], 'penalty': ['l1', 'l2']}
+    # Logistic Regression
+    grid_search = GridSearchCV(LogisticRegression(), param_grid, cv=10)
+    grid_search.fit(X_train, y_train)
+    print(grid_search.best_params_, grid_search.best_score_)
+
+    # 预测拆分的test
+    LR = LogisticRegression(C=grid_search.best_params_['C'], penalty=grid_search.best_params_['penalty'])
+    LR.fit(X_train, y_train)
+    lr_y_predict = LR.predict(X_test)
+    print(accuracy_score(y_test, lr_y_predict))
+    print('使用LR进行分类的报告结果：')
+    print(classification_report(y_test, lr_y_predict))
+    print("AUC值:", roc_auc_score(y_test, lr_y_predict))
+    displayRoc(LR, X_test, y_test)
+```
+
+使用LR进行分类的报告结果：
+
+```
+              precision    recall  f1-score   support
+
+         0.0       0.92      1.00      0.96      2740
+         1.0       1.00      0.91      0.95      2755
+
+   micro avg       0.96      0.96      0.96      5495
+   macro avg       0.96      0.96      0.96      5495
+weighted avg       0.96      0.96      0.96      5495
+```
+
+AUC值: `0.9566243194192378`
+
+## 1.7 基于多层感知器的情感极性分析
 
 多层感知器（Multilayer Perceptron, MLP）是一种前向结构的人工神经网络，映射一组输入向量到一组输出向量。MLP可以被看做是一个有向图，由多个节点层组成，每一层全连接到下一层。除了输入节点，每个节点都是一个带有非线性激活函数的神经元（或称处理单元）。
 

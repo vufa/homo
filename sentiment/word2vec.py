@@ -2,10 +2,15 @@ import codecs
 
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 from gensim.models import KeyedVectors
 from gensim.models import word2vec
 from sklearn.decomposition import PCA
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import roc_curve, auc, accuracy_score, classification_report, roc_auc_score
+from sklearn.model_selection import GridSearchCV
 from sklearn.preprocessing import scale
+from sklearn.svm import SVC
 
 from corpus import HotelCorpus as hotel
 from corpus import Waimai2Corpus as waimai2
@@ -140,7 +145,7 @@ def drawX(X, dimension):
     plt.show()
 
 
-def buildVecs():
+def Vecs2CSV():
     hotel_pos = buildVec("data/corpus_csv/hotel_pos.csv", "models/hotel_pos.vec")
     hotel_neg = buildVec("data/corpus_csv/hotel_neg.csv", "models/hotel_neg.vec")
 
@@ -151,39 +156,102 @@ def buildVecs():
     waimai2_neg = buildVec("data/corpus_csv/waimai2_neg.csv", "models/waimai2_neg.vec")
 
     # use 1 for positive sentiment, 0 for negative
-    y = np.concatenate((np.ones(len(hotel_pos) + len(waimai_pos) + len(waimai2_pos)),
+    Y = np.concatenate((np.ones(len(hotel_pos) + len(waimai_pos) + len(waimai2_pos)),
                         np.zeros(len(hotel_neg) + len(waimai_neg) + len(waimai2_neg))))
-
-    X = hotel_pos[:]
-    for neg in hotel_neg:
-        X.append(neg)
-
     # Merge all data
-    for pos in waimai_pos:
-        X.append(pos)
+    X = np.concatenate((hotel_pos, hotel_neg))
+    X = np.concatenate((X, waimai_pos, waimai_neg))
+    X = np.concatenate((X, waimai2_pos, waimai2_neg))
 
-    for neg in waimai_neg:
-        X.append(neg)
-
-    for pos in waimai2_pos:
-        X.append(pos)
-
-    for neg in waimai2_neg:
-        X.append(neg)
     X = np.array(X)
 
+    # Save to file
+    df_x = pd.DataFrame(X)
+    df_y = pd.DataFrame(Y)
+    data = pd.concat([df_y, df_x], axis=1)
+    data.to_csv('models/all_vector.csv')
+
+
+def displayRoc(clf_fited, X, y):
+    # Create ROC curve
+    pred_probas = clf_fited.predict_proba(X)[:, 1]  # score
+
+    fpr, tpr, _ = roc_curve(y, pred_probas)
+    roc_auc = auc(fpr, tpr)
+    plt.plot(fpr, tpr, label='area = %.2f' % roc_auc)
+    plt.plot([0, 1], [0, 1], 'k--')
+    plt.xlim([0.0, 1.0])
+    plt.ylim([0.0, 1.05])
+    plt.legend(loc='lower right')
+    plt.show()
+
+
+def LR(X_train, X_test, y_train, y_test):
+    """
+    Using LogisticRegression
+    :param X_train:
+    :param X_test:
+    :param y_train:
+    :param y_test:
+    :return:
+    """
+    param_grid = {'C': [0.01, 0.1, 1, 10, 100, 1000, ], 'penalty': ['l1', 'l2']}
+    # Logistic Regression
+    grid_search = GridSearchCV(LogisticRegression(), param_grid, cv=10)
+    grid_search.fit(X_train, y_train)
+    print(grid_search.best_params_, grid_search.best_score_)
+
+    # 预测拆分的test
+    LR = LogisticRegression(C=grid_search.best_params_['C'], penalty=grid_search.best_params_['penalty'])
+    LR.fit(X_train, y_train)
+    lr_y_predict = LR.predict(X_test)
+    print(accuracy_score(y_test, lr_y_predict))
+    print('使用LR进行分类的报告结果：')
+    print(classification_report(y_test, lr_y_predict))
+    print("AUC值:", roc_auc_score(y_test, lr_y_predict))
+    displayRoc(LR, X_test, y_test)
+
+
+def buildModel():
+    df = pd.read_csv('models/all_vector.csv')
+    # first column is index, second column is label
+    Y = df.iloc[:, 1]
+    # 3th and all latter columns is word vectors
+    X = df.iloc[:, 2:]
     # standardization
     X = scale(X)
 
     # Plot the PCA spectrum
-    # drawX(X)
+    # drawX(X, 400)
 
     # Reduce to 50 dimension
-    X_reduced = PCA(n_components=50).fit_transform(X)
+    # len(X_reduced) = 21978 == len(X)
+    x_pca = PCA(n_components=50).fit_transform(X)
     # drawX(X_reduced, 50)
+
+    # SVM (RBF)
+    # using training data with 100 dimensions
+    clf = SVC(C=2, probability=True)
+    clf.fit(x_pca, Y)
+    print('Test Accuracy: %.2f' % clf.score(x_pca, Y))
+    displayRoc(clf, x_pca, Y)
+
+    """
+    #
+    # test_size = 0.25
+    #
+    X_train, X_test, y_train, y_test = train_test_split(x_pca, Y, test_size=0.25, random_state=0)
+    clf.fit(X_train, y_train)
+    print('Test Accuracy: %.2f' % clf.score(X_test, y_test))
+    displayRoc(clf, X_test, y_test)
+
+    # with LR
+    # LR(X_train, X_test, y_train, y_test)
+    """
 
 
 if __name__ == "__main__":
     # Corpus2CSVs()
     # CSV2Vecs()
-    buildVecs()
+    # Vecs2CSV(
+    buildModel()
