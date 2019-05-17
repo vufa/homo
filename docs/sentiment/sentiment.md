@@ -267,11 +267,11 @@ MD... -5.34746092937
 
 ## 1.2 语料数据
 
-语料数据已标注情感极性，`...` 意为省略，文件在 `sentiment/data/corpus/`下
+语料数据已标注情感极性，`...` 意为省略，文件在 `sentiment/data/corpus/`下，共22,000条数据
 
 ### 1.2.1 酒店评价数据
 
-源于网络对酒店评价数据
+源于网络对酒店评价数据，3000条正面评价，3000条负面评价
 
 数据来自：[github.com/chaoming0625/SentimentPolarityAnalysis](https://github.com/chaoming0625/SentimentPolarityAnalysis/blob/master/spa/f_dict/ch_hotel_corpus.txt)
 
@@ -293,7 +293,7 @@ neg	经济型	酒店	虽然	没有	太高	的	要求	但	房间	实在	是	太�
 
 ### 1.2.2 外卖评价数据1
 
-源于网络对外卖评价数据
+源于网络对外卖评价数据，4000条正面评价，4000条负面评价
 
 数据来自：[github.com/chaoming0625/SentimentPolarityAnalysis](https://github.com/chaoming0625/SentimentPolarityAnalysis/blob/master/spa/f_dict/ch_waimai_corpus.txt)
 
@@ -318,7 +318,7 @@ neg	5	块钱	一份	的	鹌鹑蛋	居然	只有	2	个	。	。	。
 
 ### 1.2.3 外卖评价数据2
 
-源于网络对外卖评价数据
+源于网络对外卖评价数据，4000条正面评价，4000条负面评价
 
 数据来自：[github.com/chaoming0625/SentimentPolarityAnalysis](https://github.com/chaoming0625/SentimentPolarityAnalysis/blob/master/spa/f_dict/ch_waimai2_corpus.txt)
 
@@ -457,26 +457,26 @@ chi_word_list = re.findall(chinese_pattern, line)
 停用词主要指的是一些对情感分析没有太多帮助的常见的无实际意义的词，比如说“的”。
 
 ```python
-    def clean_detected_words(self, cutted_list):
-        """
-        Remove detected words
-        :param cutted_list:
-        :return:
-        """
-        detected_list = []
-        with open('data/dict/detected_dict.txt', 'r', encoding='utf-8', errors='ignore') as f:
-            detected_list = f.readlines()
+def clean_detected_words(self, cutted_list):
+    """
+    Remove detected words
+    :param cutted_list:
+    :return:
+    """
+    detected_list = []
+    with open('data/dict/detected_dict.txt', 'r', encoding='utf-8', errors='ignore') as f:
+        detected_list = f.readlines()
 
-        # Delete the last'\n'of each line
-        for i in range(0, len(detected_list)):
-            detected_list[i] = detected_list[i][:-1]
+    # Delete the last'\n'of each line
+    for i in range(0, len(detected_list)):
+        detected_list[i] = detected_list[i][:-1]
 
-        detected_dics = {}.fromkeys(detected_list, 1)
-        result = []
-        for cutted in cutted_list:
-            if cutted not in detected_dics:
-                result.append(cutted)
-        return result
+    detected_dics = {}.fromkeys(detected_list, 1)
+    result = []
+    for cutted in cutted_list:
+        if cutted not in detected_dics:
+            result.append(cutted)
+    return result
 ```
 
 ### 1.5.3 训练word2vec模型
@@ -497,33 +497,25 @@ def csv2vec(csv_file, model_file):
 采用Word2Vec算法进行向量化的操作
 
 ```python
-def buildVecs(filename, model,debug):  
-    """
-    输入文件名，首先进行数据清洗，然后利用word2vec获得他们的向量化表示，
-    :param filename:
-    :param model:
-    :return:
-    """
-    with open(filename, 'r',encoding='utf-8',errors='ignore') as f:
-        # print txtfile
-        content = f.read().replace("\n", '').strip()
-        cleaner = CleanDatas.CleanDatas()
-        content = cleaner.clean(content)
-        seg = jieba.cut(content, cut_all=False)
-        s = '-'.join(seg)
-        seg_list = s.split('-')
-        if len(cleaner.clean_detected_words(seg_list)) > 0:
-            seg_list = cleaner.clean_detected_words(seg_list)
-        result = []
-        for i in seg_list:
-            if i in model:
-                result.append(model[i])
-        array_mean=0.0
-        if len(result) != 0:
-            array_mean = sum(np.array(result))/len(result)
-        else:
-            print(debug)
-        return array_mean
+def buildVec(csv_file, vec_model):
+    # Load word2vec model
+    # model = word2vec.Word2Vec.load_word2vec_format(vec_model, binary = True)
+    model = KeyedVectors.load(vec_model)
+
+    input = []
+    # Load csv file
+    f = codecs.open(csv_file, 'r', 'utf-8')
+    lines = f.read().split('\n')
+    for line in lines:
+        # remove space line
+        res = line.replace(' ', '')
+        if len(res) != 0:
+            resultList = getWordVecs(line.split(' '), model)
+            # for each sentence, the mean vector of all its vectors is used to represent this sentence
+            if len(resultList) != 0:
+                resultArray = sum(np.array(resultList)) / len(resultList)
+                input.append(resultArray)
+    return input
 ```
 
 ### 1.5.5 标准化
@@ -537,34 +529,39 @@ X = scale(X)
 
 ### 1.5.6 向量降维
 
-我们使用word2vec算法训练出的向量都是400维的，其实这其中有很多维度对于最终的结果影响并不大，我们可以适当的删除一些从而提高效率和准确率。这里使用的方法是PCA（主成分分析法）,这里使用的是sklearn工具包中的PCA组件。
+我们使用word2vec算法训练出的向量都是400维的，其实这其中有很多维度对于最终的结果影响并不大，我们可以适当的删除一些从而提高效率和准确率。这里使用的方法是PCA(主成分分析法)，PCA算法会自动根据特征的重要性重新排序，这里使用的是`sklearn`工具包中的`PCA`组件，绘图：
 
 ```python
-#无监督使用PCA训练X
-pca = PCA(n_components=400)  
-pca.fit(X)  
-#创建图表并指定图表大小
+# PCA
+# Plot the PCA spectrum
 # figsize: w,h tuple in inches
-plt.figure(1, figsize=(4, 3))  
-plt.clf()  
-plt.axes([.2, .2, .7, .7])  
-plt.plot(pca.explained_variance_, linewidth=2)  
-plt.axis('tight')  
-plt.xlabel('n_components')  
-plt.ylabel('explained_variance_')  
+pca = PCA(n_components=400)
+pca.fit(X)
+plt.figure(1, figsize=(4, 3))
+plt.clf()
+plt.axes([.2, .2, .7, .7])
+plt.plot(pca.explained_variance_, linewidth=2)
+plt.axis('tight')
+plt.xlabel('n_components')
+plt.ylabel('explained_variance_')
 plt.show()
 ```
 
 可以得到下图：
 
-![向量降维](images/4.png)
+![维度400](images/5.png)
 
-PCA算法会自动根据特征的重要性重新排序，我们可以看到重新排序之后的前100维度数据基本可以涵盖所有的信息了，所以我们就可以降维到100维：
+由图片可以看到，由于数据量不大，重新排序之后的前50维度数据基本可以涵盖所有的信息了，所以我们就可以降维到50维：
 
 ```python
-#由图知我们保留前100维的数据
-X_reduced = PCA(n_components = 100).fit_transform(X)  
+#由图知我们保留前50维的数据
+X_reduced = PCA(n_components = 50).fit_transform(X)
 ```
+
+效果如图：
+
+![维度50](images/6.png)
+
 ### 1.5.7 模型构建
 
 
