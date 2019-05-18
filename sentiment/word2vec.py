@@ -4,11 +4,12 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from gensim.models import KeyedVectors
-from gensim.models import word2vec
 from sklearn.decomposition import PCA
+from sklearn.externals import joblib
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import roc_curve, auc, accuracy_score, classification_report, roc_auc_score
 from sklearn.model_selection import GridSearchCV
+from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import scale
 from sklearn.svm import SVC
 
@@ -48,45 +49,6 @@ def Corpus2CSVs():
     corpus2csv(waimai2().neg_list, "data/corpus_csv/waimai2_neg.csv")
 
 
-def csv2vec(csv_file, model_file):
-    # Load corpus from csv file
-    sentences = word2vec.Text8Corpus(csv_file)
-    """
-    f = codecs.open(csv_file, 'r', 'utf-8')
-    lines = f.read().split('\n')
-    sentences = []
-    for line in lines:
-        # remove space line
-        res = line.replace(' ', '')
-        if len(res) != 0:
-            sentences.append(line.split())
-    """
-    # 训练skip - gram模型
-    model = word2vec.Word2Vec(sentences, size=400)
-    # Save models to file
-    model.save(model_file)
-
-
-def CSV2Vecs():
-    """
-    Build word vector model
-    :return:
-    """
-    print("Traing word vector model...")
-    csv2vec("data/corpus_csv/hotel_pos.csv", "models/hotel_pos.vec")
-    print("15%...")
-    csv2vec("data/corpus_csv/hotel_neg.csv", "models/hotel_neg.vec")
-    print("30%...")
-    csv2vec("data/corpus_csv/waimai_pos.csv", "models/waimai_pos.vec")
-    print("45%...")
-    csv2vec("data/corpus_csv/waimai_neg.csv", "models/waimai_neg.vec")
-    print("60%...")
-    csv2vec("data/corpus_csv/waimai2_pos.csv", "models/waimai2_pos.vec")
-    print("75%...")
-    csv2vec("data/corpus_csv/waimai2_neg.csv", "models/waimai2_neg.vec")
-    print("done.")
-
-
 def getWordVecs(wordList, model):
     """
     Get vector from a sentence's words
@@ -99,18 +61,14 @@ def getWordVecs(wordList, model):
         word = word.replace('\n', '')
         try:
             vecs.append(model[word])
+            # print(model[word])
         except KeyError:
             continue
-    result = np.array(vecs, dtype='float')
-    return result
+    return np.array(vecs, dtype='float')
 
 
-def buildVec(csv_file, vec_model):
-    # Load word2vec model
-    # model = word2vec.Word2Vec.load_word2vec_format(vec_model, binary = True)
-    model = KeyedVectors.load(vec_model)
-
-    input = []
+def buildVec(csv_file, model):
+    fileVecs = []
     # Load csv file
     f = codecs.open(csv_file, 'r', 'utf-8')
     lines = f.read().split('\n')
@@ -122,8 +80,8 @@ def buildVec(csv_file, vec_model):
             # for each sentence, the mean vector of all its vectors is used to represent this sentence
             if len(resultList) != 0:
                 resultArray = sum(np.array(resultList)) / len(resultList)
-                input.append(resultArray)
-    return input
+                fileVecs.append(resultArray)
+    return fileVecs
 
 
 def drawX(X, dimension):
@@ -135,7 +93,7 @@ def drawX(X, dimension):
     pca = PCA(n_components=dimension)
     pca.fit(X)
     # figsize: w,h tuple in inches
-    plt.figure(1, figsize=(4, 3))
+    plt.figure(1, figsize=(6, 4.5))
     plt.clf()
     plt.axes([.2, .2, .7, .7])
     plt.plot(pca.explained_variance_, linewidth=2)
@@ -146,14 +104,16 @@ def drawX(X, dimension):
 
 
 def Vecs2CSV():
-    hotel_pos = buildVec("data/corpus_csv/hotel_pos.csv", "models/hotel_pos.vec")
-    hotel_neg = buildVec("data/corpus_csv/hotel_neg.csv", "models/hotel_neg.vec")
+    inp = 'models/wiki.zh.text.vector'
+    model = KeyedVectors.load_word2vec_format(inp, binary=False)
+    hotel_pos = buildVec("data/corpus_csv/hotel_pos.csv", model)
+    hotel_neg = buildVec("data/corpus_csv/hotel_neg.csv", model)
 
-    waimai_pos = buildVec("data/corpus_csv/waimai_pos.csv", "models/waimai_pos.vec")
-    waimai_neg = buildVec("data/corpus_csv/waimai_neg.csv", "models/waimai_neg.vec")
+    waimai_pos = buildVec("data/corpus_csv/waimai_pos.csv", model)
+    waimai_neg = buildVec("data/corpus_csv/waimai_neg.csv", model)
 
-    waimai2_pos = buildVec("data/corpus_csv/waimai2_pos.csv", "models/waimai2_pos.vec")
-    waimai2_neg = buildVec("data/corpus_csv/waimai2_neg.csv", "models/waimai2_neg.vec")
+    waimai2_pos = buildVec("data/corpus_csv/waimai2_pos.csv", model)
+    waimai2_neg = buildVec("data/corpus_csv/waimai2_neg.csv", model)
 
     # use 1 for positive sentiment, 0 for negative
     Y = np.concatenate((np.ones(len(hotel_pos) + len(waimai_pos) + len(waimai2_pos)),
@@ -178,6 +138,7 @@ def displayRoc(clf_fited, X, y):
 
     fpr, tpr, _ = roc_curve(y, pred_probas)
     roc_auc = auc(fpr, tpr)
+    plt.figure(figsize=(6, 4.5))
     plt.plot(fpr, tpr, label='area = %.2f' % roc_auc)
     plt.plot([0, 1], [0, 1], 'k--')
     plt.xlim([0.0, 1.0])
@@ -186,7 +147,7 @@ def displayRoc(clf_fited, X, y):
     plt.show()
 
 
-def LR(X_train, X_test, y_train, y_test):
+def LR(x_pca, Y):
     """
     Using LogisticRegression
     :param X_train:
@@ -195,6 +156,9 @@ def LR(X_train, X_test, y_train, y_test):
     :param y_test:
     :return:
     """
+    # cut dataset
+    X_train, X_test, y_train, y_test = train_test_split(x_pca, Y, test_size=0.25, random_state=0)
+
     param_grid = {'C': [0.01, 0.1, 1, 10, 100, 1000, ], 'penalty': ['l1', 'l2']}
     # Logistic Regression
     grid_search = GridSearchCV(LogisticRegression(), param_grid, cv=10)
@@ -212,6 +176,23 @@ def LR(X_train, X_test, y_train, y_test):
     displayRoc(LR, X_test, y_test)
 
 
+def cutTest(x_pca, Y):
+    """
+    test_size = 0.25
+    :param clf:
+    :param x_pca:
+    :param Y:
+    :return:
+    """
+    X_train, X_test, y_train, y_test = train_test_split(x_pca, Y, test_size=0.25, random_state=0)
+    clf = SVC(C=2, probability=True)
+    clf.fit(X_train, y_train)
+    print("Train num = %s" % len(X_train))
+    print("Test num = %s" % len(X_test))
+    print('Test Accuracy: %.2f' % clf.score(X_test, y_test))
+    displayRoc(clf, X_test, y_test)
+
+
 def buildModel():
     df = pd.read_csv('models/all_vector.csv')
     # first column is index, second column is label
@@ -222,36 +203,43 @@ def buildModel():
     X = scale(X)
 
     # Plot the PCA spectrum
-    # drawX(X, 400)
+    drawX(X, 400)
 
-    # Reduce to 50 dimension
-    # len(X_reduced) = 21978 == len(X)
-    x_pca = PCA(n_components=50).fit_transform(X)
-    # drawX(X_reduced, 50)
+    #
+    # Original clf
+    #
+    # clf_orig = SVC(C=2, probability=True)
+    # clf_orig.fit(X, Y)
+    # joblib.dump(clf_orig, "models/SVC_origin.pkl")
+
+    # Reduce to 100 dimension
+    # len(x_pca) = 21978 == len(X)
+    x_pca = PCA(n_components=100).fit_transform(X)
+    drawX(x_pca, 100)
 
     # SVM (RBF)
     # using training data with 100 dimensions
     clf = SVC(C=2, probability=True)
     clf.fit(x_pca, Y)
     print('Test Accuracy: %.2f' % clf.score(x_pca, Y))
+    # Save SVMClassifier to file
+    joblib.dump(clf, "models/SVC.pkl")
+    # Load use:
+    # clf = joblib.load("models/SVC.pkl")
     displayRoc(clf, x_pca, Y)
 
-    """
     #
-    # test_size = 0.25
+    # cut dataset to train and test
     #
-    X_train, X_test, y_train, y_test = train_test_split(x_pca, Y, test_size=0.25, random_state=0)
-    clf.fit(X_train, y_train)
-    print('Test Accuracy: %.2f' % clf.score(X_test, y_test))
-    displayRoc(clf, X_test, y_test)
+    # cutTest(x_pca, Y)
 
     # with LR
-    # LR(X_train, X_test, y_train, y_test)
-    """
+    LR(x_pca, Y)
 
 
 if __name__ == "__main__":
+    # Extract data from raw text
     # Corpus2CSVs()
-    # CSV2Vecs()
-    # Vecs2CSV(
+
+    # Vecs2CSV()
     buildModel()

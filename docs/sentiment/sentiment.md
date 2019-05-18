@@ -32,7 +32,7 @@
     - [1.5 基于支持向量机的情感极性分析](#15-基于支持向量机的情感极性分析)
         - [1.5.1 数据清洗](#151-数据清洗)
         - [1.5.2 去除停用词](#152-去除停用词)
-        - [1.5.3 训练word2vec模型](#153-训练word2vec模型)
+        - [1.5.3 利用wiki中文语料进行word2vec模型构建](#153-利用wiki中文语料进行word2vec模型构建)
         - [1.5.4 训练词向量](#154-训练词向量)
         - [1.5.5 标准化](#155-标准化)
         - [1.5.6 向量降维](#156-向量降维)
@@ -41,8 +41,6 @@
     - [1.7 基于多层感知器的情感极性分析](#17-基于多层感知器的情感极性分析)
         - [1.6.1 语料处理](#161-语料处理)
         - [1.6.2 模型构建](#162-模型构建)
-    - [1.7 算法比较](#17-算法比较)
-- [2.数据处理](#2数据处理)
 - [3.运行测试](#3运行测试)
 
 <!-- /TOC -->
@@ -480,30 +478,107 @@ def clean_detected_words(self, cutted_list):
     return result
 ```
 
-### 1.5.3 训练word2vec模型
+### 1.5.3 利用wiki中文语料进行word2vec模型构建
 
-使用[gensim](https://link.jianshu.com/?t=http://radimrehurek.com/gensim/)的word2vec进行词向量的训练：
+使用[gensim](https://link.jianshu.com/?t=http://radimrehurek.com/gensim/)的word2vec进行词向量的训练，同样经过数据清洗，分词等处理，分好词的文档即可进行word2vec词向量模型的训练，由于文档较大，需要内存较大，具体Python代码实现：
 
 ```python
-def csv2vec(csv_file, model_file):
-    corpus = word2vec.Text8Corpus(csv_file)
-    model = word2vec.Word2Vec(corpus, size=400)
+import logging
+import multiprocessing
+import os
+import sys
 
-    # Save models to file
-    model.save(model_file)
+from gensim.models import Word2Vec
+from gensim.models.word2vec import LineSentence
+
+program = os.path.basename(sys.argv[0])
+logger = logging.getLogger(program)
+logging.basicConfig(format='%(asctime)s: %(levelname)s: %(message)s', level=logging.INFO)
+logger.info("running %s" % ' '.join(sys.argv))
+
+# inp为输入语料, outp1 为输出模型, outp2为原始c版本word2vec的vector格式的模型
+inp = 'wiki.zh.simp.seg.txt'
+outp1 = 'wiki.zh.text.model'
+outp2 = 'wiki.zh.text.vector'
+
+# 训练skip-gram 模型
+model = Word2Vec(LineSentence(inp), size=400, window=5, min_count=5, workers=multiprocessing.cpu_count())
+model.save(outp1)
+model.wv.save_word2vec_format(outp2, binary=False)
+import os
+import sys
+import logging
+from gensim.models import Word2Vec
+from gensim.models.word2vec import LineSentence
+import multiprocessing
+
+program = os.path.basename(sys.argv[0])
+logger = logging.getLogger(program)
+logging.basicConfig(format='%(asctime)s: %(levelname)s: %(message)s', level=logging.INFO)
+logger.info("running %s" % ' '.join(sys.argv))
+
+# inp为输入语料, outp1 为输出模型, outp2为原始c版本word2vec的vector格式的模型
+inp = 'wiki.zh.simp.seg.txt'
+outp1 = 'wiki.zh.text.model'
+outp2 = 'wiki.zh.text.vector'
+
+# 训练skip-gram 模型
+model = Word2Vec(LineSentence(inp), size=400, window=5, min_count=5, workers=multiprocessing.cpu_count())
+model.save(outp1)
+model.wv.save_word2vec_format(outp2, binary=False)
+```
+
+**模型测试**
+
+```python
+import sys
+import warnings
+
+import gensim
+
+warnings.filterwarnings(action='ignore', category=UserWarning, module='gensim')  # 忽略警告
+
+model = gensim.models.Word2Vec.load('wiki.zh.text.model')
+# 与足球最相似的
+word = model.most_similar("足球")
+for each in word:
+    print(each[0], each[1])
+
+print('*' * 20)
+
+word = model.most_similar(positive=['皇上', '国王'], negative=['皇后'])
+for t in word:
+    print(t[0], t[1])
+
+print(model.doesnt_match('太后 妃子 贵人 贵妃 才人'.split(' ')))
+print('*' * 20)
+
+print(model.similarity('书籍', '书本'))
+print('*' * 20)
+print(model.similarity('逛街', '书本'))
 ```
 
 ### 1.5.4 训练词向量
 
-采用Word2Vec算法进行向量化的操作
+根据以上步骤得到了正负向语料的特征词文本，而模型的输入必须是数值型数据，因此需要将每条由词语组合而成的语句转化为一个数值型向量。常见的转化算法有Bag of Words(BOW)、TF-IDF、Word2Vec
+
+采用Word2Vec词向量模型将语料转换为词向量
+
+由于特征词向量的抽取是基于已经训练好的词向量模型，而wiki中文语料是公认的大型中文语料，从上一步，从wiki中文语料生成的词向量中抽取本文语料的特征词向量
+
+**获取特征词向量的主要步骤如下：**
+
+1）读取模型词向量矩阵
+
+2）遍历语句中的每个词，从模型词向量矩阵中抽取当前词的数值向量，一条语句即可得到一个二维矩阵，行数为词的个数，列数为模型设定的维度
+
+3）根据得到的矩阵计算矩阵均值作为当前语句的特征词向量
+
+4）全部语句计算完成后，拼接语句类别代表的值，写入csv文件中
 
 ```python
-def buildVec(csv_file, vec_model):
-    # Load word2vec model
-    # model = word2vec.Word2Vec.load_word2vec_format(vec_model, binary = True)
-    model = KeyedVectors.load(vec_model)
-
-    input = []
+def buildVec(csv_file, model):
+    fileVecs = []
     # Load csv file
     f = codecs.open(csv_file, 'r', 'utf-8')
     lines = f.read().split('\n')
@@ -515,8 +590,8 @@ def buildVec(csv_file, vec_model):
             # for each sentence, the mean vector of all its vectors is used to represent this sentence
             if len(resultList) != 0:
                 resultArray = sum(np.array(resultList)) / len(resultList)
-                input.append(resultArray)
-    return input
+                fileVecs.append(resultArray)
+    return fileVecs
 ```
 
 ### 1.5.5 标准化
@@ -550,24 +625,25 @@ plt.show()
 
 可以得到下图：
 
-![维度400](images/5.png)
+![维度400](images/8.png)
 
-由图片可以看到，由于数据量不大，重新排序之后的前50维度数据基本可以涵盖所有的信息了，所以我们就可以降维到50维：
+由图片可以看到，重新排序之后的前100维度数据基本可以涵盖所有的信息了，所以我们就可以降维到100维：
 
 ```python
-#由图知我们保留前50维的数据
-X_reduced = PCA(n_components = 50).fit_transform(X)
+x_pca = PCA(n_components=100).fit_transform(X)
 ```
 
 效果如图：
 
-![维度50](images/6.png)
+![维度50](images/9.png)
 
 ### 1.5.7 模型构建
 
-采用SVM作为分类器算法，通过计算测试集的预测精度和ROC曲线来验证分类器的有效性，一般来说ROC曲线的面积（AUC）越大模型的表现越好。
+采用SVM作为分类器算法，通过计算测试集的预测精度和ROC曲线来验证分类器的有效性，一般来说ROC曲线的面积（AUC）越大模型的表现越好，这里使用`sklearn`提供的`SVM`
 
-使用`sklearn`提供的`SVM`
+* `clf.fit`：用于训练SVM，具体参数已经在定义SVC对象时给出，调用时只需要给出数据集X和X对应的标签y
+
+  **这一步需要大量时间**，在22,000条数据规模下，一次需要花费40min
 
 ```python
 def buildModel():
@@ -580,63 +656,64 @@ def buildModel():
     X = scale(X)
 
     # Plot the PCA spectrum
-    # drawX(X, 400)
+    drawX(X, 400)
 
-    # Reduce to 50 dimension
-    # len(X_reduced) = 21978 == len(X)
-    x_pca = PCA(n_components=50).fit_transform(X)
-    # drawX(X_reduced, 50)
+    #
+    # Original clf
+    #
+    clf_orig = SVC(C=2, probability=True)
+    clf_orig.fit(X, Y)
+    joblib.dump(clf_orig, "models/SVC_origin.pkl")
+
+    # Reduce to 100 dimension
+    # len(x_pca) = 21978 == len(X)
+    x_pca = PCA(n_components=100).fit_transform(X)
+    drawX(x_pca, 100)
 
     # SVM (RBF)
     # using training data with 100 dimensions
     clf = SVC(C=2, probability=True)
     clf.fit(x_pca, Y)
     print('Test Accuracy: %.2f' % clf.score(x_pca, Y))
+    # Save SVMClassifier to file
+    joblib.dump(clf, "models/SVC.pkl")
+    # Load use:
+    # clf = joblib.load("models/SVC.pkl")
     displayRoc(clf, x_pca, Y)
 ```
 
-准确率为`95%`，ROC曲线如图
+准确率为`98%`，ROC曲线如图
 
-![ROC曲线](images/7.png)
+![未切分数据，ROC曲线](images/10.png)
 
 将数据集进行拆分，**test_size**设置为`0.25`，
- 关于SVM的调参可以参考笔者的另一篇文章[Python利用Gausian Process对Hyper-parameter进行调参](https://www.jianshu.com/p/90e6abdeb4f2)
 
-拆分使用`sklearn`提供的`train_test_split`：
-
-```python
-# test_size = 0.25
-X_train, X_test, y_train, y_test = train_test_split(x_pca, Y, test_size=0.25, random_state=0)
-```
+拆分使用`sklearn`提供的`train_test_split`，随机取25%的数据用于测试
 
 ```python
-"""
-2.1 SVM (RBF)
-    using training data with 100 dimensions
-"""
-
-clf = SVC(C = 2, probability = True)
-clf.fit(X_reduced_train, y_reduced_train)
-
-print 'Test Accuracy: %.2f'% clf.score(X_reduced_test, y_reduced_test)
-
-pred_probas = clf.predict_proba(X_reduced_test)[:,1]
-print "KS value: %f" % KSmetric(y_reduced_test, pred_probas)[0]
-
-# plot ROC curve
-# AUC = 0.92
-# KS = 0.7
-fpr,tpr,_ = roc_curve(y_reduced_test, pred_probas)
-roc_auc = auc(fpr,tpr)
-plt.plot(fpr, tpr, label = 'area = %.2f' % roc_auc)
-plt.plot([0, 1], [0, 1], 'k--')
-plt.xlim([0.0, 1.0])
-plt.ylim([0.0, 1.05])
-plt.legend(loc = 'lower right')
-plt.show()
-
-joblib.dump(clf, "SVC.pkl")
+def cutTest(x_pca, Y):
+    """
+    test_size = 0.25
+    :param clf:
+    :param x_pca:
+    :param Y:
+    :return:
+    """
+    X_train, X_test, y_train, y_test = train_test_split(x_pca, Y, test_size=0.25, random_state=0)
+    clf = SVC(C=2, probability=True)
+    clf.fit(X_train, y_train)
+    print("Train num = %s" % len(X_train))
+    print("Test num = %s" % len(X_test))
+    print('Test Accuracy: %.2f' % clf.score(X_test, y_test))
+    displayRoc(clf, X_test, y_test)
 ```
+
+训练数据：`16491`，测试数据：`5498`
+
+准确率为`77%`，ROC曲线如图：
+
+![切分数据-ROC曲线](images/11.png)
+
 ## 1.6 基于逻辑回归的情感极性分析
 
 语料处理和词向量训练过程和[基于SVM的情感极性分析](#15-基于svm的情感极性分析)相同
@@ -675,15 +752,17 @@ def LR(X_train, X_test, y_train, y_test):
 ```
               precision    recall  f1-score   support
 
-         0.0       0.92      1.00      0.96      2740
-         1.0       1.00      0.91      0.95      2755
+         0.0       0.73      0.83      0.78      2751
+         1.0       0.80      0.70      0.75      2747
 
-   micro avg       0.96      0.96      0.96      5495
-   macro avg       0.96      0.96      0.96      5495
-weighted avg       0.96      0.96      0.96      5495
+   micro avg       0.76      0.76      0.76      5498
+   macro avg       0.77      0.76      0.76      5498
+weighted avg       0.77      0.76      0.76      5498
 ```
 
-AUC值: `0.9566243194192378`
+AUC值: `0.7647764713946559`，ROC曲线如图：
+
+![切分数据-LR分类-ROC曲线](images/12.png)
 
 ## 1.7 基于多层感知器的情感极性分析
 
@@ -737,18 +816,6 @@ plt.ylim([0.0, 1.05])
 plt.legend(loc = 'lower right')
 plt.show()
 ```
-
-## 1.7 算法比较
-
-|    算法    | 准确率  |               优点               |           缺点           |
-| :--------: | :-----: | :------------------------------: | :----------------------: |
-|  情感词典  |  80%+   |      算法易于理解，准确率高      |       人工工作量大       |
-|  K最近邻   | 60%~70% |        算法简单，易于理解        | 准确率低；耗内存；耗时间 |
-| 朴素贝叶斯 | 70%~80% | 简单，高效，运算速度快，扩展性好 |  准确率不高，达不到实用  |
-|   最大熵   |  83%+   |             准确率高             |        训练时间久        |
-|    SVM     |   85%   |             准确率高             |         训练耗时         |
-
-# 2.数据处理
 
 # 3.运行测试
 
