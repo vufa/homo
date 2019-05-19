@@ -480,7 +480,7 @@ def clean_detected_words(self, cutted_list):
 
 ### 1.5.3 利用wiki中文语料进行word2vec模型构建
 
-使用[gensim](https://link.jianshu.com/?t=http://radimrehurek.com/gensim/)的word2vec进行词向量的训练，同样经过数据清洗，分词等处理，分好词的文档即可进行word2vec词向量模型的训练，由于文档较大，需要内存较大，具体Python代码实现：
+使用[gensim](https://github.com/RaRe-Technologies/gensim)的word2vec进行词向量的训练，同样经过数据清洗，分词等处理，分好词的文档即可进行word2vec词向量模型的训练，由于文档较大，需要内存较大，具体Python代码实现：
 
 ```python
 import logging
