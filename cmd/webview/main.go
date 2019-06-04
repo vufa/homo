@@ -93,7 +93,12 @@ func lanchWebview(ctx *cli.Context) {
 	//
 	// Prepare wake up function
 	//
-	sphinx.LoadCMUSphinx()
+	config.WakeUpWait.Add(1)
+	go sphinx.LoadCMUSphinx()
+	config.WakeUpWait.Wait()
+
+	logrus.Infof("唤醒成功，开始启动界面...")
+
 	go func() {
 		sendReply(w, []string{Greeting})
 		time.Sleep(time.Second)

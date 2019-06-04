@@ -69,7 +69,48 @@ make webview
 
 生成的文件为：`homo-webview`
 
-## 3. 运行GUI
+## 3. 运行
+
+## 3.1 运行自然语言理解引擎
+
+进入`nlu`的文件夹，`source`对应的python虚拟环境并启动http服务器：
+
+```bash
+cd nlu
+source env3.6/bin/activate
+
+python -m rasa_nlu.server \
+       -c configs/rasa/config_jieba_mitie_sklearn.yml \
+       --path models
+```
+
+或者直接运行脚本`nlu_server.sh`：
+
+```bash
+cd nlu
+./nlu_server.sh
+```
+
+## 3.2 运行文本情感分析引擎
+
+进入`sentiment`文件夹，`source`对应的python虚拟环境并启动http服务器：
+
+```bash
+cd sentiment
+source env3.6/bin/activate
+python server.py
+```
+
+或直接运行脚本：
+
+```bash
+cd sentiment
+./server.sh 
+```
+
+**注意：加载word2vec模型需要花费5~7分钟时间**
+
+## 3.3 运行主程序
 
 ```bash
 ./homo-webview
@@ -94,11 +135,15 @@ make webview
 
 # 开发文档
 
-## 1.离线唤醒实现
+## 1. 离线唤醒实现
 
 参见文档：[wake_up.md](docs/sphinx/wake_up.md)
 
-## 2.文本情感分析实现
+## 2. 自然语音理解实现
+
+参见文档：
+
+## 3. 文本情感分析实现
 
 用语音识别得到的文本进行情感分析
 

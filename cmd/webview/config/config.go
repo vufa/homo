@@ -18,7 +18,9 @@ var (
 	WakeUpd        bool
 	DebugMode      bool
 	VoicePlayMutex sync.Mutex
-	WakeUpWait     sync.WaitGroup
+	// Make sphinx keep capturing audio input
+	SphinxLoop sync.WaitGroup
+	WakeUpWait sync.WaitGroup
 	//WebViewWait     sync.WaitGroup
 )
 

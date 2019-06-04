@@ -8,11 +8,14 @@
 package sphinx
 
 import (
+	"bytes"
+	"encoding/binary"
 	"github.com/countstarlight/homo/cmd/webview/config"
 	"github.com/countstarlight/homo/module/audio"
 	"github.com/sirupsen/logrus"
 	"github.com/xlab/pocketsphinx-go/sphinx"
 	"github.com/xlab/portaudio-go/portaudio"
+	"io/ioutil"
 	"unsafe"
 )
 
@@ -30,7 +33,7 @@ type Listener struct {
 }
 
 func LoadCMUSphinx() {
-	config.WakeUpWait.Add(1)
+	config.SphinxLoop.Add(1)
 	// Init CMUSphinx
 	cfg := sphinx.NewConfig(
 		sphinx.HMMDirOption("sphinx/en-us/en-us"),
@@ -50,6 +53,8 @@ func LoadCMUSphinx() {
 		logrus.Fatalf("sphinx.NewDecoder failed: %s", err.Error())
 	}
 	defer dec.Destroy()
+
+	dec.SetRawDataSize(300000)
 
 	l := &Listener{
 		dec: dec,
@@ -76,9 +81,8 @@ func LoadCMUSphinx() {
 	if !dec.StartUtt() {
 		logrus.Fatalln("Sphinx failed to start utterance")
 	}
-	logrus.Infof("开始从麦克风检测唤醒词，采样率[%d]", sampleRate)
-	config.WakeUpWait.Wait()
-	config.WakeUpd = true
+	logrus.Infof("开始从麦克风检测唤醒词：采样率[%dHz] 通道数[%d]", sampleRate, channels)
+	config.SphinxLoop.Wait()
 }
 
 // paCallback: for simplicity reasons we process raw audio with sphinx in the this stream callback,
@@ -98,11 +102,16 @@ func (l *Listener) paCallback(input unsafe.Pointer, _ unsafe.Pointer, sampleCoun
 	if !ok {
 		return statusAbort
 	}
+
 	if l.dec.IsInSpeech() {
 		l.inSpeech = true
 		if !l.uttStarted {
 			l.uttStarted = true
-			logrus.Info("检测唤醒词...")
+			if config.WakeUpd {
+				logrus.Info("发现音频波动，开始录制音频...")
+			} else {
+				logrus.Info("发现音频波动，开始检测唤醒词...")
+			}
 		}
 	} else if l.uttStarted {
 		// speech -> silence transition, time to start new utterance
@@ -117,14 +126,35 @@ func (l *Listener) paCallback(input unsafe.Pointer, _ unsafe.Pointer, sampleCoun
 }
 
 func (l *Listener) report() {
-	hyp, _ := l.dec.Hypothesis()
-	if len(hyp) > 0 {
-		//logrus.Printf("    > hypothesis: %s", hyp)
-		if hyp == "homo" || hyp == "como" {
-			logrus.Info("检测到唤醒词，开始唤醒")
-			config.WakeUpWait.Done()
+	outRaw := "tmp/record/input.raw"
+	if config.WakeUpd {
+		// Save raw data to file
+		rData := l.dec.RawData()
+
+		buf := new(bytes.Buffer)
+		for _, v := range rData {
+			err := binary.Write(buf, binary.LittleEndian, v)
+			if err != nil {
+				logrus.Errorf("binary.Write failed: %s", err.Error())
+			}
 		}
-		return
+
+		logrus.Infof("保存音频文件到: %s, 音频流长度: %d\n", outRaw, len(buf.Bytes()))
+
+		if err := ioutil.WriteFile(outRaw, buf.Bytes(), 0644); err != nil {
+			logrus.Warnf("binary.Write failed: %s", err.Error())
+		}
+	} else {
+		hyp, _ := l.dec.Hypothesis()
+		if len(hyp) > 0 {
+			//logrus.Printf("    > hypothesis: %s", hyp)
+			if hyp == "homo" || hyp == "como" {
+				logrus.Info("检测到唤醒词，开始唤醒")
+				config.WakeUpWait.Done()
+				config.WakeUpd = true
+			}
+			return
+		}
+		logrus.Println("没有检测到唤醒词")
 	}
-	logrus.Println("没有检测到唤醒词")
 }
