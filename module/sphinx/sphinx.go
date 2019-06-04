@@ -24,6 +24,11 @@ const (
 	sampleRate        = 16000
 	channels          = 1
 	sampleFormat      = portaudio.PaInt16
+
+	// Save raw input audio
+	InputRaw = "tmp/record/input.raw"
+	// Convert from pcm to wav
+	OutputWav = "tmp/record/input.wav"
 )
 
 type Listener struct {
@@ -126,7 +131,6 @@ func (l *Listener) paCallback(input unsafe.Pointer, _ unsafe.Pointer, sampleCoun
 }
 
 func (l *Listener) report() {
-	outRaw := "tmp/record/input.raw"
 	if config.WakeUpd {
 		// Save raw data to file
 		rData := l.dec.RawData()
@@ -139,15 +143,20 @@ func (l *Listener) report() {
 			}
 		}
 
-		logrus.Infof("保存音频文件到: %s, 音频流长度: %d\n", outRaw, len(buf.Bytes()))
+		logrus.Infof("保存原始音频文件到: %s, 音频流长度: %d\n", InputRaw, len(buf.Bytes()))
 
-		if err := ioutil.WriteFile(outRaw, buf.Bytes(), 0644); err != nil {
+		if err := ioutil.WriteFile(InputRaw, buf.Bytes(), 0644); err != nil {
 			logrus.Warnf("binary.Write failed: %s", err.Error())
+		}
+		err := Pcm2Wav(InputRaw)
+		if err != nil {
+			logrus.Warnf("Convert raw input %s to wav failed: %s", InputRaw, err.Error())
+		} else {
+			logrus.Infof("原始音频文件编码为wav，保存到: %s", OutputWav)
 		}
 	} else {
 		hyp, _ := l.dec.Hypothesis()
 		if len(hyp) > 0 {
-			//logrus.Printf("    > hypothesis: %s", hyp)
 			if hyp == "homo" || hyp == "como" {
 				logrus.Info("检测到唤醒词，开始唤醒")
 				config.WakeUpWait.Done()
