@@ -13,7 +13,6 @@ import (
 	"github.com/go-audio/audio"
 	"github.com/go-audio/wav"
 	"io"
-	"log"
 	"os"
 )
 
@@ -27,7 +26,7 @@ func Pcm2Wav(file string) error {
 	// Output file.
 	out, err := os.Create(OutputWav)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 	defer com.IOClose("Save file to "+OutputWav, out)
 

@@ -12,10 +12,12 @@ import (
 	"encoding/binary"
 	"github.com/countstarlight/homo/cmd/webview/config"
 	"github.com/countstarlight/homo/module/audio"
+	"github.com/countstarlight/homo/module/com"
 	"github.com/sirupsen/logrus"
 	"github.com/xlab/pocketsphinx-go/sphinx"
 	"github.com/xlab/portaudio-go/portaudio"
 	"io/ioutil"
+	"os"
 	"unsafe"
 )
 
@@ -25,11 +27,23 @@ const (
 	channels          = 1
 	sampleFormat      = portaudio.PaInt16
 
+	RawDir = "tmp/record"
+
 	// Save raw input audio
 	InputRaw = "tmp/record/input.raw"
 	// Convert from pcm to wav
 	OutputWav = "tmp/record/input.wav"
 )
+
+func init() {
+	// Create path
+	if !com.PathExists(RawDir) {
+		err := os.MkdirAll(RawDir, os.ModePerm)
+		if err != nil {
+			logrus.Fatalf("Create path %s failed: %s", RawDir, err.Error())
+		}
+	}
+}
 
 type Listener struct {
 	inSpeech   bool
@@ -47,7 +61,7 @@ func LoadCMUSphinx() {
 		sphinx.SampleRateOption(sampleRate),
 	)
 	//Specify output dir for RAW recorded sound files (s16le). Directory must exist.
-	sphinx.RawLogDirOption("tmp/record")(cfg)
+	sphinx.RawLogDirOption(RawDir)(cfg)
 
 	sphinx.LogFileOption("log/sphinx.log")(cfg)
 

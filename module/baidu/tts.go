@@ -11,6 +11,7 @@ import (
 	"fmt"
 	"github.com/countstarlight/homo/module/audio"
 	"github.com/countstarlight/homo/module/com"
+	"github.com/sirupsen/logrus"
 	"io/ioutil"
 	"net"
 	"net/http"
@@ -18,7 +19,23 @@ import (
 	"os"
 )
 
-const TTS_URL = "http://tsn.baidu.com/text2audio"
+const (
+	TTS_URL = "http://tsn.baidu.com/text2audio"
+
+	TTSDir = "tmp/tts"
+
+	TTSOutFile = "tmp/tts/tmp.wav"
+)
+
+func init() {
+	// Create path
+	if !com.PathExists(TTSDir) {
+		err := os.MkdirAll(TTSDir, os.ModePerm)
+		if err != nil {
+			logrus.Fatalf("Create path %s failed: %s", TTSDir, err.Error())
+		}
+	}
+}
 
 //TextToSpeech 对接baidu tts rest api
 //https://ai.baidu.com/docs#/TTS-API/top
@@ -121,14 +138,14 @@ func TextToSpeech(text string) error {
 	}
 
 	//Remove previous file
-	if com.IsFile("tmp/tts/tmp.wav") {
-		err = os.Remove("tmp/tts/tmp.wav")
+	if com.IsFile(TTSOutFile) {
+		err = os.Remove(TTSOutFile)
 		if err != nil {
 			return err
 		}
 	}
 
-	f, err := os.OpenFile("tmp/tts/tmp.wav", os.O_CREATE|os.O_WRONLY, 0644)
+	f, err := os.OpenFile(TTSOutFile, os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
 		return err
 	}
@@ -138,5 +155,5 @@ func TextToSpeech(text string) error {
 	}
 	//PortAudio
 	//err = audio.PortAudioPlayMp3("tmp/tts/tmp.mp3")
-	return audio.BeepPlayWav("tmp/tts/tmp.wav")
+	return audio.BeepPlayWav(TTSOutFile)
 }
