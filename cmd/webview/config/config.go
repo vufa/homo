@@ -21,12 +21,16 @@ var (
 	// Make sphinx keep capturing audio input
 	SphinxLoop sync.WaitGroup
 	WakeUpWait sync.WaitGroup
+
+	//Auto convert raw pcm buffer to wav
+	RawToWav bool
 	//WebViewWait     sync.WaitGroup
 )
 
 func init() {
 	WakeUpd = false
 	DebugMode = false
+	RawToWav = false
 }
 
 func Terminal(c *cli.Context) error {

@@ -20,10 +20,13 @@ import (
 )
 
 const (
-	TTS_URL = "http://tsn.baidu.com/text2audio"
+	// This Api Key and Api Secret is just for example,
+	// you should get your own first.
+	APIKEY    = "MDNsII2jkUtbF729GQOZt7FS"
+	APISECRET = "0vWCVCLsbWHMSH1wjvxaDq4VmvCZM2O9"
+	TTS_URL   = "http://tsn.baidu.com/text2audio"
 
-	TTSDir = "tmp/tts"
-
+	TTSDir     = "tmp/tts"
 	TTSOutFile = "tmp/tts/tmp.wav"
 )
 
@@ -102,13 +105,6 @@ func (vc *VoiceClient) TextToSpeech(txt string) ([]byte, error) {
 	}
 
 }
-
-const (
-	// This Api Key and Api Secret is just for example,
-	// you should get your own first.
-	APIKEY    = "MDNsII2jkUtbF729GQOZt7FS"
-	APISECRET = "0vWCVCLsbWHMSH1wjvxaDq4VmvCZM2O9"
-)
 
 const (
 	B = 1 << (10 * iota)

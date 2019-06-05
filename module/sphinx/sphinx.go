@@ -10,8 +10,10 @@ package sphinx
 import (
 	"bytes"
 	"encoding/binary"
+	"fmt"
 	"github.com/countstarlight/homo/cmd/webview/config"
 	"github.com/countstarlight/homo/module/audio"
+	"github.com/countstarlight/homo/module/baidu"
 	"github.com/countstarlight/homo/module/com"
 	"github.com/sirupsen/logrus"
 	"github.com/xlab/pocketsphinx-go/sphinx"
@@ -30,7 +32,7 @@ const (
 	RawDir = "tmp/record"
 
 	// Save raw input audio
-	InputRaw = "tmp/record/input.raw"
+	InputRaw = "tmp/record/input.pcm"
 	// Convert from pcm to wav
 	OutputWav = "tmp/record/input.wav"
 )
@@ -162,11 +164,19 @@ func (l *Listener) report() {
 		if err := ioutil.WriteFile(InputRaw, buf.Bytes(), 0644); err != nil {
 			logrus.Warnf("binary.Write failed: %s", err.Error())
 		}
-		err := Pcm2Wav(InputRaw)
+		result, err := baidu.SpeechToText(InputRaw, "pcm", sampleRate)
 		if err != nil {
-			logrus.Warnf("Convert raw input %s to wav failed: %s", InputRaw, err.Error())
+			logrus.Warnf("语音在线识别出错：%s", err.Error())
 		} else {
-			logrus.Infof("原始音频文件编码为wav，保存到: %s", OutputWav)
+			fmt.Println(result)
+		}
+		if config.RawToWav {
+			err := Pcm2Wav(InputRaw)
+			if err != nil {
+				logrus.Warnf("Convert raw input %s to wav failed: %s", InputRaw, err.Error())
+			} else {
+				logrus.Infof("原始音频文件编码为wav，保存到: %s", OutputWav)
+			}
 		}
 	} else {
 		hyp, _ := l.dec.Hypothesis()
