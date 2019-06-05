@@ -153,7 +153,11 @@ func (vc *VoiceClient) SpeechToText(reader io.Reader, params ...ASRParam) ([]str
 	}
 
 	if asrResponse.ErrNo != 0 {
-		return nil, fmt.Errorf("调用服务失败：%s", asrResponse.ErrMsg)
+		if asrResponse.ErrMsg == "speech quality error." {
+			return nil, ErrSpeechQuality{ErrNo: asrResponse.ErrNo, ErrMsg: asrResponse.ErrMsg}
+		} else {
+			return nil, fmt.Errorf("调用服务失败：%s", asrResponse.ErrMsg)
+		}
 	}
 
 	return asrResponse.Result, nil

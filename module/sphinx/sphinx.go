@@ -166,9 +166,17 @@ func (l *Listener) report() {
 		}
 		result, err := baidu.SpeechToText(InputRaw, "pcm", sampleRate)
 		if err != nil {
-			logrus.Warnf("语音在线识别出错：%s", err.Error())
+			if baidu.IsErrSpeechQuality(err) {
+				logrus.Warnf("没有听清在说什么")
+			} else {
+				logrus.Warnf("语音在线识别出错：%s", err.Error())
+			}
 		} else {
-			fmt.Println(result)
+			if len(result) == 0 {
+				logrus.Warnf("没有听清在说什么")
+			} else {
+				fmt.Println(result)
+			}
 		}
 		if config.RawToWav {
 			err := Pcm2Wav(InputRaw)
