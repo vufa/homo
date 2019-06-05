@@ -7,7 +7,10 @@
 
 package nlu
 
-import "time"
+import (
+	"github.com/countstarlight/homo/cmd/webview/config"
+	"time"
+)
 
 var actions = []string{
 	"affirm",
@@ -21,44 +24,65 @@ var actions = []string{
 	"request_search",
 }
 
-func askName() (string, error) {
+func askName(entitiesList map[string]string) (string, error) {
 	return "我叫homo丫", nil
 }
 
-func affirm() (string, error) {
+func affirm(entitiesList map[string]string) (string, error) {
 	return "明白", nil
 }
 
-func deny() (string, error) {
+func deny(entitiesList map[string]string) (string, error) {
 	return "明白了", nil
 }
 
-func goodbye() (string, error) {
+func goodbye(entitiesList map[string]string) (string, error) {
 	return "再见，和你聊天很开心", nil
 }
 
-func greet() (string, error) {
+func greet(entitiesList map[string]string) (string, error) {
 	return "你好!我叫homo", nil
 }
 
-func informTime() (string, error) {
+func informTime(entitiesList map[string]string) (string, error) {
 	return "现在是" + time.Now().Format("2006-01-02 15:04:05"), nil
 }
 
-func medical() (string, error) {
+func medical(entitiesList map[string]string) (string, error) {
 	return "[伤心]哎...希望你早日康复", nil
 }
-func thanks() (string, error) {
+
+func thanks(entitiesList map[string]string) (string, error) {
 	return "不用谢", nil
 }
 
-var RunActions = map[string]func() (string, error){
-	"affirm":      affirm,
-	"ask_name":    askName,
-	"deny":        deny,
-	"goodbye":     goodbye,
-	"greet":       greet,
-	"inform_time": informTime,
-	"thanks":      thanks,
-	"medical":     medical,
+func switchModel(entitiesList map[string]string) (string, error) {
+	if entitiesList["model"] == "分析" || entitiesList["model"] == "调试" {
+		if config.AnalyticalMode {
+			return "已经处于[分析模式]", nil
+		} else {
+			config.AnalyticalMode = true
+			return "已进入[分析模式]", nil
+		}
+	} else if entitiesList["model"] == "交互" {
+		if !config.AnalyticalMode {
+			return "已经处于[交互模式]", nil
+		} else {
+			config.AnalyticalMode = false
+			return "已进入[交互模式]", nil
+		}
+	}
+	return "无效的模式", nil
+}
+
+var RunActions = map[string]func(entitiesList map[string]string) (string, error){
+	"affirm":       affirm,
+	"ask_name":     askName,
+	"deny":         deny,
+	"goodbye":      goodbye,
+	"greet":        greet,
+	"inform_time":  informTime,
+	"thanks":       thanks,
+	"medical":      medical,
+	"switch_model": switchModel,
 }

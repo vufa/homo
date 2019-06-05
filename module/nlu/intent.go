@@ -11,6 +11,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/countstarlight/homo/cmd/webview/config"
 	"github.com/countstarlight/homo/module/com"
 	"io/ioutil"
 	"net/http"
@@ -30,6 +31,7 @@ var intents = map[string]string{
 	"greet":          "表达问候",
 	"inform_time":    "询问时间",
 	"medical":        "咨询医药",
+	"switch_model":   "切换模式",
 	"thanks":         "表达感谢",
 	"request_search": "请求搜索",
 }
@@ -42,6 +44,7 @@ var intentList = []string{
 	"greet",
 	"inform_time",
 	"medical",
+	"switch_model",
 	"thanks",
 	"request_search",
 }
@@ -120,20 +123,24 @@ func ActionLocal(text string) ([]string, error) {
 	var (
 		replyMessage []string
 		result       string
+		entitiesList map[string]string
 	)
-	//1.Get intent rank
-	sort.Sort(reply.IntentRanking)
-	rankList := reply.IntentRanking[:3]
-	result = "意图分析: "
-	for _, r := range rankList {
-		if !com.IfStringInArray(r.Name, intentList) {
-			result = result + fmt.Sprintf("[%s]: %.4f%% ", "未知", r.Confidence*100)
-		} else {
-			result = result + fmt.Sprintf("[%s]: %.4f%% ", intents[r.Name], r.Confidence*100)
+	if config.AnalyticalMode {
+		//1.Get intent rank
+		sort.Sort(reply.IntentRanking)
+		rankList := reply.IntentRanking[:3]
+		result = "意图分析: "
+		for _, r := range rankList {
+			if !com.IfStringInArray(r.Name, intentList) {
+				result = result + fmt.Sprintf("[%s]: %.4f%% ", "未知", r.Confidence*100)
+			} else {
+				result = result + fmt.Sprintf("[%s]: %.4f%% ", intents[r.Name], r.Confidence*100)
+			}
 		}
+		replyMessage = append(replyMessage, result)
 	}
-	replyMessage = append(replyMessage, result)
 	//2.Get entities
+	entitiesList = make(map[string]string)
 	result = "实体分析: "
 	if len(reply.Entities) > 0 {
 		for _, e := range reply.Entities {
@@ -141,14 +148,18 @@ func ActionLocal(text string) ([]string, error) {
 			if !ok {
 				return nil, fmt.Errorf("获取实体失败")
 			}
+			entitiesList[v["entity"].(string)] = v["value"].(string)
 			result = result + fmt.Sprintf("[%s]: %s ", entities[v["entity"].(string)], v["value"].(string))
 		}
 	} else {
 		result = result + "无实体"
 	}
-	replyMessage = append(replyMessage, result)
+	if config.AnalyticalMode {
+		replyMessage = append(replyMessage, result)
+	}
+
 	//3.Run action
-	result, err = RunActions[reply.Intent.Name]()
+	result, err = RunActions[reply.Intent.Name](entitiesList)
 	if err != nil {
 		return nil, err
 	}

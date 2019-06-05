@@ -15,8 +15,10 @@ import (
 )
 
 var (
-	WakeUpd        bool
-	DebugMode      bool
+	WakeUpd   bool
+	DebugMode bool
+	// display intent and entities
+	AnalyticalMode bool
 	VoicePlayMutex sync.Mutex
 	// Make sphinx keep capturing audio input
 	SphinxLoop sync.WaitGroup
@@ -36,6 +38,7 @@ func init() {
 	WakeUpd = false
 	DebugMode = false
 	RawToWav = false
+	AnalyticalMode = false
 }
 
 func Terminal(c *cli.Context) error {
