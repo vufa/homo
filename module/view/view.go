@@ -99,7 +99,6 @@ func TypingAnimate() {
 
 func SendInputText(message string) {
 	w.Dispatch(func() {
-		fmt.Println(fmt.Sprintf("chatWindow.InputText(%s)", message))
 		err := w.Eval(fmt.Sprintf("chatWindow.InputText(\"%s\")", message))
 		if err != nil {
 			logrus.Warning("SendInputText: w.Eval failed: %s", err.Error())
@@ -124,6 +123,20 @@ func SendReply(message []string) {
 	})
 }
 
+func SendReplyWithVoice(message []string) {
+	SendReply(message)
+	//Play voice
+	time.Sleep(time.Second)
+	for _, sent := range message {
+		config.VoicePlayMutex.Lock()
+		err := baidu.TextToSpeech(sent)
+		config.VoicePlayMutex.Unlock()
+		if err != nil {
+			SendReply([]string{"语音合成出错: " + err.Error()})
+		}
+	}
+}
+
 func handleRPC(w webview.WebView, data string) {
 	switch {
 	case strings.HasPrefix(data, "message:"):
@@ -138,20 +151,7 @@ func handleRPC(w webview.WebView, data string) {
 			} else {
 				reply = replyMessage
 			}
-			w.Dispatch(func() {
-				//sendReply(w, []string{"你好", "今天天气不错", "不是吗"})
-				SendReply(reply)
-			})
-			//Play voice
-			time.Sleep(time.Second)
-			for _, sent := range replyMessage {
-				config.VoicePlayMutex.Lock()
-				err = baidu.TextToSpeech(sent)
-				config.VoicePlayMutex.Unlock()
-				if err != nil {
-					SendReply([]string{"语音合成出错: " + err.Error()})
-				}
-			}
+			SendReplyWithVoice(reply)
 		}()
 	}
 }

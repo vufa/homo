@@ -21,6 +21,7 @@ import (
 	"github.com/xlab/portaudio-go/portaudio"
 	"io/ioutil"
 	"os"
+	"unicode"
 	"unsafe"
 )
 
@@ -149,6 +150,9 @@ func (l *Listener) paCallback(input unsafe.Pointer, _ unsafe.Pointer, sampleCoun
 
 func (l *Listener) report() {
 	if config.WakeUpd {
+		//Display typing animate during asr
+		view.TypingAnimate()
+
 		// Save raw data to file
 		rData := l.dec.RawData()
 
@@ -165,24 +169,45 @@ func (l *Listener) report() {
 		if err := ioutil.WriteFile(InputRaw, buf.Bytes(), 0644); err != nil {
 			logrus.Warnf("binary.Write failed: %s", err.Error())
 		}
+
+		// Speech to text
+		success := false
+		var errorMsg string
 		result, err := baidu.SpeechToText(InputRaw, "pcm", sampleRate)
 		if err != nil {
 			if baidu.IsErrSpeechQuality(err) {
-				result = []string{"没有听清在说什么"}
+				errorMsg = "没有听清在说什么"
+				//result = []string{"没有听清在说什么"}
 				//logrus.Warnf("没有听清在说什么")
 			} else {
-				result = []string{fmt.Sprintf("语音在线识别出错：%s", err.Error())}
+				errorMsg = fmt.Sprintf("语音在线识别出错：%s", err.Error())
 				//logrus.Warnf("语音在线识别出错：%s", err.Error())
 			}
 		} else {
 			if len(result) == 0 {
-				result = []string{"没有听清在说什么"}
+				errorMsg = "没有听清在说什么"
+				//result = []string{"没有听清在说什么"}
 				//logrus.Warnf("没有听清在说什么")
 			} else {
-				logrus.Infof("语音在线识别结果: %v", result)
+				success = true
+				//logrus.Infof("语音在线识别结果: %v", result)
 			}
 		}
-		view.SendInputText(result[0])
+
+		if !success {
+			view.SendReplyWithVoice([]string{errorMsg})
+		} else {
+			// Send input text to webview
+			var message string
+			s := []rune(result[0])
+
+			// Remove latest symbol of Chinese string, eg. '。' of '你好。'
+			if !unicode.Is(unicode.Han, s[len(s)-1]) {
+				message = string(s[:len(s)-1])
+			}
+			view.SendInputText(message)
+		}
+
 		if config.RawToWav {
 			err := Pcm2Wav(InputRaw)
 			if err != nil {

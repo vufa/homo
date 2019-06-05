@@ -46,7 +46,7 @@ func informTime() (string, error) {
 }
 
 func medical() (string, error) {
-	return "多喝热水", nil
+	return "[伤心]哎...希望你早日康复", nil
 }
 func thanks() (string, error) {
 	return "不用谢", nil

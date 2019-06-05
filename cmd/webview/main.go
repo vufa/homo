@@ -10,7 +10,6 @@ package main
 import (
 	"fmt"
 	"github.com/countstarlight/homo/cmd/webview/config"
-	"github.com/countstarlight/homo/module/baidu"
 	"github.com/countstarlight/homo/module/sphinx"
 	"github.com/countstarlight/homo/module/view"
 	"github.com/sirupsen/logrus"
@@ -96,14 +95,7 @@ func lanchWebview(ctx *cli.Context) {
 
 	go func() {
 		Greeting := Greetings[rand.Intn(len(Greetings))]
-		view.SendReply([]string{Greeting})
-		time.Sleep(time.Second)
-		config.VoicePlayMutex.Lock()
-		err := baidu.TextToSpeech(Greeting)
-		config.VoicePlayMutex.Unlock()
-		if err != nil {
-			view.SendReply([]string{"语音合成出错: " + err.Error()})
-		}
+		view.SendReplyWithVoice([]string{Greeting})
 	}()
 
 	view.Run()
