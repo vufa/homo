@@ -31,7 +31,7 @@ var intents = map[string]string{
 	"greet":          "表达问候",
 	"inform_time":    "询问时间",
 	"medical":        "咨询医药",
-	"switch_model":   "切换模式",
+	"switch_mode":    "切换模式",
 	"thanks":         "表达感谢",
 	"request_search": "请求搜索",
 }
@@ -44,7 +44,7 @@ var intentList = []string{
 	"greet",
 	"inform_time",
 	"medical",
-	"switch_model",
+	"switch_mode",
 	"thanks",
 	"request_search",
 }

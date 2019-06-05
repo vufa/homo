@@ -58,6 +58,56 @@ pip install -r requirements.txt
 # pip install -i https://pypi.tuna.tsinghua.edu.cn/simple -r requirements.txt
 ```
 
+## 1.3 使用pyenv
+
+安装`pyenv`：
+
+```bash
+git clone https://github.com/pyenv/pyenv.git ~/.pyenv
+
+# 安装 pyenv-virtualenv
+git clone https://github.com/pyenv/pyenv-virtualenv.git $(pyenv root)/plugins/pyenv-virtualenv
+```
+
+写入shell配置文件`.zshrc`和`.bashrc`：
+
+```bash
+#pyenv
+export PYENV_ROOT="$HOME/.pyenv"
+export PATH="$PYENV_ROOT/bin:$PATH"
+if command -v pyenv 1>/dev/null 2>&1; then
+  eval "$(pyenv init -)"
+fi
+#pyenv-virtualenv
+eval "$(pyenv virtualenv-init -)"
+```
+
+列出所有可安装的python：
+
+```bash
+pyenv install -l
+```
+
+列出所有已经安装的python：
+
+```bash
+pyenv versions
+```
+
+安装python：
+
+```bash
+# 安装python 3.6.8
+pyenv install 3.6.8
+# 卸载
+# pyenv uninstall 3.6.8
+```
+
+创建环境：
+
+```bash
+pyenv virtualenv 3.6.8 env3.6.8
+```
 
 ## 2. 编译
 

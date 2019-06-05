@@ -56,15 +56,15 @@ func thanks(entitiesList map[string]string) (string, error) {
 	return "不用谢", nil
 }
 
-func switchModel(entitiesList map[string]string) (string, error) {
-	if entitiesList["model"] == "分析" || entitiesList["model"] == "调试" {
+func switchMode(entitiesList map[string]string) (string, error) {
+	if entitiesList["mode"] == "分析" || entitiesList["mode"] == "调试" {
 		if config.AnalyticalMode {
 			return "已经处于[分析模式]", nil
 		} else {
 			config.AnalyticalMode = true
 			return "已进入[分析模式]", nil
 		}
-	} else if entitiesList["model"] == "交互" {
+	} else if entitiesList["mode"] == "交互" {
 		if !config.AnalyticalMode {
 			return "已经处于[交互模式]", nil
 		} else {
@@ -76,13 +76,13 @@ func switchModel(entitiesList map[string]string) (string, error) {
 }
 
 var RunActions = map[string]func(entitiesList map[string]string) (string, error){
-	"affirm":       affirm,
-	"ask_name":     askName,
-	"deny":         deny,
-	"goodbye":      goodbye,
-	"greet":        greet,
-	"inform_time":  informTime,
-	"thanks":       thanks,
-	"medical":      medical,
-	"switch_model": switchModel,
+	"affirm":      affirm,
+	"ask_name":    askName,
+	"deny":        deny,
+	"goodbye":     goodbye,
+	"greet":       greet,
+	"inform_time": informTime,
+	"thanks":      thanks,
+	"medical":     medical,
+	"switch_mode": switchMode,
 }
