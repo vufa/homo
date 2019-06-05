@@ -132,6 +132,32 @@ function Homo(container, self, options) {
         this.reply(_convo["message"])
     };
 
+    this.InputText = function (convo) {
+        var lastBubble = document.querySelectorAll(".bubble.say");
+        lastBubble = lastBubble[lastBubble.length - 1];
+        lastBubble && lastBubble.classList.contains("reply") &&
+        !lastBubble.classList.contains("reply-freeform")
+            ? lastBubble.classList.add("bubble-hidden")
+            : false;
+        addBubble(
+            '<span class="bubble-button bubble-pick">' + convo + "</span>",
+            function () {
+            },
+            "reply reply-freeform",
+            true
+        );
+        external.invoke('message:' + convo);
+        // callback
+        typeof callbackFn === "function"
+            ? callbackFn({
+                input: convo,
+                convo: _convo,
+                standingAnswer: standingAnswer
+            })
+            : false;
+    };
+
+
     var iceBreaker = false; // this variable holds answer to whether this is the initative bot interaction or not
     this.reply = function (turn) {
         questionsHTML = "";

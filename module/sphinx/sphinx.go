@@ -10,10 +10,12 @@ package sphinx
 import (
 	"bytes"
 	"encoding/binary"
+	"fmt"
 	"github.com/countstarlight/homo/cmd/webview/config"
 	"github.com/countstarlight/homo/module/audio"
 	"github.com/countstarlight/homo/module/baidu"
 	"github.com/countstarlight/homo/module/com"
+	"github.com/countstarlight/homo/module/view"
 	"github.com/sirupsen/logrus"
 	"github.com/xlab/pocketsphinx-go/sphinx"
 	"github.com/xlab/portaudio-go/portaudio"
@@ -166,17 +168,21 @@ func (l *Listener) report() {
 		result, err := baidu.SpeechToText(InputRaw, "pcm", sampleRate)
 		if err != nil {
 			if baidu.IsErrSpeechQuality(err) {
-				logrus.Warnf("没有听清在说什么")
+				result = []string{"没有听清在说什么"}
+				//logrus.Warnf("没有听清在说什么")
 			} else {
-				logrus.Warnf("语音在线识别出错：%s", err.Error())
+				result = []string{fmt.Sprintf("语音在线识别出错：%s", err.Error())}
+				//logrus.Warnf("语音在线识别出错：%s", err.Error())
 			}
 		} else {
 			if len(result) == 0 {
-				logrus.Warnf("没有听清在说什么")
+				result = []string{"没有听清在说什么"}
+				//logrus.Warnf("没有听清在说什么")
 			} else {
 				logrus.Infof("语音在线识别结果: %v", result)
 			}
 		}
+		view.SendInputText(result[0])
 		if config.RawToWav {
 			err := Pcm2Wav(InputRaw)
 			if err != nil {

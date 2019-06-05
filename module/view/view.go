@@ -88,7 +88,7 @@ type HomoReply struct {
 	Msg Message `json:"message"`
 }
 
-func typingAnimate(w webview.WebView) {
+func TypingAnimate() {
 	w.Dispatch(func() {
 		err := w.Eval("chatWindow.think()")
 		if err != nil {
@@ -96,6 +96,17 @@ func typingAnimate(w webview.WebView) {
 		}
 	})
 }
+
+func SendInputText(message string) {
+	w.Dispatch(func() {
+		fmt.Println(fmt.Sprintf("chatWindow.InputText(%s)", message))
+		err := w.Eval(fmt.Sprintf("chatWindow.InputText(\"%s\")", message))
+		if err != nil {
+			logrus.Warning("SendInputText: w.Eval failed: %s", err.Error())
+		}
+	})
+}
+
 func SendReply(message []string) {
 	b, err := json.Marshal(HomoReply{
 		Msg: Message{
@@ -103,12 +114,12 @@ func SendReply(message []string) {
 		},
 	})
 	if err != nil {
-		logrus.Warning("sendReply: json.Marshal failed: %s", err.Error())
+		logrus.Warning("SendReply: json.Marshal failed: %s", err.Error())
 	}
 	w.Dispatch(func() {
 		err = w.Eval(fmt.Sprintf("chatWindow.talk(%s, \"message\")", string(b)))
 		if err != nil {
-			logrus.Warning("sendReply: w.Eval failed: %s", err.Error())
+			logrus.Warning("SendReply: w.Eval failed: %s", err.Error())
 		}
 	})
 }
@@ -118,6 +129,7 @@ func handleRPC(w webview.WebView, data string) {
 	case strings.HasPrefix(data, "message:"):
 		msg := strings.TrimPrefix(data, "message:")
 		//fmt.Printf("发送的消息: %s\n", msg)
+		//go TypingAnimate()
 		go func() {
 			var reply []string
 			replyMessage, err := nlu.ActionLocal(msg)

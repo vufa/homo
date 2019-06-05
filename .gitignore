@@ -3,4 +3,4 @@
 /log/
 /tmp/*
 /homo-*
-/cmd/native/bindata.go
+/module/view/bindata.go
