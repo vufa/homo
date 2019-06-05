@@ -5,7 +5,7 @@
 // Written by Codist <i@codist.me>, April 2019
 //
 
-package main
+package view
 
 //go:generate go-bindata -pkg $GOPACKAGE -o bindata.go -prefix assets/ assets/...
 
@@ -28,6 +28,27 @@ import (
 	"strings"
 	"time"
 )
+
+var (
+	w webview.WebView
+)
+
+func InitWebView(title string, debug bool) {
+	w = webview.New(webview.Settings{
+		Width:                  900,
+		Height:                 700,
+		Resizable:              true,
+		Title:                  title,
+		URL:                    startServer(),
+		Debug:                  debug,
+		ExternalInvokeCallback: handleRPC,
+	})
+}
+
+// Run webview
+func Run() {
+	w.Run()
+}
 
 func startServer() string {
 	ln, err := net.Listen("tcp", "127.0.0.1:0")
@@ -75,7 +96,7 @@ func typingAnimate(w webview.WebView) {
 		}
 	})
 }
-func sendReply(w webview.WebView, message []string) {
+func SendReply(message []string) {
 	b, err := json.Marshal(HomoReply{
 		Msg: Message{
 			Says: message,
@@ -107,7 +128,7 @@ func handleRPC(w webview.WebView, data string) {
 			}
 			w.Dispatch(func() {
 				//sendReply(w, []string{"你好", "今天天气不错", "不是吗"})
-				sendReply(w, reply)
+				SendReply(reply)
 			})
 			//Play voice
 			time.Sleep(time.Second)
@@ -116,9 +137,7 @@ func handleRPC(w webview.WebView, data string) {
 				err = baidu.TextToSpeech(sent)
 				config.VoicePlayMutex.Unlock()
 				if err != nil {
-					w.Dispatch(func() {
-						sendReply(w, []string{"语音合成出错: " + err.Error()})
-					})
+					SendReply([]string{"语音合成出错: " + err.Error()})
 				}
 			}
 		}()

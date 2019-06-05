@@ -27,6 +27,11 @@ var (
 	//WebViewWait     sync.WaitGroup
 )
 
+const (
+	AppName    = "Homo Webview"
+	AppVersion = "0.0.1"
+)
+
 func init() {
 	WakeUpd = false
 	DebugMode = false

@@ -12,9 +12,9 @@ import (
 	"github.com/countstarlight/homo/cmd/webview/config"
 	"github.com/countstarlight/homo/module/baidu"
 	"github.com/countstarlight/homo/module/sphinx"
+	"github.com/countstarlight/homo/module/view"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
-	"github.com/zserge/webview"
 	"math/rand"
 	"os"
 	"runtime"
@@ -30,9 +30,6 @@ func init() {
 	rand.Seed(time.Now().Unix())
 }
 
-const AppName = "Homo Webview"
-const AppVersion = "0.0.1"
-
 var flags = []cli.Flag{
 	cli.BoolFlag{
 		EnvVar: "HOMO_WEBVIEW_DEBUG",
@@ -46,8 +43,8 @@ var Greetings = [...]string{"我在听，请说", "Hi，有什么我可以帮你
 
 func main() {
 	app := cli.NewApp()
-	app.Name = AppName
-	app.Version = AppVersion
+	app.Name = config.AppName
+	app.Version = config.AppVersion
 	app.Usage = "Help"
 	app.Action = lanchWebview
 	app.Flags = flags
@@ -85,16 +82,9 @@ func lanchWebview(ctx *cli.Context) {
 			FullTimestamp: true,
 		})
 	}
-	w := webview.New(webview.Settings{
-		Width:                  900,
-		Height:                 700,
-		Resizable:              true,
-		Title:                  AppName,
-		URL:                    startServer(),
-		Debug:                  ctx.Bool("debug"),
-		ExternalInvokeCallback: handleRPC,
-	})
-	defer w.Exit()
+	// Init webview
+	view.InitWebView(config.AppName, config.DebugMode)
+	//defer w.Exit()
 	//
 	// Prepare wake up function
 	//
@@ -106,20 +96,17 @@ func lanchWebview(ctx *cli.Context) {
 
 	go func() {
 		Greeting := Greetings[rand.Intn(len(Greetings))]
-		sendReply(w, []string{Greeting})
+		view.SendReply([]string{Greeting})
 		time.Sleep(time.Second)
 		config.VoicePlayMutex.Lock()
 		err := baidu.TextToSpeech(Greeting)
 		config.VoicePlayMutex.Unlock()
 		if err != nil {
-			w.Dispatch(func() {
-				sendReply(w, []string{"语音合成出错: " + err.Error()})
-			})
+			view.SendReply([]string{"语音合成出错: " + err.Error()})
 		}
 	}()
 
-	// Run webview
-	w.Run()
+	view.Run()
 }
 
 func before(c *cli.Context) error { return nil }
