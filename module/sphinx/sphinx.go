@@ -10,7 +10,6 @@ package sphinx
 import (
 	"bytes"
 	"encoding/binary"
-	"fmt"
 	"github.com/countstarlight/homo/cmd/webview/config"
 	"github.com/countstarlight/homo/module/audio"
 	"github.com/countstarlight/homo/module/baidu"
@@ -159,7 +158,7 @@ func (l *Listener) report() {
 			}
 		}
 
-		logrus.Infof("保存原始音频文件到: %s, 音频流长度: %d\n", InputRaw, len(buf.Bytes()))
+		logrus.Infof("保存原始音频文件到: %s, 音频流长度: %d Byte\n", InputRaw, len(buf.Bytes()))
 
 		if err := ioutil.WriteFile(InputRaw, buf.Bytes(), 0644); err != nil {
 			logrus.Warnf("binary.Write failed: %s", err.Error())
@@ -175,7 +174,7 @@ func (l *Listener) report() {
 			if len(result) == 0 {
 				logrus.Warnf("没有听清在说什么")
 			} else {
-				fmt.Println(result)
+				logrus.Infof("语音在线识别结果: %v", result)
 			}
 		}
 		if config.RawToWav {
@@ -190,7 +189,7 @@ func (l *Listener) report() {
 		hyp, _ := l.dec.Hypothesis()
 		if len(hyp) > 0 {
 			if hyp == "homo" || hyp == "como" {
-				logrus.Info("检测到唤醒词，开始唤醒")
+				logrus.Info("命中唤醒词，开始唤醒...")
 				config.WakeUpWait.Done()
 				config.WakeUpd = true
 			}

@@ -15,6 +15,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
 	"github.com/zserge/webview"
+	"math/rand"
 	"os"
 	"runtime"
 	"strings"
@@ -24,6 +25,9 @@ import (
 func init() {
 	runtime.GOMAXPROCS(runtime.NumCPU())
 	//setting.MaxConcurrency = runtime.NumCPU() * 2
+
+	// initialize global pseudo random generator
+	rand.Seed(time.Now().Unix())
 }
 
 const AppName = "Homo Webview"
@@ -37,7 +41,8 @@ var flags = []cli.Flag{
 	},
 }
 
-const Greeting = "我在听，请说"
+// Greeting list
+var Greetings = [...]string{"我在听，请说", "Hi，有什么我可以帮你的吗？"}
 
 func main() {
 	app := cli.NewApp()
@@ -97,9 +102,10 @@ func lanchWebview(ctx *cli.Context) {
 	go sphinx.LoadCMUSphinx()
 	config.WakeUpWait.Wait()
 
-	logrus.Infof("唤醒成功，开始启动界面...")
+	logrus.Infof("唤醒成功，开始唤起界面...")
 
 	go func() {
+		Greeting := Greetings[rand.Intn(len(Greetings))]
 		sendReply(w, []string{Greeting})
 		time.Sleep(time.Second)
 		config.VoicePlayMutex.Lock()

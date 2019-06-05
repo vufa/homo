@@ -9,7 +9,7 @@ package baidu
 
 import (
 	"encoding/json"
-	"errors"
+	"fmt"
 	"net/http"
 	"net/url"
 )
@@ -57,7 +57,7 @@ func (da DefaultAuthorizer) Authorize(client *Client) error {
 		return err
 	}
 	if authresponse.ERROR != "" || authresponse.AccessToken == "" {
-		return errors.New("授权失败:" + authresponse.ErrorDescription)
+		return fmt.Errorf("授权失败: %s", authresponse.ErrorDescription)
 	}
 
 	client.AccessToken = authresponse.AccessToken
