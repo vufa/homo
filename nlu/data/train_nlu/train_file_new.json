@@ -1,0 +1,424 @@
+{
+  "rasa_nlu_data": {
+    "common_examples": [
+      {
+        "text": "进入分析模式",
+        "intent": "switch_mode",
+        "entities": [
+          {
+            "start": 2,
+            "end": 4,
+            "value": "分析",
+            "entity": "mode"
+          }
+        ]
+      },
+      {
+        "text": "分析模式",
+        "intent": "switch_mode",
+        "entities": [
+          {
+            "start": 0,
+            "end": 2,
+            "value": "分析",
+            "entity": "mode"
+          }
+        ]
+      },
+      {
+        "text": "进入调试模式",
+        "intent": "switch_mode",
+        "entities": [
+          {
+            "start": 2,
+            "end": 4,
+            "value": "调试",
+            "entity": "mode"
+          }
+        ]
+      },
+      {
+        "text": "调试模式",
+        "intent": "switch_mode",
+        "entities": [
+          {
+            "start": 0,
+            "end": 2,
+            "value": "调试",
+            "entity": "mode"
+          }
+        ]
+      },
+      {
+        "text": "进入交互模式",
+        "intent": "switch_mode",
+        "entities": [
+          {
+            "start": 2,
+            "end": 4,
+            "value": "交互",
+            "entity": "mode"
+          }
+        ]
+      },
+      {
+        "text": "交互模式",
+        "intent": "switch_mode",
+        "entities": [
+          {
+            "start": 0,
+            "end": 2,
+            "value": "交互",
+            "entity": "mode"
+          }
+        ]
+      },
+      {
+        "text": "进入分析模式",
+        "intent": "switch_mode",
+        "entities": [
+          {
+            "start": 2,
+            "end": 4,
+            "value": "分析",
+            "entity": "mode"
+          }
+        ]
+      },
+      {
+        "text": "分析模式",
+        "intent": "switch_mode",
+        "entities": [
+          {
+            "start": 0,
+            "end": 2,
+            "value": "分析",
+            "entity": "mode"
+          }
+        ]
+      },
+      {
+        "text": "感冒了怎么办",
+        "intent": "medical",
+        "entities": [
+          {
+            "start": 0,
+            "end": 2,
+            "value": "感冒",
+            "entity": "disease"
+          }
+        ]
+      },
+      {
+        "text": "一直打喷嚏怎么办",
+        "intent": "medical",
+        "entities": [
+          {
+            "start": 2,
+            "end": 5,
+            "value": "打喷嚏",
+            "entity": "disease"
+          }
+        ]
+      },
+      {
+        "text": "感觉自己发烧了",
+        "intent": "medical",
+        "entities": [
+          {
+            "start": 4,
+            "end": 6,
+            "value": "发烧",
+            "entity": "disease"
+          }
+        ]
+      },
+      {
+        "text": "我肚子痛",
+        "intent": "medical",
+        "entities": [
+          {
+            "start": 1,
+            "end": 4,
+            "value": "肚子痛",
+            "entity": "disease"
+          }
+        ]
+      },
+      {
+        "text": "我头疼",
+        "intent": "medical",
+        "entities": [
+          {
+            "start": 1,
+            "end": 3,
+            "value": "头疼",
+            "entity": "disease"
+          }
+        ]
+      },
+      {
+        "text": "现在几点了",
+        "intent": "inform_time",
+        "entities": []
+      },
+      {
+        "text": "几点了",
+        "intent": "inform_time",
+        "entities": []
+      },
+      {
+        "text": "你叫什么名字",
+        "intent": "ask_name",
+        "entities": []
+      },
+      {
+        "text": "你叫什么",
+        "intent": "ask_name",
+        "entities": []
+      },
+      {
+        "text": "你是谁",
+        "intent": "ask_name",
+        "entities": []
+      },
+      {
+        "text": "我生病了",
+        "intent": "medical",
+        "entities": []
+      },
+      {
+        "text": "你好",
+        "intent": "greet",
+        "entities": []
+      },
+      {
+        "text": "您好",
+        "intent": "greet",
+        "entities": []
+      },
+      {
+        "text": "您好吗",
+        "intent": "greet",
+        "entities": []
+      },
+      {
+        "text": "嗨",
+        "intent": "greet",
+        "entities": []
+      },
+      {
+        "text": "喂",
+        "intent": "greet",
+        "entities": []
+      },
+      {
+        "text": "你是谁",
+        "intent": "greet",
+        "entities": []
+      },
+      {
+        "text": "您是",
+        "intent": "greet",
+        "entities": []
+      },
+      {
+        "text": "你是哪个",
+        "intent": "greet",
+        "entities": []
+      },
+      {
+        "text": "啊",
+        "intent": "greet",
+        "entities": []
+      },
+      {
+        "text": "再见",
+        "intent": "goodbye",
+        "entities": []
+      },
+      {
+        "text": "拜拜",
+        "intent": "goodbye",
+        "entities": []
+      },
+      {
+        "text": "很高兴和你说话",
+        "intent": "goodbye",
+        "entities": []
+      },
+      {
+        "text": "好的",
+        "intent": "confirm",
+        "entities": []
+      },
+      {
+        "text": "行",
+        "intent": "confirm",
+        "entities": []
+      },
+      {
+        "text": "可以的",
+        "intent": "confirm",
+        "entities": []
+      },
+      {
+        "text": "中中",
+        "intent": "confirm",
+        "entities": []
+      },
+      {
+        "text": "中",
+        "intent": "confirm",
+        "entities": []
+      },
+      {
+        "text": "行的",
+        "intent": "confirm",
+        "entities": []
+      },
+      {
+        "text": "没问题",
+        "intent": "confirm",
+        "entities": []
+      },
+      {
+        "text": "恩",
+        "intent": "confirm",
+        "entities": []
+      },
+      {
+        "text": "嗯",
+        "intent": "confirm",
+        "entities": []
+      },
+      {
+        "text": "不要",
+        "intent": "deny",
+        "entities": []
+      },
+      {
+        "text": "不需要",
+        "intent": "deny",
+        "entities": []
+      },
+      {
+        "text": "不要办",
+        "intent": "deny",
+        "entities": []
+      },
+      {
+        "text": "不办",
+        "intent": "deny",
+        "entities": []
+      },
+      {
+        "text": "暂时不要了",
+        "intent": "deny",
+        "entities": []
+      },
+      {
+        "text": "不是",
+        "intent": "deny",
+        "entities": []
+      },
+      {
+        "text": "有问题",
+        "intent": "deny",
+        "entities": []
+      },
+      {
+        "text": "我再考虑考虑",
+        "intent": "deny",
+        "entities": []
+      },
+      {
+        "text": "不好啦",
+        "intent": "deny",
+        "entities": []
+      },
+      {
+        "text": "不行",
+        "intent": "deny",
+        "entities": []
+      },
+      {
+        "text": "不可以的",
+        "intent": "deny",
+        "entities": []
+      },
+      {
+        "text": "不中",
+        "intent": "deny",
+        "entities": []
+      },
+      {
+        "text": "不可以",
+        "intent": "deny",
+        "entities": []
+      },
+      {
+        "text": "没了",
+        "intent": "deny",
+        "entities": []
+      },
+      {
+        "text": "没有了",
+        "intent": "deny",
+        "entities": []
+      },
+      {
+        "text": "不用了",
+        "intent": "deny",
+        "entities": []
+      },
+      {
+        "text": "暂时不用了",
+        "intent": "deny",
+        "entities": []
+      },
+      {
+        "text": "好的没了",
+        "intent": "deny",
+        "entities": []
+      },
+      {
+        "text": "好不用了",
+        "intent": "deny",
+        "entities": []
+      },
+      {
+        "text": "谢谢",
+        "intent": "thanks",
+        "entities": []
+      },
+      {
+        "text": "谢谢您",
+        "intent": "thanks",
+        "entities": []
+      },
+      {
+        "text": "谢谢你",
+        "intent": "thanks",
+        "entities": []
+      },
+      {
+        "text": "非常感谢",
+        "intent": "thanks",
+        "entities": []
+      },
+      {
+        "text": "谢谢啊",
+        "intent": "thanks",
+        "entities": []
+      },
+      {
+        "text": "谢了",
+        "intent": "thanks",
+        "entities": []
+      }
+    ],
+    "regex_features": [],
+    "entity_synonyms": []
+  }
+}

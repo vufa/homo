@@ -19,6 +19,7 @@ var entities = map[string]string{
 	"food":         "食物",
 	"item":         "商品",
 	"time":         "时间",
+	"mode":         "模式",
 	"phone_number": "电话号码",
 	"price":        "价格",
 }

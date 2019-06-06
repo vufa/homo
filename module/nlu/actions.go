@@ -20,12 +20,13 @@ var actions = []string{
 	"greet",
 	"inform_time",
 	"medical",
+	"switch_mode",
 	"thanks",
 	"request_search",
 }
 
 func askName(entitiesList map[string]string) (string, error) {
-	return "我叫homo丫", nil
+	return "莫非我忘记自我介绍了？我是你的homo助理，你好呀", nil
 }
 
 func affirm(entitiesList map[string]string) (string, error) {
@@ -37,11 +38,11 @@ func deny(entitiesList map[string]string) (string, error) {
 }
 
 func goodbye(entitiesList map[string]string) (string, error) {
-	return "再见，和你聊天很开心", nil
+	return "回头见", nil
 }
 
 func greet(entitiesList map[string]string) (string, error) {
-	return "你好!我叫homo", nil
+	return "你好，我是homo，你的智能助理", nil
 }
 
 func informTime(entitiesList map[string]string) (string, error) {
@@ -53,7 +54,7 @@ func medical(entitiesList map[string]string) (string, error) {
 }
 
 func thanks(entitiesList map[string]string) (string, error) {
-	return "不用谢", nil
+	return "应该的，有事随时找我", nil
 }
 
 func switchMode(entitiesList map[string]string) (string, error) {

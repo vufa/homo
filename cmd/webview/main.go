@@ -94,8 +94,9 @@ func lanchWebview(ctx *cli.Context) {
 	logrus.Infof("唤醒成功，开始唤起界面...")
 
 	go func() {
-		Greeting := Greetings[rand.Intn(len(Greetings))]
-		view.SendReplyWithVoice([]string{Greeting})
+		//Greeting := Greetings[rand.Intn(len(Greetings))]
+		//view.SendReplyWithVoice([]string{Greeting})
+		view.SendReplyWithVoice([]string{"你好，我是你的智能助理", "有什么我能帮你的吗？"})
 	}()
 
 	view.Run()

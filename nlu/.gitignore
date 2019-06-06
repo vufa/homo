@@ -1,0 +1,16 @@
+/.vscode/
+/.idea/
+
+
+*pyc
+__pycache__
+
+# mitie model
+/data/rasa/total_word_feature_extractor_zh.dat
+
+# Python virtualenv
+/env3.6/
+
+/logs/
+/models/
+projects/
