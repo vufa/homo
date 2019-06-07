@@ -18,13 +18,15 @@ import (
 	"sort"
 )
 
-//API url of homo-core nlu server
-const nluURL = "http://localhost:5000/parse"
-const project = "rasa"
-const model = "ini"
+const (
+	//API url of homo-core nlu server
+	nluURL  = "http://localhost:5000/parse"
+	project = "rasa"
+	model   = "ini"
+)
 
-var intents = map[string]string{
-	"affirm":         "表示确定",
+var intentsName = map[string]string{
+	"confirm":        "表示确定",
 	"ask_name":       "询问名字",
 	"deny":           "表示拒绝",
 	"goodbye":        "表示道别",
@@ -36,17 +38,13 @@ var intents = map[string]string{
 	"request_search": "请求搜索",
 }
 
-var intentList = []string{
-	"affirm",
-	"ask_name",
-	"deny",
-	"goodbye",
-	"greet",
-	"inform_time",
-	"medical",
-	"switch_mode",
-	"thanks",
-	"request_search",
+var intentList []string
+
+func init() {
+	intentList = make([]string, 0, len(intentsName))
+	for k := range intentsName {
+		intentList = append(intentList, k)
+	}
 }
 
 type IntentRankingList []struct {
@@ -117,7 +115,7 @@ func ActionLocal(text string) ([]string, error) {
 	if err != nil {
 		return nil, err
 	}
-	if !com.IfStringInArray(reply.Intent.Name, actions) {
+	if !com.IfStringInArray(reply.Intent.Name, actionList) {
 		return nil, fmt.Errorf("意图[%s]没有对应的行为", reply.Intent.Name)
 	}
 	var (
@@ -134,7 +132,7 @@ func ActionLocal(text string) ([]string, error) {
 			if !com.IfStringInArray(r.Name, intentList) {
 				result = result + fmt.Sprintf("[%s]: %.4f%% ", "未知", r.Confidence*100)
 			} else {
-				result = result + fmt.Sprintf("[%s]: %.4f%% ", intents[r.Name], r.Confidence*100)
+				result = result + fmt.Sprintf("[%s]: %.4f%% ", intentsName[r.Name], r.Confidence*100)
 			}
 		}
 		replyMessage = append(replyMessage, result)
@@ -149,7 +147,7 @@ func ActionLocal(text string) ([]string, error) {
 				return nil, fmt.Errorf("获取实体失败")
 			}
 			entitiesList[v["entity"].(string)] = v["value"].(string)
-			result = result + fmt.Sprintf("[%s]: %s ", entities[v["entity"].(string)], v["value"].(string))
+			result = result + fmt.Sprintf("[%s]: %s ", entitiesName[v["entity"].(string)], v["value"].(string))
 		}
 	} else {
 		result = result + "无实体"

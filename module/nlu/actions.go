@@ -12,24 +12,32 @@ import (
 	"time"
 )
 
-var actions = []string{
-	"affirm",
-	"ask_name",
-	"deny",
-	"goodbye",
-	"greet",
-	"inform_time",
-	"medical",
-	"switch_mode",
-	"thanks",
-	"request_search",
+var RunActions = map[string]func(entitiesList map[string]string) (string, error){
+	"confirm":     confirm,
+	"ask_name":    askName,
+	"deny":        deny,
+	"goodbye":     goodbye,
+	"greet":       greet,
+	"inform_time": informTime,
+	"thanks":      thanks,
+	"medical":     medical,
+	"switch_mode": switchMode,
+}
+
+var actionList []string
+
+func init() {
+	actionList = make([]string, 0, len(RunActions))
+	for k := range RunActions {
+		actionList = append(actionList, k)
+	}
 }
 
 func askName(entitiesList map[string]string) (string, error) {
 	return "莫非我忘记自我介绍了？我是你的homo助理，你好呀", nil
 }
 
-func affirm(entitiesList map[string]string) (string, error) {
+func confirm(entitiesList map[string]string) (string, error) {
 	return "明白", nil
 }
 
@@ -74,16 +82,4 @@ func switchMode(entitiesList map[string]string) (string, error) {
 		}
 	}
 	return "无效的模式", nil
-}
-
-var RunActions = map[string]func(entitiesList map[string]string) (string, error){
-	"affirm":      affirm,
-	"ask_name":    askName,
-	"deny":        deny,
-	"goodbye":     goodbye,
-	"greet":       greet,
-	"inform_time": informTime,
-	"thanks":      thanks,
-	"medical":     medical,
-	"switch_mode": switchMode,
 }
