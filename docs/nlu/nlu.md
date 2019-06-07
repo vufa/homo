@@ -1,15 +1,163 @@
-自然语言理解
-======
+ 构建NLU训练语料和模型
+ ======
 
-Homo自然交互系统的核心
+Homo自然交互系统的自然语言理解核心
 
-采用的技术：
+<!-- TOC -->
 
-* [MITIE](https://github.com/mit-nlp/MITIE)：信息提取模型，用于构建Rasa NLU进行实体识别和意图识别的模型。
-* [jieba](https://github.com/fxsjy/jieba)：“结巴”中文分词，用于分词。
-* [scikit-learn](https://github.com/scikit-learn/scikit-learn)：机器学习框架，使用它提供的分类方法，对意图识别分类。
+- [1.获取和处理语料](#1获取和处理语料)
+    - [1.1 下载原始数据](#11-下载原始数据)
+    - [1.2 抽取正文](#12-抽取正文)
+    - [1.3 繁体转简体](#13-繁体转简体)
+    - [1.4 符号处理](#14-符号处理)
+- [2.对语料文件分词](#2对语料文件分词)
+- [3.训练MITIE模型](#3训练mitie模型)
+- [4.添加示例数据](#4添加示例数据)
+    - [4.1 数据格式](#41-数据格式)
+    - [4.2 生成json数据](#42-生成json数据)
+- [5.训练Rasa NLU模型](#5训练rasa-nlu模型)
+    - [5.1 算法解读：训练流程](#51-算法解读训练流程)
+- [6.进行意图和实体判断](#6进行意图和实体判断)
+    - [6.1 启动HTTP服务](#61-启动http服务)
+    - [6.2 发送测试请求](#62-发送测试请求)
 
-## 训练流程
+<!-- /TOC -->
+
+# 1.获取和处理语料
+
+从[awesome-chinese-nlp](https://github.com/crownpku/awesome-chinese-nlp)获取收集好的语料，这里使用的是[wikipedia dump](https://dumps.wikimedia.org/zhwiki/)
+
+## 1.1 下载原始数据
+
+从上述wikipedia dump下载`.xml.bz2`文件并解压：
+
+```shell
+bzip2 -d filename.bz2
+```
+
+## 1.2 抽取正文 
+
+这里使用[Wikipedia Extractor](https://github.com/attardi/wikiextractor)抽取维基百科的正文：
+
+```shell
+git clone https://github.com/attardi/wikiextractor.git wikiextractor
+cd wikiextractor
+python setup.py install
+./WikiExtractor.py -b 1024M -o extracted zhwiki-latest-pages-articles.xml.bz2
+```
+
+其中：
+
+* `-b 1024M`：以1024M为单位切分文件，默认是1M，把参数设置的大一些可以保证最后的抽取结果全部存在一个文件里。这里我们设为1024M，可以分成一个1G的大文件和一个36M的小文件，后续的步骤可以先在小文件上实验，再应用到大文件上。
+
+得到两个文件：wiki_00, wiki_01
+
+## 1.3 繁体转简体 
+
+根据系统安装`opencc`，再进行转换：
+
+```shell
+opencc -i wiki_00 -o zh_wiki_00 -c zht2zhs.ini
+opencc -i wiki_01 -o zh_wiki_01 -c zht2zhs.ini
+```
+
+## 1.4 符号处理
+
+Wikipedia Extractor抽取正文时，会将有特殊标记的外文直接剔除。将「」『』这些符号替换成引号，顺便删除空括号，相关工具脚本在`scripts/convert.py`：
+
+```shell
+python scripts/convert.py zh_wiki_00
+python scripts/convert.py zh_wiki_01
+```
+
+# 2.对语料文件分词
+
+用jieba对语料文件分词：
+
+```shell
+python -m jieba -d " " ./zh_wiki_00 > ./zh_wiki_cut00
+python -m jieba -d " " ./zh_wiki_01 > ./zh_wiki_cut01
+```
+
+# 3.训练MITIE模型
+
+* 1.获取MITIE
+
+  ```shell
+  git clone https://github.com/mit-nlp/MITIE.git
+  ```
+
+* 2.编译wordrep
+
+  ```shell
+  cd MITIE/tools/wordrep
+  mkdir build
+  cd build
+  cmake ..
+  cmake --build . --config Release
+  ```
+
+* 3.训练
+
+  ```shell
+  ./wordrep -e /path/to/your/folder_of_cutted_text_files
+  ```
+
+  这里的目录是上一步分词好的文件存放的目录
+
+  这大概需要两到三天时间，需要保证硬盘有100G以上剩余空间
+
+# 4.添加示例数据
+
+## 4.1 数据格式
+
+`nlu/data/rasa/raw_data.txt`为示例数据，格式如下：
+```
+text,intent
+现在几点了|inform_time
+几点了|inform_time
+你叫什么名字|ask_name
+你叫什么|ask_name
+
+text,intent,food
+我想吃火锅啊|restaurant_search|火锅
+找个吃拉面的店|restaurant_search|拉面
+```
+
+每段第一行为接下来的数据格式，段之间用换行符隔开
+
+`text` 为 `文本`，`intent` 为 `文本` 对应的意图
+
+`food` 意为实体的分类，对应 `文本` 中的实体名称
+
+如 "我想吃火锅啊" 的文本 `text` 为 `我想吃火锅啊` ；对应的意图 `intent` 为 `restaurant_search` ；实体 `火锅` 所属分类为 `food`
+
+## 4.2 生成json数据
+
+运行脚本`scripts/trainsfer_raw_to_rasa.py`将原文本转换为rasa需要的json格式，生成的文件在`nlu/data/train_nlu/train_file.json`：
+
+```shell
+python -m scripts.trainsfer_raw_to_rasa
+```
+
+# 5.训练Rasa NLU模型
+
+```shell
+python -m rasa_nlu.train \
+       -c configs/rasa/config_jieba_mitie_sklearn.yml \
+       --data data/rasa/train_file_new.json \
+       --project rasa \
+       --fixed_model_name ini \
+       --path models
+```
+
+* `-c`：配置文件，包括使用的MITIE模型和生成的模型文件
+* `--data`：用来做意图识别和实体识别的训练数据的示例数据
+* `--project`：生成的模型上层目录名
+* `--fixed_model_name`：生成的模型文件名
+* `--path`：生成的模型文件存放的路径
+
+## 5.1 算法解读：训练流程
 
 * 1.初始化MITIE
 * 2.用jieba分词
@@ -17,102 +165,42 @@ Homo自然交互系统的核心
 * 4.为意图识别做特征提取
 * 5.用sklearn对意图识别分类
 
-## 部署和启动`homo-core`
+# 6.进行意图和实体判断
 
-* 1.安装依赖和配置环境参见：[deploy.md](deploy.md)
+## 6.1 启动HTTP服务
 
-* 2.获取语料和构建MITIE模型参见：[dataset.md](dataset.md)
+运行命令：
 
-* 3.启动http服务参见：[deploy.md](deploy.md)
+```bash
+# 进入创建好的python环境
+source env3.6/bin/activate
 
-# 对话或只进行意图和实体判断
-
-## 1.对话
-
-* 创建和标记对话用语料并启动对话参见：[dialog.md](dialog.md)
-
-### 1.1启动流程
-
-* 1.训练得到MITIE模型参见：[dataset.md](dataset.md)(耗时最长，完整大概需要2~3天)
-
-* 2.生成示例数据，参见：[dataset.md](dataset.md)：
-
-  ```shell
-  python -m scripts.trainsfer_raw_to_rasa
-  ```
-
-* 3.训练得到Rasa NLU模型，参见：[dataset.md](dataset.md)：(短对话也最少需要半个小时)
-
-  ```shell
-  ./train_nlu.sh
-  ```
-
-* 4.训练对话模型，参见：[dialog.md](dialog.md)：
-
-  ```shell
-  ./train_dialog.sh
-  ```
-
-* 5.启动对话，参见：[dialog.md](dialog.md)：
-
-  ```shell
-  ./dialog.sh
-  ```
-
-### 1.2完善对话(标记意图和应该的回答)
-
-参见：[dialog.md](dialog.md)：
-
-```shell
-./interaction.sh
+# 启动HTTP服务
+python -m rasa_nlu.server \
+       -c configs/config_jieba_mitie_sklearn.yml \
+       --path models
 ```
 
-完善后需要重新训练对话模型
+* `-c`：加载配置文件 `config_jieba_mitie_sklearn.yml`
 
-### 1.3完善行为
+* `--path`：加载 `models` 中的模型文件
 
-在`configs/domain.yml`里添加新的意图和行为后，需要添加响应的示例数据在`data/rasa/raw_data.txt`，
+或直接运行脚本：
 
-* 1.重新生成示例json数据:
-
-  ```shell
-  ./gen_dialog.sh
-  ```
-
-* 2.重新训练nlu:
-
-  ```shell
-  ./train_nlu.sh
-  ```
-
-* 3.参照上一节，完善对话:
-
-  ```shell
-  ./interaction.sh
-  ```
-
-* 4.重新训练对话:
-
-  ```shell
-  ./train_dialog.sh
-  ```
-
-
-## 2.只进行意图和实体判断
-
-启动nlu 服务：
-
-```shell
+```bash
 ./nlu_server.sh
 ```
 
-运行在5000端口：
+## 6.2 发送测试请求
+使用命令行工具`curl`进行测试：
 
 ```shell
 curl --request POST \
   --url http://localhost:5000/parse \
   --data '{"q": "你好","project": "rasa","model": "ini"}'
 ```
+
+得到的响应：
 
 ```json
 {
@@ -168,6 +256,3 @@ curl --request POST \
   "model": "ini"
 }
 ```
-
-
-
