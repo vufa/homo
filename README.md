@@ -11,7 +11,7 @@ Homo
 
 https://www.bilibili.com/video/av54654613
 
-[![https://www.bilibili.com/video/av54654613](screenshot.jpg)](https://www.bilibili.com/video/av54654613)
+[![https://www.bilibili.com/video/av54654613](screenshot/screenshot.jpg)](https://www.bilibili.com/video/av54654613)
 
 **功能**
 
@@ -62,6 +62,7 @@ https://www.bilibili.com/video/av54654613
     - [3. 文本情感分析实现](#3-文本情感分析实现)
 - [发展路线](#发展路线)
 - [贡献](#贡献)
+- [捐赠](#捐赠)
 - [协议](#协议)
 
 <!-- /TOC -->
@@ -224,6 +225,12 @@ cd sentiment
 # 贡献
 
 欢迎通过 [issues](https://github.com/countstarlight/homo/issues) 提出问题和建议，或通过 [Pull Requests](https://github.com/countstarlight/homo/pulls) 向本项目提交修改
+
+# 捐赠
+
+如果你觉得这个项目对你有帮助，可以请作者喝一杯咖啡，支持作者继续开发
+
+![donate.png](screenshot/donate.png)
 
 # 协议
 
