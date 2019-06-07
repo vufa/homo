@@ -1,7 +1,7 @@
 import json
 
 
-with open("data/rasa/raw_data.txt") as f, open("data/train_nlu/train_file_new.json", "w") as f2:
+with open("data/rasa/raw_data.txt") as f, open("data/train_nlu/train_file.json", "w") as f2:
     train_set = {}
     train_set["rasa_nlu_data"] = {}
     train_set["rasa_nlu_data"]["common_examples"] = []

@@ -74,30 +74,6 @@
         ]
       },
       {
-        "text": "进入分析模式",
-        "intent": "switch_mode",
-        "entities": [
-          {
-            "start": 2,
-            "end": 4,
-            "value": "分析",
-            "entity": "mode"
-          }
-        ]
-      },
-      {
-        "text": "分析模式",
-        "intent": "switch_mode",
-        "entities": [
-          {
-            "start": 0,
-            "end": 2,
-            "value": "分析",
-            "entity": "mode"
-          }
-        ]
-      },
-      {
         "text": "感冒了怎么办",
         "intent": "medical",
         "entities": [
@@ -134,6 +110,42 @@
         ]
       },
       {
+        "text": "我便秘了，该吃什么药",
+        "intent": "medical",
+        "entities": [
+          {
+            "start": 1,
+            "end": 3,
+            "value": "便秘",
+            "entity": "disease"
+          }
+        ]
+      },
+      {
+        "text": "我胃痛，该吃什么药",
+        "intent": "medical",
+        "entities": [
+          {
+            "start": 1,
+            "end": 3,
+            "value": "胃痛",
+            "entity": "disease"
+          }
+        ]
+      },
+      {
+        "text": "父母都有高血压，我会遗传吗",
+        "intent": "medical",
+        "entities": [
+          {
+            "start": 4,
+            "end": 7,
+            "value": "高血压",
+            "entity": "disease"
+          }
+        ]
+      },
+      {
         "text": "我肚子痛",
         "intent": "medical",
         "entities": [
@@ -141,6 +153,18 @@
             "start": 1,
             "end": 4,
             "value": "肚子痛",
+            "entity": "disease"
+          }
+        ]
+      },
+      {
+        "text": "头上烫烫的，感觉发烧了",
+        "intent": "medical",
+        "entities": [
+          {
+            "start": 8,
+            "end": 10,
+            "value": "发烧",
             "entity": "disease"
           }
         ]
@@ -154,6 +178,66 @@
             "end": 3,
             "value": "头疼",
             "entity": "disease"
+          }
+        ]
+      },
+      {
+        "text": "头很疼该怎么办",
+        "intent": "medical",
+        "entities": [
+          {
+            "start": 0,
+            "end": 3,
+            "value": "头很疼",
+            "entity": "disease"
+          }
+        ]
+      },
+      {
+        "text": "减肥有什么好方法吗",
+        "intent": "medical",
+        "entities": [
+          {
+            "start": 0,
+            "end": 2,
+            "value": "减肥",
+            "entity": "disease"
+          }
+        ]
+      },
+      {
+        "text": "我想吃火锅啊",
+        "intent": "restaurant_search",
+        "entities": [
+          {
+            "start": 3,
+            "end": 5,
+            "value": "火锅",
+            "entity": "food"
+          }
+        ]
+      },
+      {
+        "text": "找个吃拉面的店",
+        "intent": "restaurant_search",
+        "entities": [
+          {
+            "start": 3,
+            "end": 5,
+            "value": "拉面",
+            "entity": "food"
+          }
+        ]
+      },
+      {
+        "text": "这附近哪里有吃麻辣烫的地方",
+        "intent": "restaurant_search",
+        "entities": [
+          {
+            "start": 7,
+            "end": 10,
+            "value": "麻辣烫",
+            "entity": "food"
           }
         ]
       },
@@ -188,7 +272,47 @@
         "entities": []
       },
       {
+        "text": "怎样良好的生活习惯才能预防生病呢",
+        "intent": "medical",
+        "entities": []
+      },
+      {
+        "text": "我想找地方吃饭",
+        "intent": "restaurant_search",
+        "entities": []
+      },
+      {
+        "text": "附近有什么好吃的地方吗",
+        "intent": "restaurant_search",
+        "entities": []
+      },
+      {
+        "text": "肚子饿了，推荐一家吃放的地儿呗",
+        "intent": "restaurant_search",
+        "entities": []
+      },
+      {
+        "text": "带老婆孩子去哪里吃饭比较好",
+        "intent": "restaurant_search",
+        "entities": []
+      },
+      {
+        "text": "想去一家有情调的餐厅",
+        "intent": "restaurant_search",
+        "entities": []
+      },
+      {
         "text": "你好",
+        "intent": "greet",
+        "entities": []
+      },
+      {
+        "text": "你好啊",
+        "intent": "greet",
+        "entities": []
+      },
+      {
+        "text": "你好吗",
         "intent": "greet",
         "entities": []
       },
@@ -208,22 +332,27 @@
         "entities": []
       },
       {
+        "text": "hello",
+        "intent": "greet",
+        "entities": []
+      },
+      {
+        "text": "hi",
+        "intent": "greet",
+        "entities": []
+      },
+      {
         "text": "喂",
         "intent": "greet",
         "entities": []
       },
       {
-        "text": "你是谁",
+        "text": "早上好",
         "intent": "greet",
         "entities": []
       },
       {
-        "text": "您是",
-        "intent": "greet",
-        "entities": []
-      },
-      {
-        "text": "你是哪个",
+        "text": "晚上好",
         "intent": "greet",
         "entities": []
       },
@@ -233,18 +362,18 @@
         "entities": []
       },
       {
-        "text": "再见",
-        "intent": "goodbye",
+        "text": "是",
+        "intent": "confirm",
         "entities": []
       },
       {
-        "text": "拜拜",
-        "intent": "goodbye",
+        "text": "是的",
+        "intent": "confirm",
         "entities": []
       },
       {
-        "text": "很高兴和你说话",
-        "intent": "goodbye",
+        "text": "对的",
+        "intent": "confirm",
         "entities": []
       },
       {
@@ -253,7 +382,32 @@
         "entities": []
       },
       {
+        "text": "好滴",
+        "intent": "confirm",
+        "entities": []
+      },
+      {
+        "text": "好啊",
+        "intent": "confirm",
+        "entities": []
+      },
+      {
+        "text": "好",
+        "intent": "confirm",
+        "entities": []
+      },
+      {
         "text": "行",
+        "intent": "confirm",
+        "entities": []
+      },
+      {
+        "text": "确实",
+        "intent": "confirm",
+        "entities": []
+      },
+      {
+        "text": "ok",
         "intent": "confirm",
         "entities": []
       },
@@ -279,6 +433,11 @@
       },
       {
         "text": "没问题",
+        "intent": "confirm",
+        "entities": []
+      },
+      {
+        "text": "好的，谢谢你",
         "intent": "confirm",
         "entities": []
       },
@@ -415,6 +574,36 @@
       {
         "text": "谢了",
         "intent": "thanks",
+        "entities": []
+      },
+      {
+        "text": "bye",
+        "intent": "goodbye",
+        "entities": []
+      },
+      {
+        "text": "再见",
+        "intent": "goodbye",
+        "entities": []
+      },
+      {
+        "text": "拜拜",
+        "intent": "goodbye",
+        "entities": []
+      },
+      {
+        "text": "886",
+        "intent": "goodbye",
+        "entities": []
+      },
+      {
+        "text": "下次见",
+        "intent": "goodbye",
+        "entities": []
+      },
+      {
+        "text": "很高兴和你说话",
+        "intent": "goodbye",
         "entities": []
       }
     ],
