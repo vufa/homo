@@ -39,12 +39,11 @@ https://www.bilibili.com/video/av54654613
   * word2vec模型构建采用开源主题建模工具[Gensim](https://github.com/RaRe-Technologies/gensim)
   * (可选)基于逻辑回归(Logistic Regression)算法的情感极性分类器实现
 
-
 **目录**
 
 <!-- TOC -->
 
-- [配置运行](#配置运行)
+- [配置](#配置)
     - [1. 系统支持](#1-系统支持)
     - [2. 安装依赖](#2-安装依赖)
         - [2.1 系统依赖](#21-系统依赖)
@@ -52,19 +51,22 @@ https://www.bilibili.com/video/av54654613
             - [2.1.2 CMUSphinx](#212-cmusphinx)
         - [2.2 Python依赖](#22-python依赖)
     - [3. 编译](#3-编译)
-- [4. 运行](#4-运行)
-    - [4.1 运行自然语言理解引擎](#41-运行自然语言理解引擎)
-    - [4.2 运行文本情感分析引擎](#42-运行文本情感分析引擎)
-    - [4.3 运行主程序](#43-运行主程序)
+- [运行](#运行)
+    - [1.运行自然语言理解引擎](#1运行自然语言理解引擎)
+    - [2.运行文本情感分析引擎](#2运行文本情感分析引擎)
+    - [3.运行主程序](#3运行主程序)
 - [文件结构](#文件结构)
 - [开发文档](#开发文档)
     - [1. 离线唤醒实现](#1-离线唤醒实现)
     - [2. 自然语言理解实现](#2-自然语言理解实现)
     - [3. 文本情感分析实现](#3-文本情感分析实现)
+- [发展路线](#发展路线)
+- [贡献](#贡献)
+- [协议](#协议)
 
 <!-- /TOC -->
 
-# 配置运行
+# 配置
 
 ## 1. 系统支持
 
@@ -117,9 +119,9 @@ make webview
 
 生成的文件为：`homo-webview`
 
-# 4. 运行
+# 运行
 
-## 4.1 运行自然语言理解引擎
+## 1.运行自然语言理解引擎
 
 进入`nlu`的文件夹，`source`对应的python虚拟环境并启动http服务器：
 
@@ -139,7 +141,7 @@ cd nlu
 ./nlu_server.sh
 ```
 
-## 4.2 运行文本情感分析引擎
+## 2.运行文本情感分析引擎
 
 进入`sentiment`文件夹，`source`对应的python虚拟环境并启动http服务器：
 
@@ -158,7 +160,7 @@ cd sentiment
 
 **注意：加载word2vec模型需要花费5~7分钟时间**
 
-## 4.3 运行主程序
+## 3.运行主程序
 
 ```bash
 ./homo-webview
@@ -197,3 +199,34 @@ cd sentiment
 用语音识别得到的文本进行情感分析
 
 参见文档：[sentiment.md](docs/sentiment/sentiment.md)
+
+# 发展路线
+
+- [ ] 多平台支持
+    - [ ] Windows
+    - [ ] Macos
+
+- [ ] 完善文档
+    - [ ] 在多个平台上的编译配置
+    - [ ] 如何进一步扩展和完善自然语言理解引擎
+
+- [ ] Python部分用Go或Rust或C++重写
+    - [ ] 替代用到的机器学习库
+    - [ ] 文本情感分析部分：SVM...
+    - [ ] 自然语言理解部分：MITIE...
+
+- [ ] 添加对英文的支持
+    - [ ] 离线唤醒
+    - [ ] 语音识别
+    - [ ] 语音合成
+    - [ ] 文档
+
+# 贡献
+
+欢迎通过 [issues](https://github.com/countstarlight/homo/issues) 提出问题和建议，或通过 [Pull Requests](https://github.com/countstarlight/homo/pulls) 向本项目提交修改
+
+# 协议
+
+[MIT](https://github.com/countstarlight/homo/blob/master/LICENSE)
+
+Copyright (c) 2019-present Codist
