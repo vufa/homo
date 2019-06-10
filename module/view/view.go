@@ -151,7 +151,11 @@ func handleRPC(w webview.WebView, data string) {
 			} else {
 				reply = replyMessage
 			}
-			SendReplyWithVoice(reply)
+			if !config.OfflineMode {
+				SendReplyWithVoice(reply)
+			} else {
+				SendReply(reply)
+			}
 		}()
 	}
 }

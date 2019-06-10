@@ -15,8 +15,10 @@ import (
 )
 
 var (
-	WakeUpd   bool
-	DebugMode bool
+	WakeUpd        bool
+	WakeUpDisabled bool
+	DebugMode      bool
+	OfflineMode    bool
 	// display intent and entities
 	AnalyticalMode bool
 	VoicePlayMutex sync.Mutex

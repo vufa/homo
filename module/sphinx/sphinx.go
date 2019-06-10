@@ -195,7 +195,11 @@ func (l *Listener) report() {
 		}
 
 		if !success {
-			view.SendReplyWithVoice([]string{errorMsg})
+			if !config.OfflineMode {
+				view.SendReplyWithVoice([]string{errorMsg})
+			} else {
+				view.SendReply([]string{errorMsg})
+			}
 		} else {
 			// Send input text to webview
 			var message string

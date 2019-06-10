@@ -5,7 +5,7 @@ Homo
 
 除语音合成和语音识别调用在线API，其余模块的训练或运行过程均不依赖任何形式的在线服务
 
-模块均基于完全开源的库实现，所有训练过程和运行过程均采用完全开源的工具集和开放的数据集
+模块均基于完全开源的库实现，所有训练和运行过程均采用完全开源的工具集和开放的数据集
 
 **演示视频(BiliBili)：**
 
@@ -97,6 +97,8 @@ https://www.bilibili.com/video/av54654613
 
 Python版本推荐使用`3.6.8`
 
+安装情感分析依赖：
+
 ```bash
 cd homo/sentiment
 # 创建一个python3.6的环境
@@ -109,6 +111,8 @@ pip install -r requirements.txt
 # 使用国内镜像
 # pip install -i https://pypi.tuna.tsinghua.edu.cn/simple -r requirements.txt
 ```
+
+自然语言理解部分类似
 
 ## 3. 编译
 

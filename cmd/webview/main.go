@@ -35,10 +35,22 @@ var flags = []cli.Flag{
 		Name:   "debug, d",
 		Usage:  "start homo webview in debug mode",
 	},
+	cli.BoolFlag{
+		EnvVar:      "HOMO_WEBVIEW_OFFLINE",
+		Name:        "offline, f",
+		Usage:       "disable speech recognition and text to speech",
+		Destination: &config.OfflineMode,
+	},
+	cli.BoolFlag{
+		EnvVar:      "HOMO_WEBVIEW_SILENCE",
+		Name:        "silence, s",
+		Usage:       "disable wakeup",
+		Destination: &config.WakeUpDisabled,
+	},
 }
 
 // Greeting list
-var Greetings = [...]string{"我在听，请说", "Hi，有什么我可以帮你的吗？"}
+// var Greetings = [...]string{"我在听，请说", "Hi，有什么我可以帮你的吗？"}
 
 func main() {
 	app := cli.NewApp()
@@ -81,22 +93,37 @@ func lanchWebview(ctx *cli.Context) {
 			FullTimestamp: true,
 		})
 	}
+
+	if config.OfflineMode {
+		logrus.Warnf("注意：当前处于离线模式，语音识别和语音合成将不可用")
+	}
 	// Init webview
 	view.InitWebView(config.AppName, config.DebugMode)
 	//defer w.Exit()
 	//
 	// Prepare wake up function
 	//
-	config.WakeUpWait.Add(1)
-	go sphinx.LoadCMUSphinx()
-	config.WakeUpWait.Wait()
+	if config.WakeUpDisabled {
+		if !config.OfflineMode {
+			go sphinx.LoadCMUSphinx()
+			config.WakeUpd = true
+		}
+	} else {
+		config.WakeUpWait.Add(1)
+		go sphinx.LoadCMUSphinx()
+		config.WakeUpWait.Wait()
+	}
 
 	logrus.Infof("唤醒成功，开始唤起界面...")
 
 	go func() {
 		//Greeting := Greetings[rand.Intn(len(Greetings))]
 		//view.SendReplyWithVoice([]string{Greeting})
-		view.SendReplyWithVoice([]string{"你好，我是你的智能助理", "有什么我能帮你的吗？"})
+		if !config.OfflineMode {
+			view.SendReplyWithVoice([]string{"你好，我是你的智能助理", "有什么我能帮你的吗？"})
+		} else {
+			view.SendReply([]string{"你好，我是你的智能助理", "有什么我能帮你的吗？"})
+		}
 	}()
 
 	view.Run()
