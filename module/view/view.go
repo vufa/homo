@@ -106,6 +106,16 @@ func SendInputText(message string) {
 	})
 }
 
+// Only send text to input, not trigger thinking
+func SendOnlyInputText(message string) {
+	w.Dispatch(func() {
+		err := w.Eval(fmt.Sprintf("chatWindow.OnlyInputText(\"%s\")", message))
+		if err != nil {
+			logrus.Warning("SendOnlyInputText: w.Eval failed: %s", err.Error())
+		}
+	})
+}
+
 func SendReply(message []string) {
 	b, err := json.Marshal(HomoReply{
 		Msg: Message{

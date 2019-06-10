@@ -18,6 +18,7 @@ var (
 	WakeUpd        bool
 	WakeUpDisabled bool
 	DebugMode      bool
+	SilenceMode    bool
 	OfflineMode    bool
 	// display intent and entities
 	AnalyticalMode bool
@@ -37,8 +38,8 @@ const (
 )
 
 func init() {
-	WakeUpd = false
 	DebugMode = false
+	WakeUpDisabled = false
 	RawToWav = false
 	AnalyticalMode = false
 }

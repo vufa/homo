@@ -74,6 +74,30 @@
         ]
       },
       {
+        "text": "进入勿扰模式",
+        "intent": "switch_mode",
+        "entities": [
+          {
+            "start": 2,
+            "end": 4,
+            "value": "勿扰",
+            "entity": "mode"
+          }
+        ]
+      },
+      {
+        "text": "勿扰模式",
+        "intent": "switch_mode",
+        "entities": [
+          {
+            "start": 0,
+            "end": 2,
+            "value": "勿扰",
+            "entity": "mode"
+          }
+        ]
+      },
+      {
         "text": "感冒了怎么办",
         "intent": "medical",
         "entities": [

@@ -37,13 +37,13 @@ var flags = []cli.Flag{
 	},
 	cli.BoolFlag{
 		EnvVar:      "HOMO_WEBVIEW_OFFLINE",
-		Name:        "offline, f",
+		Name:        "offline, o",
 		Usage:       "disable speech recognition and text to speech",
 		Destination: &config.OfflineMode,
 	},
 	cli.BoolFlag{
-		EnvVar:      "HOMO_WEBVIEW_SILENCE",
-		Name:        "silence, s",
+		EnvVar:      "HOMO_WEBVIEW_FALL",
+		Name:        "fall, f",
 		Usage:       "disable wakeup",
 		Destination: &config.WakeUpDisabled,
 	},

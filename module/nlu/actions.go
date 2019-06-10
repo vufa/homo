@@ -74,12 +74,20 @@ func switchMode(entitiesList map[string]string) (string, error) {
 			return "已进入[分析模式]", nil
 		}
 	} else if entitiesList["mode"] == "交互" {
+		if config.SilenceMode {
+			config.SilenceMode = false
+			config.AnalyticalMode = false
+			return "[勿扰模式]已关闭", nil
+		}
 		if !config.AnalyticalMode {
 			return "已经处于[交互模式]", nil
 		} else {
 			config.AnalyticalMode = false
 			return "已进入[交互模式]", nil
 		}
+	} else if entitiesList["mode"] == "勿扰" {
+		config.SilenceMode = true
+		return "已进入[勿扰模式]，再次启用语音识别请切换到[交互模式]", nil
 	}
 	return "无效的模式", nil
 }

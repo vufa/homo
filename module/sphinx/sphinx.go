@@ -15,6 +15,7 @@ import (
 	"github.com/countstarlight/homo/module/audio"
 	"github.com/countstarlight/homo/module/baidu"
 	"github.com/countstarlight/homo/module/com"
+	"github.com/countstarlight/homo/module/nlu"
 	"github.com/countstarlight/homo/module/view"
 	"github.com/sirupsen/logrus"
 	"github.com/xlab/pocketsphinx-go/sphinx"
@@ -151,7 +152,9 @@ func (l *Listener) paCallback(input unsafe.Pointer, _ unsafe.Pointer, sampleCoun
 func (l *Listener) report() {
 	if config.WakeUpd {
 		//Display typing animate during asr
-		view.TypingAnimate()
+		if !config.SilenceMode {
+			view.TypingAnimate()
+		}
 
 		// Save raw data to file
 		rData := l.dec.RawData()
@@ -177,6 +180,7 @@ func (l *Listener) report() {
 		if err != nil {
 			if baidu.IsErrSpeechQuality(err) {
 				errorMsg = "没有听清在说什么"
+				return
 				//result = []string{"没有听清在说什么"}
 				//logrus.Warnf("没有听清在说什么")
 			} else {
@@ -186,6 +190,7 @@ func (l *Listener) report() {
 		} else {
 			if len(result) == 0 {
 				errorMsg = "没有听清在说什么"
+				return
 				//result = []string{"没有听清在说什么"}
 				//logrus.Warnf("没有听清在说什么")
 			} else {
@@ -195,9 +200,16 @@ func (l *Listener) report() {
 		}
 
 		if !success {
-			if !config.OfflineMode {
-				view.SendReplyWithVoice([]string{errorMsg})
+			//Output message to log if in silence mode
+			if config.SilenceMode {
+				logrus.Warnf("%s", errorMsg)
 			} else {
+				/*if !config.OfflineMode {
+					view.SendReplyWithVoice([]string{errorMsg})
+				} else {
+					view.SendReply([]string{errorMsg})
+				}*/
+				//error message not to speech
 				view.SendReply([]string{errorMsg})
 			}
 		} else {
@@ -209,7 +221,23 @@ func (l *Listener) report() {
 			if !unicode.Is(unicode.Han, s[len(s)-1]) {
 				message = string(s[:len(s)-1])
 			}
-			view.SendInputText(message)
+			// If in silence mode, post message to nlu
+			if config.SilenceMode {
+				replyMessage, err := nlu.ActionLocal(message)
+				if err != nil {
+					logrus.Warnf("连接到nlu出错: %s", err.Error())
+				}
+				if !config.SilenceMode {
+					view.SendOnlyInputText(message)
+					if config.OfflineMode {
+						view.SendReply(replyMessage)
+					} else {
+						view.SendReplyWithVoice(replyMessage)
+					}
+				}
+			} else {
+				view.SendInputText(message)
+			}
 		}
 
 		if config.RawToWav {
