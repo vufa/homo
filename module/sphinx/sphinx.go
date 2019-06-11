@@ -14,14 +14,12 @@ import (
 	"github.com/countstarlight/homo/cmd/webview/config"
 	"github.com/countstarlight/homo/module/audio"
 	"github.com/countstarlight/homo/module/baidu"
-	"github.com/countstarlight/homo/module/com"
 	"github.com/countstarlight/homo/module/nlu"
 	"github.com/countstarlight/homo/module/view"
 	"github.com/sirupsen/logrus"
 	"github.com/xlab/pocketsphinx-go/sphinx"
 	"github.com/xlab/portaudio-go/portaudio"
 	"io/ioutil"
-	"os"
 	"unicode"
 	"unsafe"
 )
@@ -31,24 +29,7 @@ const (
 	sampleRate        = 16000
 	channels          = 1
 	sampleFormat      = portaudio.PaInt16
-
-	RawDir = "tmp/record"
-
-	// Save raw input audio
-	InputRaw = "tmp/record/input.pcm"
-	// Convert from pcm to wav
-	OutputWav = "tmp/record/input.wav"
 )
-
-func init() {
-	// Create path
-	if !com.PathExists(RawDir) {
-		err := os.MkdirAll(RawDir, os.ModePerm)
-		if err != nil {
-			logrus.Fatalf("Create path %s failed: %s", RawDir, err.Error())
-		}
-	}
-}
 
 type Listener struct {
 	inSpeech   bool
@@ -60,15 +41,15 @@ func LoadCMUSphinx() {
 	config.SphinxLoop.Add(1)
 	// Init CMUSphinx
 	cfg := sphinx.NewConfig(
-		sphinx.HMMDirOption("sphinx/en-us/en-us"),
-		sphinx.DictFileOption("sphinx/homo/homo.dic"),
-		sphinx.LMFileOption("sphinx/homo/homo.lm.bin"),
+		sphinx.HMMDirOption(config.HMMDirEn),
+		sphinx.DictFileOption(config.DictFileEn),
+		sphinx.LMFileOption(config.LMFileEn),
 		sphinx.SampleRateOption(sampleRate),
 	)
 	//Specify output dir for RAW recorded sound files (s16le). Directory must exist.
-	sphinx.RawLogDirOption(RawDir)(cfg)
+	sphinx.RawLogDirOption(config.RawDir)(cfg)
 
-	sphinx.LogFileOption("log/sphinx.log")(cfg)
+	sphinx.LogFileOption(config.SphinxLogFile)(cfg)
 
 	logrus.Info("开始加载 CMU PhocketSphinx...")
 	logrus.Info("开始加载唤醒模型...")
@@ -120,7 +101,7 @@ func (l *Listener) paCallback(input unsafe.Pointer, _ unsafe.Pointer, sampleCoun
 	)
 
 	// Do not record if is playing voice
-	if config.IsPlayingVoice && !config.InterruptMode{
+	if config.IsPlayingVoice && !config.InterruptMode {
 		return statusContinue
 	}
 
@@ -179,16 +160,16 @@ func (l *Listener) report() {
 			return
 		}
 
-		logrus.Infof("保存原始音频文件到: %s, 音频流长度: %d Byte\n", InputRaw, len(buf.Bytes()))
+		logrus.Infof("保存原始音频文件到: %s, 音频流长度: %d Byte\n", config.InputRaw, len(buf.Bytes()))
 
-		if err := ioutil.WriteFile(InputRaw, buf.Bytes(), 0644); err != nil {
+		if err := ioutil.WriteFile(config.InputRaw, buf.Bytes(), 0644); err != nil {
 			logrus.Warnf("binary.Write failed: %s", err.Error())
 		}
 
 		// Speech to text
 		success := false
 		var errorMsg string
-		result, err := baidu.SpeechToText(InputRaw, "pcm", sampleRate)
+		result, err := baidu.SpeechToText(config.InputRaw, "pcm", sampleRate)
 		if err != nil {
 			if baidu.IsErrSpeechQuality(err) {
 				view.TypingAnimateStop()
@@ -255,11 +236,11 @@ func (l *Listener) report() {
 		}
 
 		if config.RawToWav {
-			err := Pcm2Wav(InputRaw)
+			err := Pcm2Wav(config.InputRaw)
 			if err != nil {
-				logrus.Warnf("Convert raw input %s to wav failed: %s", InputRaw, err.Error())
+				logrus.Warnf("Convert raw input %s to wav failed: %s", config.InputRaw, err.Error())
 			} else {
-				logrus.Infof("原始音频文件编码为wav，保存到: %s", OutputWav)
+				logrus.Infof("原始音频文件编码为wav，保存到: %s", config.InputWav)
 			}
 		}
 	} else {

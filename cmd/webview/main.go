@@ -14,11 +14,9 @@ import (
 	"github.com/countstarlight/homo/module/view"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
-	"math/rand"
 	"os"
 	"runtime"
 	"strings"
-	"time"
 )
 
 func init() {
@@ -26,7 +24,7 @@ func init() {
 	//setting.MaxConcurrency = runtime.NumCPU() * 2
 
 	// initialize global pseudo random generator
-	rand.Seed(time.Now().Unix())
+	// rand.Seed(time.Now().Unix())
 }
 
 var flags = []cli.Flag{
@@ -56,7 +54,7 @@ var flags = []cli.Flag{
 }
 
 // Greeting list
-// var Greetings = [...]string{"我在听，请说", "Hi，有什么我可以帮你的吗？"}
+var Greetings = []string{"你好，我是你的智能助理", "有什么我能帮你的吗？"}
 
 func main() {
 	app := cli.NewApp()
@@ -125,15 +123,17 @@ func lanchWebview(ctx *cli.Context) {
 
 	go func() {
 		//Greeting := Greetings[rand.Intn(len(Greetings))]
-		//view.SendReplyWithVoice([]string{Greeting})
 		if !config.OfflineMode {
-			view.SendReplyWithVoice([]string{"你好，我是你的智能助理", "有什么我能帮你的吗？"})
+			view.SendReplyWithVoice(Greetings)
 		} else {
-			view.SendReply([]string{"你好，我是你的智能助理", "有什么我能帮你的吗？"})
+			view.SendReply(Greetings)
 		}
 	}()
 
 	view.Run()
 }
 
-func before(c *cli.Context) error { return nil }
+func before(c *cli.Context) error {
+	config.LoadConfig()
+	return nil
+}

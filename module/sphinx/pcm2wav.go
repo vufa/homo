@@ -9,6 +9,7 @@ package sphinx
 
 import (
 	"encoding/binary"
+	"github.com/countstarlight/homo/cmd/webview/config"
 	"github.com/countstarlight/homo/module/com"
 	"github.com/go-audio/audio"
 	"github.com/go-audio/wav"
@@ -24,11 +25,11 @@ func Pcm2Wav(file string) error {
 	}
 
 	// Output file.
-	out, err := os.Create(OutputWav)
+	out, err := os.Create(config.InputWav)
 	if err != nil {
 		return err
 	}
-	defer com.IOClose("Save file to "+OutputWav, out)
+	defer com.IOClose("Save file to "+config.InputWav, out)
 
 	// 16000 Hz, 16 bit, 1 channel, WAV.
 	e := wav.NewEncoder(out, sampleRate, 16, 1, 1)

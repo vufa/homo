@@ -4,6 +4,7 @@ require (
 	github.com/faiface/beep v0.0.0-20190331160154-e59a7440241a
 	github.com/go-audio/audio v1.0.0
 	github.com/go-audio/wav v1.0.0
+	github.com/go-ini/ini v1.42.0
 	github.com/gopherjs/gopherjs v0.0.0-20190411002643-bd77b112433e // indirect
 	github.com/gopherjs/gopherwasm v1.1.0 // indirect
 	github.com/hajimehoshi/go-mp3 v0.2.0 // indirect
