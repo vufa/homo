@@ -17,6 +17,7 @@ import (
 	"os/exec"
 	"path"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"sync"
 )
@@ -40,11 +41,31 @@ var (
 	RawDir   string
 	InputRaw string
 	InputWav string
+
 	//sphinx
-	HMMDirEn      string
-	DictFileEn    string
-	LMFileEn      string
-	SphinxLogFile string
+	HMMDirEn        string
+	DictFileEn      string
+	LMFileEn        string
+	SphinxLogFile   string
+	RecordThreshold int
+
+	// Nlu
+	ConversationAPI string
+	ParseAPI        string
+	NluProject      string
+	NluModel        string
+
+	// baidu
+	BaiduASRAPI         string
+	BaiduTTSAPI         string
+	BaiduVoiceAuthUrl   string
+	BaiduVoiceAPIKey    string
+	BaiduVoiceAPISecret string
+
+	// TTS
+	TTSDir     string
+	TTSOutFile string
+
 	// Flag
 	IsPlayingVoice bool
 	WakeUpd        bool
@@ -54,8 +75,6 @@ var (
 	VoicePlayMutex sync.Mutex
 	SphinxLoop     sync.WaitGroup // Make sphinx keep capturing audio input
 	WakeUpWait     sync.WaitGroup
-
-	RecordThreshold int
 
 	//Auto convert raw pcm buffer to wav
 	RawToWav bool
@@ -137,7 +156,36 @@ func LoadConfig() {
 	HMMDirEn = sec.Key("EN_HMM_DIR").MustString(path.Join(workDir, "sphinx/en-us/en-us"))
 	DictFileEn = sec.Key("EN_DICT_FILE").MustString(path.Join(workDir, "sphinx/homo/homo.dic"))
 	LMFileEn = sec.Key("EN_LM_FILE").MustString(path.Join(workDir, "sphinx/homo/homo.lm.bin"))
+	RecordThreshold = sec.Key("RECORD_THRESHOLD").MustInt(50000)
 	SphinxLogFile = sec.Key("LOG_FILE").MustString(path.Join(workDir, "log/sphinx.log"))
+
+	// Load Nlu config
+	sec = Cfg.Section("nlu")
+	ConversationAPI = sec.Key("CONVERSATION_API").MustString("http://localhost:5005/conversations/default/respond")
+	ParseAPI = sec.Key("PARSE_API").MustString("http://localhost:5000/parse")
+	NluProject = sec.Key("PROJECT").MustString("rasa")
+	NluModel = sec.Key("MODEL").MustString("ini")
+
+	// Load baidu config
+	sec = Cfg.Section("baidu")
+	BaiduASRAPI = sec.Key("ASR_API").MustString("http://vop.baidu.com/server_api")
+	BaiduTTSAPI = sec.Key("TTS_API").MustString("http://tsn.baidu.com/text2audio")
+	BaiduVoiceAuthUrl = sec.Key("VOICE_AUTH_URL").MustString("https://openapi.baidu.com/oauth/2.0/token")
+	BaiduVoiceAPIKey = sec.Key("VOICE_API_KEY").MustString("MDNsII2jkUtbF729GQOZt7FS")
+	BaiduVoiceAPISecret = sec.Key("VOICE_API_SECRET").MustString("0vWCVCLsbWHMSH1wjvxaDq4VmvCZM2O9")
+
+	// Load tts config
+	sec = Cfg.Section("tts")
+	TTSDir = sec.Key("TTS_DIR").MustString(path.Join(workDir, "tmp/tts"))
+	TTSOutFile = sec.Key("TTS_OUT_FILE").MustString(path.Join(workDir, "tmp/tts/tmp.wav"))
+
+	// Create path
+	if !com.PathExists(TTSDir) {
+		err := os.MkdirAll(TTSDir, os.ModePerm)
+		if err != nil {
+			logrus.Fatalf("Create path %s failed: %s", TTSDir, err.Error())
+		}
+	}
 
 	// Update config file
 	UpdateConfigFile()
@@ -161,7 +209,25 @@ func UpdateConfigFile() {
 	cfg.Section("sphinx").Key("EN_HMM_DIR").SetValue(HMMDirEn)
 	cfg.Section("sphinx").Key("EN_DICT_FILE").SetValue(DictFileEn)
 	cfg.Section("sphinx").Key("EN_LM_FILE").SetValue(LMFileEn)
+	cfg.Section("sphinx").Key("RECORD_THRESHOLD").SetValue(strconv.Itoa(RecordThreshold))
 	cfg.Section("sphinx").Key("LOG_FILE").SetValue(SphinxLogFile)
+
+	// Update nlu config
+	cfg.Section("nlu").Key("CONVERSATION_API").SetValue(ConversationAPI)
+	cfg.Section("nlu").Key("PARSE_API").SetValue(ParseAPI)
+	cfg.Section("nlu").Key("PROJECT").SetValue(NluProject)
+	cfg.Section("nlu").Key("MODEL").SetValue(NluModel)
+
+	// Update baidu config
+	cfg.Section("baidu").Key("ASR_API").SetValue(BaiduASRAPI)
+	cfg.Section("baidu").Key("TTS_API").SetValue(BaiduTTSAPI)
+	cfg.Section("baidu").Key("VOICE_AUTH_URL").SetValue(BaiduVoiceAuthUrl)
+	cfg.Section("baidu").Key("VOICE_API_KEY").SetValue(BaiduVoiceAPIKey)
+	cfg.Section("baidu").Key("VOICE_API_SECRET").SetValue(BaiduVoiceAPISecret)
+
+	// Update tts config
+	cfg.Section("tts").Key("TTS_DIR").SetValue(TTSDir)
+	cfg.Section("tts").Key("TTS_OUT_FILE").SetValue(TTSOutFile)
 
 	if err := cfg.SaveTo(ConfFile); err != nil {
 		logrus.Fatalf("Update config file failed: %s", err.Error())

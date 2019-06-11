@@ -10,13 +10,11 @@ package nlu
 import (
 	"bytes"
 	"encoding/json"
+	"github.com/countstarlight/homo/cmd/webview/config"
 	"github.com/countstarlight/homo/module/com"
 	"io/ioutil"
 	"net/http"
 )
-
-//API url of homo-core
-const coreURL = "http://localhost:5005/conversations/default/respond"
 
 type coreReply struct {
 	RecipientID string `json:"recipient_id"`
@@ -25,7 +23,7 @@ type coreReply struct {
 
 func ChatWithCore(text string) (string, error) {
 	var postJson = []byte(`{"query":"` + text + `"}`)
-	req, err := http.NewRequest("POST", coreURL, bytes.NewBuffer(postJson))
+	req, err := http.NewRequest("POST", config.ConversationAPI, bytes.NewBuffer(postJson))
 	req.Header.Set("Content-Type", "application/json")
 
 	client := &http.Client{}

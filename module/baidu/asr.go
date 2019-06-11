@@ -12,6 +12,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"github.com/countstarlight/homo/cmd/webview/config"
 	"github.com/countstarlight/homo/module/com"
 	"io"
 	"io/ioutil"
@@ -19,8 +20,6 @@ import (
 	"net/http"
 	"os"
 )
-
-const ASR_URL = "http://vop.baidu.com/server_api"
 
 //语音识别响应信息
 //http://ai.baidu.com/docs#/ASR-API-PRO/top
@@ -130,7 +129,7 @@ func (vc *VoiceClient) SpeechToText(reader io.Reader, params ...ASRParam) ([]str
 		return nil, err
 	}
 
-	req, err := http.NewRequest("POST", ASR_URL, asrParamsBuffer)
+	req, err := http.NewRequest("POST", config.BaiduASRAPI, asrParamsBuffer)
 	if err != nil {
 		return nil, err
 	}
@@ -168,7 +167,7 @@ func (vc *VoiceClient) SpeechToText(reader io.Reader, params ...ASRParam) ([]str
 // ATTENTION: the .wav file must be 8k or 16k rate with single(mono) channel.
 // FYI: you can use QuickTime to record voice and Fission converting to .wav
 func SpeechToText(file, format string, sampleRate int) ([]string, error) {
-	client := NewVoiceClient(APIKEY, APISECRET)
+	client := NewVoiceClient(config.BaiduVoiceAPIKey, config.BaiduVoiceAPISecret)
 	if err := client.Auth(); err != nil {
 		return nil, err
 	}

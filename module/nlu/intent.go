@@ -18,13 +18,6 @@ import (
 	"sort"
 )
 
-const (
-	//API url of homo-core nlu server
-	nluURL  = "http://localhost:5000/parse"
-	project = "rasa"
-	model   = "ini"
-)
-
 var intentsName = map[string]string{
 	"confirm":        "表示确定",
 	"ask_name":       "询问名字",
@@ -87,14 +80,14 @@ func (l IntentRankingList) Swap(i, j int) {
 func ActionLocal(text string) ([]string, error) {
 	postM := &intentRequest{
 		Query:   text,
-		Project: project,
-		Model:   model,
+		Project: config.NluProject,
+		Model:   config.NluModel,
 	}
 	var postJson, err = json.Marshal(postM)
 	if err != nil {
 		return nil, err
 	}
-	req, err := http.NewRequest("POST", nluURL, bytes.NewBuffer(postJson))
+	req, err := http.NewRequest("POST", config.ParseAPI, bytes.NewBuffer(postJson))
 	if err != nil {
 		return nil, err
 	}

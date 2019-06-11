@@ -10,11 +10,10 @@ package baidu
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/countstarlight/homo/cmd/webview/config"
 	"net/http"
 	"net/url"
 )
-
-const VOICE_AUTH_URL = "https://openapi.baidu.com/oauth/2.0/token"
 
 // Authorizer 用于设置access_token
 // 可以通过RESTFul api的方式从百度方获取
@@ -44,7 +43,7 @@ type AuthResponse struct {
 type DefaultAuthorizer struct{}
 
 func (da DefaultAuthorizer) Authorize(client *Client) error {
-	resp, err := http.PostForm(VOICE_AUTH_URL, url.Values{
+	resp, err := http.PostForm(config.BaiduVoiceAuthUrl, url.Values{
 		"grant_type":    {"client_credentials"},
 		"client_id":     {client.ClientID},
 		"client_secret": {client.ClientSecret},

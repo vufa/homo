@@ -9,36 +9,15 @@ package baidu
 
 import (
 	"fmt"
+	"github.com/countstarlight/homo/cmd/webview/config"
 	"github.com/countstarlight/homo/module/audio"
 	"github.com/countstarlight/homo/module/com"
-	"github.com/sirupsen/logrus"
 	"io/ioutil"
 	"net"
 	"net/http"
 	"net/url"
 	"os"
 )
-
-const (
-	// This Api Key and Api Secret is just for example,
-	// you should get your own first.
-	APIKEY    = "MDNsII2jkUtbF729GQOZt7FS"
-	APISECRET = "0vWCVCLsbWHMSH1wjvxaDq4VmvCZM2O9"
-	TTS_URL   = "http://tsn.baidu.com/text2audio"
-
-	TTSDir     = "tmp/tts"
-	TTSOutFile = "tmp/tts/tmp.wav"
-)
-
-func init() {
-	// Create path
-	if !com.PathExists(TTSDir) {
-		err := os.MkdirAll(TTSDir, os.ModePerm)
-		if err != nil {
-			logrus.Fatalf("Create path %s failed: %s", TTSDir, err.Error())
-		}
-	}
-}
 
 //TextToSpeech 对接baidu tts rest api
 //https://ai.baidu.com/docs#/TTS-API/top
@@ -63,7 +42,7 @@ func (vc *VoiceClient) TextToSpeech(txt string) ([]byte, error) {
 		}
 	}
 
-	resp, err := http.PostForm(TTS_URL, url.Values{
+	resp, err := http.PostForm(config.BaiduTTSAPI, url.Values{
 		"tex":  {txt},
 		"tok":  {vc.AccessToken},
 		"cuid": {cuid},
@@ -127,21 +106,21 @@ func NewVoiceClient(apiKey, apiSecret string) *VoiceClient {
 
 // Voice Composition
 func TextToSpeech(text string) error {
-	client := NewVoiceClient(APIKEY, APISECRET)
+	client := NewVoiceClient(config.BaiduVoiceAPIKey, config.BaiduVoiceAPISecret)
 	voiceData, err := client.TextToSpeech(text)
 	if err != nil {
 		return err
 	}
 
 	//Remove previous file
-	if com.IsFile(TTSOutFile) {
-		err = os.Remove(TTSOutFile)
+	if com.IsFile(config.TTSOutFile) {
+		err = os.Remove(config.TTSOutFile)
 		if err != nil {
 			return err
 		}
 	}
 
-	f, err := os.OpenFile(TTSOutFile, os.O_CREATE|os.O_WRONLY, 0644)
+	f, err := os.OpenFile(config.TTSOutFile, os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
 		return err
 	}
@@ -151,5 +130,5 @@ func TextToSpeech(text string) error {
 	}
 	//PortAudio
 	//err = audio.PortAudioPlayMp3("tmp/tts/tmp.mp3")
-	return audio.BeepPlayWav(TTSOutFile)
+	return audio.BeepPlayWav(config.TTSOutFile)
 }
