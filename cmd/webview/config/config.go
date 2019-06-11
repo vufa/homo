@@ -17,19 +17,26 @@ import (
 var (
 	WakeUpd        bool
 	WakeUpDisabled bool
+
+	// Mode
 	DebugMode      bool
 	SilenceMode    bool
 	OfflineMode    bool
-	// display intent and entities
-	AnalyticalMode bool
+	InterruptMode  bool
+	AnalyticalMode bool // display intent and entities
+
+	// Flag
+	IsPlayingVoice bool
+
+	// Lock
 	VoicePlayMutex sync.Mutex
-	// Make sphinx keep capturing audio input
-	SphinxLoop sync.WaitGroup
-	WakeUpWait sync.WaitGroup
+	SphinxLoop     sync.WaitGroup // Make sphinx keep capturing audio input
+	WakeUpWait     sync.WaitGroup
+
+	RecordThreshold int
 
 	//Auto convert raw pcm buffer to wav
 	RawToWav bool
-	//WebViewWait     sync.WaitGroup
 )
 
 const (
@@ -38,10 +45,11 @@ const (
 )
 
 func init() {
-	DebugMode = false
-	WakeUpDisabled = false
+	// DebugMode = false
+	// WakeUpDisabled = false
 	RawToWav = false
 	AnalyticalMode = false
+	RecordThreshold = 50000
 }
 
 func Terminal(c *cli.Context) error {

@@ -119,6 +119,11 @@ func (l *Listener) paCallback(input unsafe.Pointer, _ unsafe.Pointer, sampleCoun
 		statusAbort    = int32(portaudio.PaAbort)
 	)
 
+	// Do not record if is playing voice
+	if config.IsPlayingVoice && !config.InterruptMode{
+		return statusContinue
+	}
+
 	in := (*(*[1 << 24]int16)(input))[:int(sampleCount)*channels]
 	// ProcessRaw with disabled search because callback needs to be relatime
 	_, ok := l.dec.ProcessRaw(in, true, false)
@@ -167,6 +172,13 @@ func (l *Listener) report() {
 			}
 		}
 
+		//Reduce sensitivity
+		if len(buf.Bytes()) < config.RecordThreshold {
+			logrus.Infof("音频长度小于阈值 %d，取消录制", config.RecordThreshold)
+			view.TypingAnimateStop()
+			return
+		}
+
 		logrus.Infof("保存原始音频文件到: %s, 音频流长度: %d Byte\n", InputRaw, len(buf.Bytes()))
 
 		if err := ioutil.WriteFile(InputRaw, buf.Bytes(), 0644); err != nil {
@@ -179,7 +191,8 @@ func (l *Listener) report() {
 		result, err := baidu.SpeechToText(InputRaw, "pcm", sampleRate)
 		if err != nil {
 			if baidu.IsErrSpeechQuality(err) {
-				errorMsg = "没有听清在说什么"
+				view.TypingAnimateStop()
+				// errorMsg = "没有听清在说什么"
 				return
 				//result = []string{"没有听清在说什么"}
 				//logrus.Warnf("没有听清在说什么")
@@ -189,7 +202,8 @@ func (l *Listener) report() {
 			}
 		} else {
 			if len(result) == 0 {
-				errorMsg = "没有听清在说什么"
+				view.TypingAnimateStop()
+				// errorMsg = "没有听清在说什么"
 				return
 				//result = []string{"没有听清在说什么"}
 				//logrus.Warnf("没有听清在说什么")

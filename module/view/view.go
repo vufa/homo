@@ -97,6 +97,15 @@ func TypingAnimate() {
 	})
 }
 
+func TypingAnimateStop() {
+	w.Dispatch(func() {
+		err := w.Eval("chatWindow.thinkStop()")
+		if err != nil {
+			logrus.Warning("botTypingAnimateStop w.Eval failed: %s", err.Error())
+		}
+	})
+}
+
 func SendInputText(message string) {
 	w.Dispatch(func() {
 		err := w.Eval(fmt.Sprintf("chatWindow.InputText(\"%s\")", message))
@@ -137,6 +146,7 @@ func SendReplyWithVoice(message []string) {
 	SendReply(message)
 	//Play voice
 	time.Sleep(time.Second)
+	config.IsPlayingVoice = true
 	for _, sent := range message {
 		config.VoicePlayMutex.Lock()
 		err := baidu.TextToSpeech(sent)
@@ -145,6 +155,7 @@ func SendReplyWithVoice(message []string) {
 			SendReply([]string{"语音合成出错: " + err.Error()})
 		}
 	}
+	config.IsPlayingVoice = false
 }
 
 func handleRPC(w webview.WebView, data string) {

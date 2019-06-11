@@ -47,6 +47,12 @@ var flags = []cli.Flag{
 		Usage:       "disable wakeup",
 		Destination: &config.WakeUpDisabled,
 	},
+	cli.BoolFlag{
+		EnvVar:      "HOMO_WEBVIEW_INTERRUPT",
+		Name:        "interrupt, i",
+		Usage:       "can interrupt the playing voice",
+		Destination: &config.InterruptMode,
+	},
 }
 
 // Greeting list
@@ -108,6 +114,7 @@ func lanchWebview(ctx *cli.Context) {
 			go sphinx.LoadCMUSphinx()
 			config.WakeUpd = true
 		}
+		config.IsPlayingVoice = true
 	} else {
 		config.WakeUpWait.Add(1)
 		go sphinx.LoadCMUSphinx()
