@@ -43,14 +43,7 @@ https://www.bilibili.com/video/av54654613
 
 <!-- TOC -->
 
-- [配置](#配置)
-    - [1. 系统支持](#1-系统支持)
-    - [2. 安装依赖](#2-安装依赖)
-        - [2.1 系统依赖](#21-系统依赖)
-            - [2.1.1 PortAudio](#211-portaudio)
-            - [2.1.2 CMUSphinx](#212-cmusphinx)
-        - [2.2 Python依赖](#22-python依赖)
-    - [3. 编译](#3-编译)
+- [安装和配置](#安装和配置)
 - [运行](#运行)
     - [1.运行自然语言理解引擎](#1运行自然语言理解引擎)
     - [2.运行文本情感分析引擎](#2运行文本情感分析引擎)
@@ -67,62 +60,9 @@ https://www.bilibili.com/video/av54654613
 
 <!-- /TOC -->
 
-# 配置
+# 安装和配置
 
-## 1. 系统支持
-
-理论上跨平台，但推荐使用Linux，没有在Macos上进行过测试，一些依赖库在Windows系统上配置可能相当繁琐
-
-## 2. 安装依赖
-
-### 2.1 系统依赖
-
-#### 2.1.1 PortAudio
-
-录制声音依赖 `portaudio`
-
-使用 Go 的 `portaudio`绑定 [portaudio-go](https://github.com/xlab/portaudio-go)，参照对应的文档配置好依赖
-
-注意：Archlinux需要安装 `pulseaudio-alsa` 使得和 `pulseaudio` 一起工作时不会造成崩溃
-
-#### 2.1.2 CMUSphinx
-
-基于 `CMUSphinx` 实现离线唤醒和语音录制
-
-使用 Go 的 `CMUSphinx` 绑定 [pocketsphinx-go](https://github.com/xlab/pocketsphinx-go)，参照对应的文档配置好依赖
-
-### 2.2 Python依赖
-
-情感分析和自然语言理解部分主要由Python实现，需要安装用到的依赖库，推荐使用`virtualenv`
-
-Python版本推荐使用`3.6.8`
-
-安装情感分析依赖：
-
-```bash
-cd homo/sentiment
-# 创建一个python3.6的环境
-# 需要已经安装有pyhton3.6
-virtualenv --python=python3.6 env3.6
-# 进入创建的环境
-source env3.6/bin/activate
-# 安装依赖
-pip install -r requirements.txt
-# 使用国内镜像
-# pip install -i https://pypi.tuna.tsinghua.edu.cn/simple -r requirements.txt
-```
-
-自然语言理解部分类似
-
-## 3. 编译
-
-编译 `homo-webview`：
-
-```bash
-make webview
-```
-
-生成的文件为：`homo-webview`
+安装和配置参考文档: [https://blog.codist.me/homo/get-started/](https://blog.codist.me/homo/get-started/)
 
 # 运行
 
