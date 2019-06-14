@@ -62,7 +62,7 @@ https://www.bilibili.com/video/av54654613
 
 # 安装和配置
 
-安装和配置参考文档: [https://blog.codist.me/homo/](https://blog.codist.me/homo/)
+安装和配置请阅读文档: [https://blog.codist.me/homo/](https://blog.codist.me/homo/)
 
 # 运行
 
@@ -111,7 +111,7 @@ cd sentiment
 ./homo-webview
 ```
 
-调试模式下日志会打印具体的代码文件和函数信息，webview界面也能调用控制台查看html和js/css
+了解详细启动参数请阅读[文档](https://blog.codist.me/homo/run/)
 
 # 文件结构
 
