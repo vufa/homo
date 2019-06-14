@@ -4,7 +4,6 @@
 /homo/homo.vocab
 /homo/homo.idngram
 /homo/homo.arpa
-/homo/homo.lm.bin
 
 /weather_zh/
 /*.log
