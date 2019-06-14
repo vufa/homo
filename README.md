@@ -62,7 +62,7 @@ https://www.bilibili.com/video/av54654613
 
 # 安装和配置
 
-安装和配置参考文档: [https://blog.codist.me/homo/get-started/](https://blog.codist.me/homo/get-started/)
+安装和配置参考文档: [https://blog.codist.me/homo/](https://blog.codist.me/homo/)
 
 # 运行
 
