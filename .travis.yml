@@ -18,9 +18,11 @@ before_script:
   - echo "Installing sphinxbase..."
   - git clone https://github.com/cmusphinx/sphinxbase.git
   - cd sphinxbase && ./autogen.sh && ./configure && make -j 4 && sudo make install
+  - cd .. && rm -rf sphinxbase
   - echo "Installing PocketSphinx..."
   - git clone https://github.com/cmusphinx/pocketsphinx.git
   - cd pocketsphinx && ./autogen.sh && ./configure && sudo make install
+  - cd .. & rm -rf pocketsphinx
 
 script:
   - make fmt-check
