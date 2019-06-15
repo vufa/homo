@@ -14,10 +14,6 @@ addons:
       - portaudio19-dev
       - swig
 
-before_install:
-  - sudo apt-get update
-  - sudo apt-get install portaudio19-dev
-
 before_script:
   - echo "Installing sphinxbase..."
   - git clone https://github.com/cmusphinx/sphinxbase.git
