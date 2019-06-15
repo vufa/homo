@@ -8,6 +8,12 @@ go:
 os:
   - linux
 
+addons:
+  apt:
+    packages:
+      - portaudio19-dev
+      - swig
+
 before_install:
   - sudo apt-get update
   - sudo apt-get install portaudio19-dev
