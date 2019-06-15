@@ -1,7 +1,7 @@
 DIST := dist
 IMPORT := github.com/countstarlight/homo
  
-GO ?= go
+GO ?= env GO111MODULE=on go
 SED_INPLACE := sed -i
 EXTRA_GOFLAGS ?=
 

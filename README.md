@@ -3,12 +3,16 @@ Homo
 
 一个高性能，易于扩展且完全开源的自然交互系统
 
-除语音合成和语音识别调用在线API，其余模块的训练或运行过程均不依赖任何形式的在线服务
-
-模块均基于完全开源的库实现，所有训练和运行过程均采用完全开源的工具集和开放的数据集
+<p align="center">
+  <a href="https://travis-ci.org/countstarlight/homo">
+    <img src="https://travis-ci.org/countstarlight/homo.svg?branch=master" alt="Build Status">
+  </a>
+  <a href="https://goreportcard.com/report/github.com/countstarlight/homo">
+    <img src="https://goreportcard.com/badge/github.com/countstarlight/homo" alt="Go Report">
+  </a>
+</p>
 
 **演示视频(BiliBili)：**
-
 https://www.bilibili.com/video/av54654613
 
 [![https://www.bilibili.com/video/av54654613](screenshot/screenshot.jpg)](https://www.bilibili.com/video/av54654613)
@@ -17,20 +21,13 @@ https://www.bilibili.com/video/av54654613
 
 * 离线唤醒
   * 基于开源轻量级语音识别引擎[PocketSphinx](https://github.com/cmusphinx/pocketsphinx)实现
-  * 使用开源工具集[CMUCLMTK](http://www.speech.cs.cmu.edu/SLM/toolkit_documentation.html)用于语言模型训练
-  * 包含全部的训练数据集，工具集参数配置和预训练模型
+  * 使用开源工具集[CMUCLMTK](http://www.speech.cs.cmu.edu/SLM/toolkit_documentation.html)进行离线语言模型训练
 * 在线语音识别
-  * 调用百度在线语音识别和语音合成API
-  * 计划加入更多平台支持
-* (可选)本地离线语音识别：
-  * 采用开源语音识别工具集[Kaldi](https://github.com/kaldi-asr/kaldi)
-  * 使用清华大学30小时的数据集`thchs30`配置及训练
-  * 使用AI SHELL公司开源178小时中文语音语料置及训练
-  * 使用cvte预训练模型
-* 语音合成：调用百度在线API
+  * 调用百度在线语音识别API
+* 语音合成：
+  * 调用百度在线语音合成API
 * 自然语言理解
   * 基于开源自然语言理解框架[Rasa NLU](https://github.com/RasaHQ/rasa)实现
-  * 采用完全开源免费的公共数据集作为语料进行训练
   * 采用开源信息提取工具集[MITIE](https://github.com/mit-nlp/MITIE)构建用于Rasa NLU进行实体识别和意图识别的模型
   * 意图识别分类采用开源机器学习框架[scikit-learn](https://github.com/scikit-learn/scikit-learn)
   * 中文分词采用开源分词组件[jieba](https://github.com/fxsjy/jieba)
