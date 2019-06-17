@@ -36,6 +36,7 @@ all: build
 .PHONY: gen
 gen:
 	@hash go-bindata > /dev/null 2>&1; if [ $$? -ne 0 ]; then \
+		$(GO) get -u github.com/jteeuwen/go-bindata; \
 		$(GO) get -u github.com/jteeuwen/go-bindata/...; \
 	fi
 	$(GO) generate github.com/countstarlight/homo/module/view
