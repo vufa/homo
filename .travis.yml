@@ -21,9 +21,10 @@ before_script:
   - cd .. && rm -rf sphinxbase
   - echo "Installing PocketSphinx..."
   - git clone https://github.com/cmusphinx/pocketsphinx.git
-  - cd pocketsphinx && ./autogen.sh && ./configure && sudo make install
-  - cd .. & rm -rf pocketsphinx
+  - cd pocketsphinx && ./autogen.sh && ./configure && make -j 4 && sudo make install
+  - cd .. && rm -rf pocketsphinx
 
 script:
   - make fmt-check
+  - make gen
   - make webview
