@@ -59,7 +59,7 @@ https://www.bilibili.com/video/av54654613
 
 # 安装和配置
 
-安装和配置请阅读文档: [https://blog.codist.me/homo/](https://blog.codist.me/homo/)
+安装和配置请阅读文档: [https://homo.codist.me/docs/install/](https://homo.codist.me/docs/install/)
 
 # 运行
 
@@ -108,7 +108,7 @@ cd sentiment
 ./homo-webview
 ```
 
-了解详细启动参数请阅读[文档](https://blog.codist.me/homo/run/)
+了解详细启动参数请阅读[文档](https://homo.codist.me/docs/run/)
 
 # 文件结构
 

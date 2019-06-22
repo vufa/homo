@@ -33,6 +33,17 @@ SOURCES ?= $(shell find . -name "*.go" -type f)
 .PHONY: all
 all: build
 
+.PHONY: deps
+deps:
+	echo "Installing sphinxbase..."; \
+	git clone https://github.com/cmusphinx/sphinxbase.git; \
+	cd sphinxbase && ./autogen.sh && ./configure && make -j 4 && sudo make install; \
+	cd .. && rm -rf sphinxbase; \
+	echo "Installing PocketSphinx..."; \
+	git clone https://github.com/cmusphinx/pocketsphinx.git; \
+	cd pocketsphinx && ./autogen.sh && ./configure && make -j 4 && sudo make install; \
+	cd .. && rm -rf pocketsphinx
+
 .PHONY: gen
 gen:
 	@hash go-bindata > /dev/null 2>&1; if [ $$? -ne 0 ]; then \
