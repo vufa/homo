@@ -41,6 +41,7 @@ deps:
 	cd .. && rm -rf sphinxbase; \
 	echo "Installing PocketSphinx..."; \
 	git clone https://github.com/cmusphinx/pocketsphinx.git; \
+	cp -r pocketsphinx/model/en-us sphinx/; \
 	cd pocketsphinx && ./autogen.sh && ./configure && make -j 4 && sudo make install; \
 	cd .. && rm -rf pocketsphinx
 

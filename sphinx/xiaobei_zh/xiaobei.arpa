@@ -1,0 +1,103 @@
+#############################################################################
+## Copyright (c) 1996, Carnegie Mellon University, Cambridge University,
+## Ronald Rosenfeld and Philip Clarkson
+## Version 3, Copyright (c) 2006, Carnegie Mellon University 
+## Contributors includes Wen Xu, Ananlada Chotimongkol, 
+## David Huggins-Daines, Arthur Chan and Alan Black 
+#############################################################################
+=============================================================================
+===============  This file was produced by the CMU-Cambridge  ===============
+===============     Statistical Language Modeling Toolkit     ===============
+=============================================================================
+This is a 3-gram language model, based on a vocabulary of 9 words,
+  which begins "</s>", "<s>", "么么哒"...
+This is a CLOSED-vocabulary model
+  (OOVs eliminated from training data and are forbidden in test data)
+Good-Turing discounting was applied.
+1-gram frequency of frequency : 6 
+2-gram frequency of frequency : 13 0 0 0 0 1 0 
+3-gram frequency of frequency : 19 0 0 0 0 0 0 
+1-gram discounting ratios : 0.86 
+2-gram discounting ratios : 
+3-gram discounting ratios : 
+This file is in the ARPA-standard format introduced by Doug Paul.
+
+p(wd3|wd1,wd2)= if(trigram exists)           p_3(wd1,wd2,wd3)
+                else if(bigram w1,w2 exists) bo_wt_2(w1,w2)*p(wd3|wd2)
+                else                         p(wd3|w2)
+
+p(wd2|wd1)= if(bigram exists) p_2(wd1,wd2)
+            else              bo_wt_1(wd1)*p_1(wd2)
+
+All probs and back-off weights (bo_wt) are given in log10 form.
+
+Data formats:
+
+Beginning of data mark: \data\
+ngram 1=nr            # number of 1-grams
+ngram 2=nr            # number of 2-grams
+ngram 3=nr            # number of 3-grams
+
+\1-grams:
+p_1     wd_1 bo_wt_1
+\2-grams:
+p_2     wd_1 wd_2 bo_wt_2
+\3-grams:
+p_3     wd_1 wd_2 wd_3 
+
+end of data mark: \end\
+
+\data\
+ngram 1=9
+ngram 2=14
+ngram 3=19
+
+\1-grams:
+-0.5006 </s>	-0.7035
+-0.4337 <s>	-1.0113
+-1.3457 么么哒	0.0000
+-1.3457 呵呵	-0.3123
+-1.3457 哈哈	-0.3123
+-1.3457 啊	-0.3123
+-1.3457 小贝	-0.3123
+-1.3457 小魏	-0.3123
+-1.3457 巧倍	-0.3123
+
+\2-grams:
+-0.0580 </s> <s> -0.1461
+-0.8751 <s> 么么哒 -0.1362
+-0.8751 <s> 呵呵 0.1761
+-0.8751 <s> 哈哈 0.1761
+-0.8751 <s> 啊 0.1761
+-0.8751 <s> 小贝 0.1761
+-0.8751 <s> 小魏 0.1761
+-0.8751 <s> 巧倍 0.1761
+-0.1761 呵呵 </s> 0.6021
+-0.1761 哈哈 </s> 0.6021
+-0.1761 啊 </s> 0.6021
+-0.1761 小贝 </s> 0.6021
+-0.1761 小魏 </s> 0.6021
+-0.1761 巧倍 </s> 0.6021
+
+\3-grams:
+-0.8451 </s> <s> 么么哒 
+-0.8451 </s> <s> 呵呵 
+-0.8451 </s> <s> 哈哈 
+-0.8451 </s> <s> 啊 
+-0.8451 </s> <s> 小魏 
+-0.8451 </s> <s> 巧倍 
+-0.3010 <s> 么么哒 </s> 
+-0.3010 <s> 呵呵 </s> 
+-0.3010 <s> 哈哈 </s> 
+-0.3010 <s> 啊 </s> 
+-0.3010 <s> 小贝 </s> 
+-0.3010 <s> 小魏 </s> 
+-0.3010 <s> 巧倍 </s> 
+-0.3010 呵呵 </s> <s> 
+-0.3010 哈哈 </s> <s> 
+-0.3010 啊 </s> <s> 
+-0.3010 小贝 </s> <s> 
+-0.3010 小魏 </s> <s> 
+-0.3010 巧倍 </s> <s> 
+
+\end\
