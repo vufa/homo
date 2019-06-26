@@ -25,6 +25,7 @@ import (
 var (
 	//App settings
 	AppPath string
+	LogPath string
 
 	// Mode
 	DebugMode      bool
@@ -137,13 +138,25 @@ func LoadConfig() {
 
 	Cfg.NameMapper = ini.AllCapsUnderscore
 
+	// Load log config
+	sec := Cfg.Section("log")
+	LogPath = sec.Key("ROOT_PATH").MustString(path.Join(workDir, "log"))
+
+	// Create log path
+	if !com.PathExists(LogPath) {
+		err := os.MkdirAll(LogPath, os.ModePerm)
+		if err != nil {
+			logrus.Fatalf("Create path %s failed: %s", LogPath, err.Error())
+		}
+	}
+
 	// Load PortAudio config
-	sec := Cfg.Section("portaudio")
+	sec = Cfg.Section("portaudio")
 	RawDir = sec.Key("RAW_DIR").MustString(path.Join(workDir, "tmp/record"))
 	InputRaw = sec.Key("INPUT_RAW").MustString(path.Join(workDir, "tmp/record/input.pcm"))
 	InputWav = sec.Key("INPUT_WAV").MustString(path.Join(workDir, "tmp/record/input.wav"))
 
-	// Create path
+	// Create ram dir path
 	if !com.PathExists(RawDir) {
 		err := os.MkdirAll(RawDir, os.ModePerm)
 		if err != nil {
@@ -157,7 +170,7 @@ func LoadConfig() {
 	DictFileEn = sec.Key("EN_DICT_FILE").MustString(path.Join(workDir, "sphinx/homo/homo.dic"))
 	LMFileEn = sec.Key("EN_LM_FILE").MustString(path.Join(workDir, "sphinx/homo/homo.lm.bin"))
 	RecordThreshold = sec.Key("RECORD_THRESHOLD").MustInt(50000)
-	SphinxLogFile = sec.Key("LOG_FILE").MustString(path.Join(workDir, "log/sphinx.log"))
+	SphinxLogFile = sec.Key("LOG_FILE").MustString(path.Join(LogPath, "sphinx.log"))
 
 	// Load Nlu config
 	sec = Cfg.Section("nlu")
@@ -199,6 +212,9 @@ func UpdateConfigFile() {
 			logrus.Fatalf("Fail to load conf '%s': %s", ConfFile, err.Error())
 		}
 	}
+
+	// Update log config
+	cfg.Section("log").Key("ROOT_PATH").SetValue(LogPath)
 
 	// Update PortAudio config
 	cfg.Section("portaudio").Key("RAW_DIR").SetValue(RawDir)

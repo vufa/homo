@@ -1,6 +1,6 @@
 #! /bin/bash
 
-rm -r models/rasa/ini && \
+rm -rf models/rasa/ini && \
 
 source env3.6/bin/activate &&
     python -m rasa_nlu.train \

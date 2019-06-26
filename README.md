@@ -31,7 +31,7 @@ https://www.bilibili.com/video/av54654613
   * 采用开源信息提取工具集[MITIE](https://github.com/mit-nlp/MITIE)构建用于Rasa NLU进行实体识别和意图识别的模型
   * 意图识别分类采用开源机器学习框架[scikit-learn](https://github.com/scikit-learn/scikit-learn)
   * 中文分词采用开源分词组件[jieba](https://github.com/fxsjy/jieba)
-* 情感分析
+* 文本情感分析
   * 基于支持向量机(SVM)算法进行情感极性分析
   * word2vec模型构建采用开源主题建模工具[Gensim](https://github.com/RaRe-Technologies/gensim)
   * (可选)基于逻辑回归(Logistic Regression)算法的情感极性分类器实现
@@ -114,7 +114,7 @@ cd sentiment
 
 自定义唤醒Homo时的唤醒词
 
-参考文档：[https://homo.codist.me/docs/wake-up/](https://homo.codist.me/docs/wake-up/)
+请阅读文档：[https://homo.codist.me/docs/wake-up/](https://homo.codist.me/docs/wake-up/)
 # 文件结构
 
 * `cmd`：用户交互部分，Golang实现
@@ -141,6 +141,9 @@ cd sentiment
     - [x] 自定义唤醒词
     - [ ] 扩展自然语言理解
     - [ ] 扩展行为
+
+- [ ] 完善单元测试
+    - [ ] 离线唤醒模块
 
 - [ ] Python部分用Go或Rust或C++重写
     - [ ] 替代用到的机器学习库
