@@ -59,6 +59,14 @@ clean:
 	rm -f $(EXECUTABLE_INTERACT)
 	rm -f $(EXECUTABLE_WEBVIEW)
 
+.PHONY: docker
+docker:
+	docker build -t homo:v0.0.1 - < Dockerfile
+
+.PHONY: dockercn
+dockercn:
+	docker-compose -f docker/homo-compose-zh.yml up -d --build
+
 .PHONY: fmt
 fmt:
 	$(GOFMT) -w $(GOFILES)

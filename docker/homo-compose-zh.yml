@@ -1,0 +1,6 @@
+version: '2'
+services:
+  homo:
+    build:
+      context: ./
+      dockerfile: Dockerfile.zh
