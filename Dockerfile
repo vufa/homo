@@ -1,12 +1,12 @@
 FROM debian:stretch
-MAINTAINER Codist <countstarlight@gmail.com>
-
-RUN \
-    apt-get update && \
-    apt-get install -y git gcc automake autoconf libtool && \
-    apt-get install -y bison swig python-dev libpulse-dev portaudio19-dev
 
 WORKDIR /home/homo
+
+# Install system dependence
+RUN \
+    apt-get update && \
+    apt-get install -y git gcc automake autoconf libtool build-essential && \
+    apt-get install -y bison swig python-dev libpulse-dev portaudio19-dev
 
 # Install sphinxbase
 RUN \
