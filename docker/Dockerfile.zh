@@ -16,14 +16,14 @@ RUN \
 # Install sphinxbase
 RUN \
     git clone https://github.com/cmusphinx/sphinxbase.git && \
-    cd sphinxbase && ./autogen.sh && ./configure && make -j 4 && sudo make install && \
+    cd sphinxbase && ./autogen.sh && ./configure && make -j 4 && make install && \
     cd .. && rm -rf sphinxbase
 
 # Install PocketSphinx
 RUN \
     git clone https://github.com/cmusphinx/pocketsphinx.git && \
     cp -r pocketsphinx/model/en-us sphinx/ && \
-    cd pocketsphinx && ./autogen.sh && ./configure && make -j 4 && sudo make install && \
+    cd pocketsphinx && ./autogen.sh && ./configure && make -j 4 && make install && \
     cd .. && rm -rf pocketsphinx
 
 # Replace 1000 with your user / group id

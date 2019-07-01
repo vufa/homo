@@ -10,6 +10,9 @@ Homo
   <a href="https://goreportcard.com/report/github.com/countstarlight/homo">
     <img src="https://goreportcard.com/badge/github.com/countstarlight/homo" alt="Go Report">
   </a>
+  <a href="https://github.com/countstarlight/homo/blob/master/LICENSE">
+    <img src="https://img.shields.io/badge/license-MIT-blue.svg?style=flat" alt="MIT License">
+  </a>
 </p>
 
 **演示视频(BiliBili)：**
