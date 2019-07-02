@@ -7,6 +7,9 @@ Homo
   <a href="https://travis-ci.org/countstarlight/homo">
     <img src="https://travis-ci.org/countstarlight/homo.svg?branch=master" alt="Build Status">
   </a>
+  <a href="https://hub.docker.com/r/countstarlight/homo">
+    <img src="https://img.shields.io/microbadger/layers/countstarlight/homo.svg" alt="MicroBadger Layers">
+  </a>
   <a href="https://goreportcard.com/report/github.com/countstarlight/homo">
     <img src="https://goreportcard.com/badge/github.com/countstarlight/homo" alt="Go Report">
   </a>
@@ -48,6 +51,8 @@ https://www.bilibili.com/video/av54654613
     - [1.运行自然语言理解引擎](#1运行自然语言理解引擎)
     - [2.运行文本情感分析引擎](#2运行文本情感分析引擎)
     - [3.运行主程序](#3运行主程序)
+- [使用指南](#使用指南)
+    - [1. 意图理解范围](#1-意图理解范围)
 - [自定义](#自定义)
     - [1. 自定义唤醒词](#1-自定义唤醒词)
 - [文件结构](#文件结构)
@@ -109,15 +114,19 @@ cd sentiment
 ./homo-webview
 ```
 
-了解详细启动参数请阅读[文档](https://homo.codist.me/docs/run/)
+了解详细启动参数，请阅读文档：[https://homo.codist.me/docs/run/](https://homo.codist.me/docs/run/)
+
+# 使用指南
+
+## 1. 意图理解范围
+
+了解Homo自带的意图理解的范围，请阅读文档：[https://homo.codist.me/docs/intent/](https://homo.codist.me/docs/intent/)
 
 # 自定义
 
 ## 1. 自定义唤醒词
 
-自定义唤醒Homo时的唤醒词
-
-请阅读文档：[https://homo.codist.me/docs/wake-up/](https://homo.codist.me/docs/wake-up/)
+自定义唤醒Homo时的唤醒词，请阅读文档：[https://homo.codist.me/docs/wake-up/](https://homo.codist.me/docs/wake-up/)
 # 文件结构
 
 * `cmd`：用户交互部分，Golang实现
@@ -134,6 +143,9 @@ cd sentiment
 * `sphinx`：离线唤醒模块，包括数据集及模块构建
 
 # 发展路线
+
+- [ ] 插件系统
+    - [ ] 扩展行为
 
 - [ ] 多平台支持
     - [ ] Windows
