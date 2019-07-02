@@ -36,11 +36,11 @@ all: build
 .PHONY: deps
 deps:
 	echo "Installing sphinxbase..."; \
-	git clone https://github.com/cmusphinx/sphinxbase.git; \
+	git clone https://github.com/countstarlight/sphinxbase.git; \
 	cd sphinxbase && ./autogen.sh && ./configure && make -j 4 && sudo make install; \
 	cd .. && rm -rf sphinxbase; \
 	echo "Installing PocketSphinx..."; \
-	git clone https://github.com/cmusphinx/pocketsphinx.git; \
+	git clone https://github.com/countstarlight/pocketsphinx.git; \
 	cp -r pocketsphinx/model/en-us sphinx/; \
 	cd pocketsphinx && ./autogen.sh && ./configure && make -j 4 && sudo make install; \
 	cd .. && rm -rf pocketsphinx
@@ -61,7 +61,7 @@ clean:
 
 .PHONY: docker
 docker:
-	docker build -t homo:v0.0.1 - < Dockerfile
+	docker build -t homo:v0.0.1 .
 
 .PHONY: dockercn
 dockercn:

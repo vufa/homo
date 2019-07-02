@@ -2,10 +2,14 @@ FROM debian:stretch
 
 WORKDIR /home/homo
 
+COPY . /home/homo/homo/
+
 # Use Chinese mirror
 RUN mv /etc/apt/sources.list /etc/apt/sources.list.bak
 
-COPY sources.zh.list /etc/apt/sources.list
+COPY docker/sources.zh.list /etc/apt/sources.list
+
+RUN ls /home/homo/homo/
 
 # Golang env
 ENV GOLANG_VERSION 1.12.6
@@ -23,13 +27,13 @@ RUN \
 
 # Install sphinxbase
 RUN \
-    git clone https://github.com/cmusphinx/sphinxbase.git && \
+    git clone https://github.com/countstarlight/sphinxbase.git && \
     cd sphinxbase && ./autogen.sh && ./configure && make -j 4 && make install && \
     cd .. && rm -rf sphinxbase
 
 # Install PocketSphinx
 RUN \
-    git clone https://github.com/cmusphinx/pocketsphinx.git && \
+    git clone https://github.com/countstarlight/pocketsphinx.git && \
     cp -r pocketsphinx/model/en-us sphinx/ && \
     cd pocketsphinx && ./autogen.sh && ./configure && make -j 4 && make install && \
     cd .. && rm -rf pocketsphinx
@@ -45,6 +49,12 @@ RUN mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 777 "$GOPATH"
 RUN go env
 
 RUN go version
+
+# Build homo webview
+RUN \
+    cd homo && \
+    make gen && \
+    make webview
 
 # Replace 1000 with your user / group id
 #RUN export uid=1000 gid=1000 && \
