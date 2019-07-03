@@ -49,8 +49,7 @@ https://www.bilibili.com/video/av54654613
 - [安装和配置](#安装和配置)
 - [运行](#运行)
     - [1.运行自然语言理解引擎](#1运行自然语言理解引擎)
-    - [2.运行文本情感分析引擎](#2运行文本情感分析引擎)
-    - [3.运行主程序](#3运行主程序)
+    - [2.运行主程序](#2运行主程序)
 - [使用指南](#使用指南)
     - [1. 意图理解范围](#1-意图理解范围)
 - [自定义](#自定义)
@@ -89,26 +88,9 @@ cd nlu
 ./nlu_server.sh
 ```
 
-## 2.运行文本情感分析引擎
-
-进入`sentiment`文件夹，`source`对应的python虚拟环境并启动http服务器：
-
-```bash
-cd sentiment
-source env3.6/bin/activate
-python server.py
-```
-
-或直接运行脚本：
-
-```bash
-cd sentiment
-./server.sh 
-```
-
 **注意：加载word2vec模型需要花费5~7分钟时间**
 
-## 3.运行主程序
+## 2.运行主程序
 
 ```bash
 ./homo-webview

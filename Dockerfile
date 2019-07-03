@@ -2,7 +2,7 @@ FROM debian:stretch
 
 WORKDIR /home/homo
 
-COPY . /home/homo/homo/
+COPY . /home/homo/
 
 # Golang env
 ENV GOLANG_VERSION 1.12.6
@@ -15,21 +15,11 @@ ENV PATH $GOPATH/bin:/usr/local/go/bin:$PATH
 # Install system dependence
 RUN \
     apt-get update && \
-    apt-get install -y --no-install-recommends git gcc automake autoconf libtool build-essential && \
+    apt-get install -y --no-install-recommends ca-certificates git gcc automake autoconf libtool build-essential && \
     apt-get install -y --no-install-recommends bison swig python-dev libpulse-dev portaudio19-dev
 
-# Install sphinxbase
-RUN \
-    git clone https://github.com/countstarlight/sphinxbase.git && \
-    cd sphinxbase && ./autogen.sh && ./configure && make -j 4 && make install && \
-    cd .. && rm -rf sphinxbase
-
 # Install PocketSphinx
-RUN \
-    git clone https://github.com/countstarlight/pocketsphinx.git && \
-    cp -r pocketsphinx/model/en-us sphinx/ && \
-    cd pocketsphinx && ./autogen.sh && ./configure && make -j 4 && make install && \
-    cd .. && rm -rf pocketsphinx
+RUN make deps
 
 # Install Golang
 RUN wget $GOLANG_DOWNLOAD_URL && \
