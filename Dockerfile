@@ -32,11 +32,8 @@ RUN mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 777 "$GOPATH"
 
 RUN go env
 
-RUN go version
-
 # Build homo webview
 RUN \
-    cd homo && \
     make gen && \
     make webview
 

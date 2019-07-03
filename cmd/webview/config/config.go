@@ -131,9 +131,13 @@ func LoadConfig() {
 	}
 	ConfFile = path.Join(workDir, "conf/app.ini")
 
+	if !com.IsFile(ConfFile) {
+		logrus.Fatalf("没有找到配置文件 %s , 如果是第一次运行，请拷贝一份 conf/example_app.ini 到 conf/app.ini", ConfFile)
+	}
+
 	Cfg, err = ini.Load(ConfFile)
 	if err != nil {
-		logrus.Fatalf("Fail to parse %s: %s", ConfFile, err.Error())
+		logrus.Fatalf("解析配置文件 %s 出错: %s", ConfFile, err.Error())
 	}
 
 	Cfg.NameMapper = ini.AllCapsUnderscore
@@ -167,12 +171,17 @@ func LoadConfig() {
 	// Load sphinx config
 	sec = Cfg.Section("sphinx")
 	HMMDirEn = sec.Key("EN_HMM_DIR").MustString(path.Join(workDir, "sphinx/en-us/en-us"))
+
+	if !com.PathExists(HMMDirEn) {
+		logrus.Fatalf("没有找到离线唤醒的英文语音模型 %s ，请按照 https://homo.codist.me/docs/dataset/ 下载并放置对应的数据，或在配置文件中指定自定义的目录", HMMDirEn)
+	}
+
 	DictFileEn = sec.Key("EN_DICT_FILE").MustString(path.Join(workDir, "sphinx/homo/homo.dic"))
 	LMFileEn = sec.Key("EN_LM_FILE").MustString(path.Join(workDir, "sphinx/homo/homo.lm.bin"))
 	RecordThreshold = sec.Key("RECORD_THRESHOLD").MustInt(50000)
 	SphinxLogFile = sec.Key("LOG_FILE").MustString(path.Join(LogPath, "sphinx.log"))
 
-	// Load Nlu config
+	// Load NLU config
 	sec = Cfg.Section("nlu")
 	ConversationAPI = sec.Key("CONVERSATION_API").MustString("http://localhost:5005/conversations/default/respond")
 	ParseAPI = sec.Key("PARSE_API").MustString("http://localhost:5000/parse")
