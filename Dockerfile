@@ -15,7 +15,8 @@ ENV PATH $GOPATH/bin:/usr/local/go/bin:$PATH
 # Install system dependence
 RUN \
     apt-get update && \
-    apt-get install -y --no-install-recommends ca-certificates git gcc automake autoconf libtool build-essential && \
+    apt-get install -y --no-install-recommends ca-certificates git wget tar && \
+    apt-get install -y --no-install-recommends gcc automake autoconf libtool build-essential && \
     apt-get install -y --no-install-recommends bison swig python-dev libpulse-dev portaudio19-dev
 
 # Install PocketSphinx
