@@ -1,6 +1,6 @@
 FROM debian:stretch
 
-WORKDIR /home/homo/homo
+WORKDIR /home/homo
 
 COPY . /home/homo/homo/
 
@@ -23,7 +23,9 @@ RUN \
 RUN useradd -m homo && echo "homo:homo" | chpasswd && adduser homo sudo
 
 # Install PocketSphinx
-RUN make deps
+RUN \
+    cd homo && \
+    make deps
 
 # Install Golang
 RUN wget $GOLANG_DOWNLOAD_URL && \
@@ -37,8 +39,28 @@ RUN go env
 
 # Build homo webview
 RUN \
+    cd homo && \
     make gen && \
     make webview
+
+# Install python
+RUN \
+    wget https://www.python.org/ftp/python/3.6.8/Python-3.6.8.tgz && \
+    tar xvf Python-3.6.8.tgz && \
+    cd Python-3.6.3 && \
+    ./configure --enable-optimizations && \
+    make -j 8 && \
+    sudo make altinstall
+
+RUN python3.6 -V
+
+# Install python dependencies
+RUN \
+    pip install virtualenv && \
+    cd homo && \
+    virtualenv --python=python3.6 env3.6 && \
+    source env3.6/bin/activate && \
+    pip install -r requirements.txt
 
 # Replace 1000 with your user / group id
 #RUN export uid=1000 gid=1000 && \
@@ -51,3 +73,7 @@ RUN \
 
 USER homo
 ENV HOME /home/homo
+
+VOLUME ["/home/homo/homo/conf", "/home/homo/homo/sphinx/en-us", "/home/homo/homo/sphinx/cmusphinx-zh-cn-5.2", "/home/homo/homo/nlu/models"]
+
+CMD ["/home/homo/homo/nlu/nlu_server.sh", "/home/homo/homo/homo-webview"]
