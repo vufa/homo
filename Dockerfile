@@ -47,7 +47,7 @@ RUN \
 RUN \
     wget https://www.python.org/ftp/python/3.6.8/Python-3.6.8.tgz && \
     tar xvf Python-3.6.8.tgz && \
-    cd Python-3.6.3 && \
+    cd Python-3.6.8 && \
     ./configure --enable-optimizations && \
     make -j 8 && \
     sudo make altinstall
@@ -57,7 +57,7 @@ RUN python3.6 -V
 # Install python dependencies
 RUN \
     pip install virtualenv && \
-    cd homo && \
+    cd homo/nlu && \
     virtualenv --python=python3.6 env3.6 && \
     source env3.6/bin/activate && \
     pip install -r requirements.txt
