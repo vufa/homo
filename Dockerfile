@@ -43,7 +43,7 @@ RUN \
     make gen && \
     make webview
 
-# Install python
+# Install python 3.6.8
 RUN \
     wget https://www.python.org/ftp/python/3.6.8/Python-3.6.8.tgz && \
     tar xvf Python-3.6.8.tgz && \
@@ -53,8 +53,11 @@ RUN \
                 --with-ssl && \
     make -j 8 && \
     sudo make altinstall && \
-    rm -rf Python-3.6.8 Python-3.6.8.tgz && \
-    curl https://bootstrap.pypa.io/get-pip.py | sudo -H python3.6
+    cd .. && \
+    rm -rf Python-3.6.8 Python-3.6.8.tgz
+
+# Install pip for python 3.6
+RUN curl https://bootstrap.pypa.io/get-pip.py | sudo -H python3.6
 
 RUN python3.6 -V
 
