@@ -62,7 +62,7 @@ RUN \
     source env3.6/bin/activate && \
     pip install -r requirements.txt
 
-# Replace 1000 with your user / group id
+# X11
 #RUN export uid=1000 gid=1000 && \
 #    mkdir -p /home/homo && \
 #    echo "homo:x:${uid}:${gid}:homo,,,:/home/homo:/bin/bash" >> /etc/passwd && \
@@ -76,4 +76,4 @@ ENV HOME /home/homo
 
 VOLUME ["/home/homo/homo/conf", "/home/homo/homo/sphinx/en-us", "/home/homo/homo/sphinx/cmusphinx-zh-cn-5.2", "/home/homo/homo/nlu/models"]
 
-CMD ["/home/homo/homo/nlu/nlu_server.sh", "/home/homo/homo/homo-webview"]
+CMD ["/home/homo/homo/nlu.sh", "/home/homo/homo/homo-webview"]
