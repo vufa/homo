@@ -20,7 +20,7 @@ ENV PATH $GOPATH/bin:/usr/local/go/bin:$PATH
 # Install system dependence
 RUN \
     apt-get update && \
-    apt-get install -y --no-install-recommends ca-certificates git wget tar sudo && \
+    apt-get install -y --no-install-recommends ca-certificates curl git wget tar sudo && \
     apt-get install -y --no-install-recommends gcc automake autoconf libtool build-essential && \
     apt-get install -y --no-install-recommends bison swig python-dev libpulse-dev portaudio19-dev libwebkit2gtk-4.0-dev
 
@@ -53,9 +53,11 @@ RUN \
     wget https://www.python.org/ftp/python/3.6.8/Python-3.6.8.tgz && \
     tar xvf Python-3.6.8.tgz && \
     cd Python-3.6.8 && \
-    ./configure --enable-optimizations --with-ensurepip=install && \
+    ./configure --enable-optimizations --without-ensurepip && \
     make -j 8 && \
-    sudo make altinstall
+    sudo make altinstall && \
+    rm -rf Python-3.6.8 Python-3.6.8.tgz && \
+    curl https://bootstrap.pypa.io/get-pip.py | sudo -H python3.6
 
 RUN python3.6 -V
 

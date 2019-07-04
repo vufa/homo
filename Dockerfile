@@ -15,7 +15,7 @@ ENV PATH $GOPATH/bin:/usr/local/go/bin:$PATH
 # Install system dependence
 RUN \
     apt-get update && \
-    apt-get install -y --no-install-recommends ca-certificates git wget tar sudo && \
+    apt-get install -y --no-install-recommends ca-certificates curl git wget tar sudo && \
     apt-get install -y --no-install-recommends gcc automake autoconf libtool build-essential && \
     apt-get install -y --no-install-recommends bison swig python-dev libpulse-dev portaudio19-dev libwebkit2gtk-4.0-dev
 
