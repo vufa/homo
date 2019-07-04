@@ -48,9 +48,11 @@ RUN \
     wget https://www.python.org/ftp/python/3.6.8/Python-3.6.8.tgz && \
     tar xvf Python-3.6.8.tgz && \
     cd Python-3.6.8 && \
-    ./configure --enable-optimizations --with-ensurepip=install && \
+    ./configure --enable-optimizations --without-ensurepip && \
     make -j 8 && \
-    sudo make altinstall
+    sudo make altinstall && \
+    rm -rf Python-3.6.8 Python-3.6.8.tgz && \
+    curl https://bootstrap.pypa.io/get-pip.py | sudo -H python3.6
 
 RUN python3.6 -V
 
