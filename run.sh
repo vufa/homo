@@ -5,7 +5,7 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 HelpApp()
 {
 	echo " 附加命令:"
-    echo " -p/--pull      从阿里云获取镜像(默认从docker hub获取)"
+	echo " -p/--pull      从阿里云获取镜像(默认从docker hub获取)"
 	echo " -a/--aliyun    运行阿里云Docker镜像(默认运行docker hub镜像)"
 	echo " -h/--help      显示此帮助信息"
 }
