@@ -21,7 +21,7 @@ ENV GOPATH /home/homo/go
 ENV PATH $GOPATH/bin:/usr/local/go/bin:$PATH
 
 # supervisor config
-RUN mkdir -p /var/log/supervisor
+RUN mkdir -p "/var/log/supervisor" && chmod -R 777 "/var/log/supervisor"
 
 COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
