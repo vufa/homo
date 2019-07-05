@@ -26,6 +26,7 @@ RunDocker()
     echo -e "\033[33m提示: 没有在本地找到镜像 countstarlight/homo:latest 开始从docker hub 获取(使用 '-a' 从阿里云拉取并运行镜像)\033[0m"
     PullDocker
     fi
+    xhost +SI:localuser:$(id -un)
     docker run --name=homo \
            -v "$DIR"/conf:/home/homo/homo/conf \
            -v "$DIR"/sphinx/en-us:/home/homo/homo/sphinx/en-us \
@@ -33,6 +34,7 @@ RunDocker()
            -v "$DIR"/nlu/models:/home/homo/homo/nlu/models \
            -v /tmp/.X11-unix:/tmp/.X11-unix \
            --device /dev/snd \
+           --device /dev/dri \
            -e DISPLAY=unix"$DISPLAY" \
            countstarlight/homo:latest
 }
@@ -43,6 +45,7 @@ RunDockerAli()
     echo -e "\033[33m提示: 没有在本地找到镜像 registry.cn-hangzhou.aliyuncs.com/codist/homo:latest 开始从阿里云获取\033[0m"
     PullDockerAli
     fi
+    xhost +SI:localuser:$(id -un)
     docker run --name=homo \
            -v "$DIR"/conf:/home/homo/homo/conf \
            -v "$DIR"/sphinx/en-us:/home/homo/homo/sphinx/en-us \
@@ -50,6 +53,7 @@ RunDockerAli()
            -v "$DIR"/nlu/models:/home/homo/homo/nlu/models \
            -v /tmp/.X11-unix:/tmp/.X11-unix \
            --device /dev/snd \
+           --device /dev/dri \
            -e DISPLAY=unix"$DISPLAY" \
            registry.cn-hangzhou.aliyuncs.com/codist/homo:latest
 }

@@ -25,9 +25,10 @@ COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 # Install system dependence
 RUN \
     apt-get update && \
-    apt-get install -y --no-install-recommends ca-certificates curl openssl libssl-dev git wget tar bzip2 libbz2-dev sudo && \
-    apt-get install -y --no-install-recommends gcc automake autoconf libtool build-essential && \
-    apt-get install -y --no-install-recommends bison swig python-dev libpulse-dev portaudio19-dev libwebkit2gtk-4.0-dev supervisor
+    apt-get install -y --no-install-recommends ca-certificates curl openssl libssl-dev git wget libbz2-dev sudo \
+                 tar bzip2 gcc automake autoconf libtool build-essential \
+                 bison swig python-dev libpulse-dev portaudio19-dev libwebkit2gtk-4.0-dev supervisor && \
+    rm -rf /var/lib/apt/lists/*
 
 # Add user homo to sudo
 RUN useradd -m homo && echo "homo:homo" | chpasswd && adduser homo sudo
@@ -35,7 +36,8 @@ RUN useradd -m homo && echo "homo:homo" | chpasswd && adduser homo sudo
 # Install PocketSphinx
 RUN \
     cd homo && \
-    make deps
+    make deps && \
+    sudo ldconfig
 
 # Install Golang
 RUN wget $GOLANG_DOWNLOAD_URL && \
