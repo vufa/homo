@@ -20,12 +20,17 @@ ENV GOLANG_DOWNLOAD_SHA256 dbcf71a3c1ea53b8d54ef1b48c85a39a6c9a935d01fc8291ff2b9
 ENV GOPATH /home/homo/go
 ENV PATH $GOPATH/bin:/usr/local/go/bin:$PATH
 
+# supervisor config
+RUN mkdir -p /var/log/supervisor
+
+COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
 # Install system dependence
 RUN \
     apt-get update && \
     apt-get install -y --no-install-recommends ca-certificates curl openssl libssl-dev git wget tar bzip2 libbz2-dev sudo && \
     apt-get install -y --no-install-recommends gcc automake autoconf libtool build-essential && \
-    apt-get install -y --no-install-recommends bison swig python-dev libpulse-dev portaudio19-dev libwebkit2gtk-4.0-dev
+    apt-get install -y --no-install-recommends bison swig python-dev libpulse-dev portaudio19-dev libwebkit2gtk-4.0-dev supervisor
 
 # Add user homo to sudo
 RUN useradd -m homo && echo "homo:homo" | chpasswd && adduser homo sudo
@@ -91,4 +96,4 @@ ENV HOME /home/homo
 
 VOLUME ["/home/homo/homo/conf", "/home/homo/homo/sphinx/en-us", "/home/homo/homo/sphinx/cmusphinx-zh-cn-5.2", "/home/homo/homo/nlu/models"]
 
-CMD ["/home/homo/homo/nlu.sh", "/home/homo/homo/homo-webview"]
+CMD ["/usr/bin/supervisord"]
