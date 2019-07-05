@@ -4,6 +4,9 @@ WORKDIR /home/homo
 
 COPY . /home/homo/homo/
 
+# Use bash as the default shell
+SHELL ["/bin/bash", "-c"]
+
 # Golang env
 ENV GOLANG_VERSION 1.12.6
 ENV GOLANG_TAR_BALL go$GOLANG_VERSION.linux-amd64.tar.gz
@@ -56,10 +59,10 @@ RUN \
     cd .. && \
     rm -rf Python-3.6.8 Python-3.6.8.tgz
 
+RUN python3.6 -V
+
 # Install pip for python 3.6
 RUN curl https://bootstrap.pypa.io/get-pip.py | sudo -H python3.6
-
-RUN python3.6 -V
 
 # Install python dependencies
 RUN \

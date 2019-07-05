@@ -8,7 +8,10 @@ Homo
     <img src="https://travis-ci.org/countstarlight/homo.svg?branch=master" alt="Build Status">
   </a>
   <a href="https://hub.docker.com/r/countstarlight/homo">
-    <img src="https://img.shields.io/microbadger/layers/countstarlight/homo.svg" alt="MicroBadger Layers">
+    <img src="https://img.shields.io/microbadger/layers/countstarlight/homo.svg" alt="Docker Layers">
+  </a>
+  <a href="https://hub.docker.com/r/countstarlight/homo">
+    <img src="https://img.shields.io/microbadger/image-size/countstarlight/homo.svg" alt="Docker Image Size">
   </a>
   <a href="https://goreportcard.com/report/github.com/countstarlight/homo">
     <img src="https://goreportcard.com/badge/github.com/countstarlight/homo" alt="Go Report">
