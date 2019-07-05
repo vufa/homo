@@ -3,8 +3,6 @@
 if [ "${USER}" != "homo" ]; then
     # rename user
     sed -i -e "s/^homo\:/${USER}\:/g" /etc/passwd
-    # switch sshd config to different user
-    sed -i -e "s/AllowUsers homo$/AllowUsers ${USER}/g" /etc/ssh/sshd_config
 fi
 
 if [ -z "${USER_GID}" ]; then
