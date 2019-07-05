@@ -16,7 +16,7 @@ ENV GOPATH /home/homo/go
 ENV PATH $GOPATH/bin:/usr/local/go/bin:$PATH
 
 # supervisor config
-RUN mkdir -p "/var/log/supervisor" && chmod -R 777 "/var/log/supervisor"
+RUN mkdir -p "/var/log/supervisor" && chmod -R 777 "/var/log/supervisor" && chmod 777 "/run"
 
 COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
@@ -28,7 +28,11 @@ RUN \
     apt-get install -y --no-install-recommends bison swig python-dev libpulse-dev portaudio19-dev libwebkit2gtk-4.0-dev supervisor
 
 # Add user homo to sudo
-RUN useradd -m homo && echo "homo:homo" | chpasswd && adduser homo sudo
+RUN useradd -m homo && echo "homo:homo" | chpasswd && adduser homo sudo && chown homo:homo -R "/home/homo"
+
+USER homo
+
+ENV HOME /home/homo
 
 # Install PocketSphinx
 RUN \
@@ -76,18 +80,6 @@ RUN \
     virtualenv --python=python3.6 env3.6 && \
     source env3.6/bin/activate && \
     pip install -r requirements.txt
-
-# X11
-#RUN export uid=1000 gid=1000 && \
-#    mkdir -p /home/homo && \
-#    echo "homo:x:${uid}:${gid}:homo,,,:/home/homo:/bin/bash" >> /etc/passwd && \
-#    echo "homo:x:${uid}:" >> /etc/group && \
-#    echo "homo ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/homo && \
-#    chmod 0440 /etc/sudoers.d/homo && \
-#    chown ${uid}:${gid} -R /home/homo
-
-USER homo
-ENV HOME /home/homo
 
 VOLUME ["/home/homo/homo/conf", "/home/homo/homo/sphinx/en-us", "/home/homo/homo/sphinx/cmusphinx-zh-cn-5.2", "/home/homo/homo/nlu/models"]
 
