@@ -4,6 +4,8 @@ WORKDIR /home/homo
 
 COPY . /home/homo/homo/
 
+COPY docker/entrypoint /usr/bin/entrypoint
+
 # Use bash as the default shell
 SHELL ["/bin/bash", "-c"]
 
@@ -84,5 +86,7 @@ USER homo
 ENV HOME /home/homo
 
 VOLUME ["/home/homo/homo/conf", "/home/homo/homo/sphinx/en-us", "/home/homo/homo/sphinx/cmusphinx-zh-cn-5.2", "/home/homo/homo/nlu/models"]
+
+ENTRYPOINT ["/usr/bin/entrypoint"]
 
 CMD ["/usr/bin/supervisord"]
