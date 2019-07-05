@@ -8,5 +8,6 @@ docker run -d --name=homo \
            -v "$DIR"/sphinx/cmusphinx-zh-cn-5.2:/home/homo/homo/sphinx/cmusphinx-zh-cn-5.2 \
            -v "$DIR"/nlu/models:/home/homo/homo/nlu/models \
            -v /tmp/.X11-unix:/tmp/.X11-unix \
+           --device /dev/snd \
            -e DISPLAY=unix"$DISPLAY" \
            countstarlight/homo:latest
