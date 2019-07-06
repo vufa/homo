@@ -98,7 +98,7 @@ USER homo
 
 ENV HOME /home/homo
 
-VOLUME ["/home/homo/homo/conf", "/home/homo/homo/sphinx/en-us", "/home/homo/homo/sphinx/cmusphinx-zh-cn-5.2", "/home/homo/homo/nlu/models"]
+VOLUME ["/home/homo/homo/conf", "/home/homo/homo/sphinx/en-us", "/home/homo/homo/sphinx/cmusphinx-zh-cn-5.2", "/home/homo/homo/nlu/data/rasa", "/home/homo/homo/nlu/models"]
 
 ENTRYPOINT ["/usr/bin/entrypoint"]
 

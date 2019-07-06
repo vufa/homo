@@ -49,10 +49,7 @@ https://www.bilibili.com/video/av54654613
 
 <!-- TOC -->
 
-- [安装和配置](#安装和配置)
-- [运行](#运行)
-    - [1.运行自然语言理解引擎](#1运行自然语言理解引擎)
-    - [2.运行主程序](#2运行主程序)
+- [快速开始(Linux)](#快速开始linux)
 - [使用指南](#使用指南)
     - [1. 意图理解范围](#1-意图理解范围)
 - [自定义](#自定义)
@@ -66,41 +63,31 @@ https://www.bilibili.com/video/av54654613
 
 <!-- /TOC -->
 
-# 安装和配置
+# 快速开始(Linux)
 
-安装和配置请阅读文档: [https://homo.codist.me/docs/install/](https://homo.codist.me/docs/install/)
-
-# 运行
-
-## 1.运行自然语言理解引擎
-
-进入`nlu`的文件夹，`source`对应的python虚拟环境并启动http服务器：
+获取Homo源码：
 
 ```bash
-cd nlu
-source env3.6/bin/activate
-
-python -m rasa_nlu.server \
-       -c configs/rasa/config_jieba_mitie_sklearn.yml \
-       --path models
+git clone https://github.com/countstarlight/homo.git
 ```
 
-或者直接运行脚本`nlu_server.sh`：
+参照文档获取运行所需数据：[https://homo.codist.me/docs/dataset/](https://homo.codist.me/docs/dataset/)
+
+确保已经安装Docker，运行(如果当前用户不在 `docker` 组里，运行 `run.sh` 需要 `root` 权限)：
 
 ```bash
-cd nlu
-./nlu_server.sh
+cd homo
+cp conf/example_app.ini conf/app.ini
+./run.sh
 ```
 
-**注意：加载word2vec模型需要花费5~7分钟时间**
-
-## 2.运行主程序
+这会默认从docker hub下载并启动镜像，也可以使用阿里云构建的镜像：
 
 ```bash
-./homo-webview
+./run.sh -a
 ```
 
-了解详细启动参数，请阅读文档：[https://homo.codist.me/docs/run/](https://homo.codist.me/docs/run/)
+手动在平台上安装和配置Homo请阅读文档: [https://homo.codist.me/docs/install/](https://homo.codist.me/docs/install/)
 
 # 使用指南
 

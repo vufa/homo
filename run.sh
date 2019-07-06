@@ -27,11 +27,12 @@ RunDocker()
     PullDocker
     fi
     xhost +SI:localuser:$(id -un)
-    docker run --name=homo \
+    docker run --name=homo --rm \
            -v "$DIR"/conf:/home/homo/homo/conf \
            -v "$DIR"/sphinx/en-us:/home/homo/homo/sphinx/en-us \
            -v "$DIR"/sphinx/cmusphinx-zh-cn-5.2:/home/homo/homo/sphinx/cmusphinx-zh-cn-5.2 \
            -v "$DIR"/nlu/models:/home/homo/homo/nlu/models \
+           -v "$DIR"/nlu/data/rasa:/home/homo/homo/nlu/data/rasa \
            -v /tmp/.X11-unix:/tmp/.X11-unix \
            --device /dev/snd \
            --device /dev/dri \
@@ -47,11 +48,12 @@ RunDockerAli()
     PullDockerAli
     fi
     xhost +SI:localuser:$(id -un)
-    docker run --name=homo \
+    docker run --name=homo --rm \
            -v "$DIR"/conf:/home/homo/homo/conf \
            -v "$DIR"/sphinx/en-us:/home/homo/homo/sphinx/en-us \
            -v "$DIR"/sphinx/cmusphinx-zh-cn-5.2:/home/homo/homo/sphinx/cmusphinx-zh-cn-5.2 \
            -v "$DIR"/nlu/models:/home/homo/homo/nlu/models \
+           -v "$DIR"/nlu/data/rasa:/home/homo/homo/nlu/data/rasa \
            -v /tmp/.X11-unix:/tmp/.X11-unix \
            --device /dev/snd \
            --device /dev/dri \
