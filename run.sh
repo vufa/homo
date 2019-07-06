@@ -35,6 +35,7 @@ RunDocker()
            -v /tmp/.X11-unix:/tmp/.X11-unix \
            --device /dev/snd \
            --device /dev/dri \
+           --group-add $(getent group audio | cut -d: -f3) \
            -e DISPLAY=unix"$DISPLAY" \
            countstarlight/homo:latest
 }
@@ -54,6 +55,7 @@ RunDockerAli()
            -v /tmp/.X11-unix:/tmp/.X11-unix \
            --device /dev/snd \
            --device /dev/dri \
+           --group-add $(getent group audio | cut -d: -f3) \
            -e DISPLAY=unix"$DISPLAY" \
            registry.cn-hangzhou.aliyuncs.com/codist/homo:latest
 }
