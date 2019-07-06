@@ -32,7 +32,7 @@ RUN \
     apt-get update && \
     apt-get install -y --no-install-recommends ca-certificates curl openssl libssl-dev git wget libbz2-dev sudo \
                  tar bzip2 gcc automake autoconf libtool build-essential \
-                 bison swig python-dev libpulse-dev portaudio19-dev libwebkit2gtk-4.0-dev supervisor && \
+                 bison swig python-dev libpulse-dev portaudio19-dev libwebkit2gtk-4.0-dev supervisor libgl1-mesa-dri && \
     rm -rf /var/lib/apt/lists/*
 
 # Add user homo to sudo
