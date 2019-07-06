@@ -32,8 +32,14 @@ RUN \
     apt-get update && \
     apt-get install -y --no-install-recommends ca-certificates curl openssl libssl-dev git wget libbz2-dev sudo \
                  tar bzip2 gcc automake autoconf libtool build-essential \
-                 bison swig python-dev libpulse-dev portaudio19-dev libwebkit2gtk-4.0-dev supervisor libgl1-mesa-dri && \
+                 bison swig python-dev libpulse-dev portaudio19-dev libwebkit2gtk-4.0-dev supervisor libgl1-mesa-dri locales ttf-wqy-microhei && \
     rm -rf /var/lib/apt/lists/*
+
+# Add Chinese support
+RUN sed -ie 's/# zh_CN.UTF-8 UTF-8/zh_CN.UTF-8 UTF-8/g' /etc/locale.gen
+RUN locale-gen
+
+ENV LANG zh_CN.UTF-8
 
 # Add user homo to sudo
 RUN useradd -m homo && echo "homo:homo" | chpasswd && adduser homo sudo
