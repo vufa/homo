@@ -13,6 +13,9 @@ Homo
   <a href="https://hub.docker.com/r/countstarlight/homo">
     <img src="https://img.shields.io/microbadger/image-size/countstarlight/homo.svg" alt="Docker Image Size">
   </a>
+  <a href="https://hub.docker.com/r/countstarlight/homo">
+    <img src="https://img.shields.io/docker/pulls/countstarlight/homo.svg" alt="Docker Pulls">
+  </a>
   <a href="https://goreportcard.com/report/github.com/countstarlight/homo">
     <img src="https://goreportcard.com/badge/github.com/countstarlight/homo" alt="Go Report">
   </a>
@@ -71,7 +74,7 @@ https://www.bilibili.com/video/av54654613
 git clone https://github.com/countstarlight/homo.git
 ```
 
-参照文档获取运行所需数据：[https://homo.codist.me/docs/dataset/](https://homo.codist.me/docs/dataset/)
+参照文档获取Homo运行所需数据：[https://homo.codist.me/docs/dataset/](https://homo.codist.me/docs/dataset/)
 
 确保已经安装Docker，运行(如果当前用户不在 `docker` 组里，运行 `run.sh` 需要 `root` 权限)：
 
@@ -98,38 +101,29 @@ $ ./run.sh -h
  -h/--help      显示此帮助信息
 ```
 
-手动在平台上安装和配置Homo请阅读文档: [https://homo.codist.me/docs/install/](https://homo.codist.me/docs/install/)
+# Homo文档
 
-# 使用指南
+[https://homo.codist.me/docs/](https://homo.codist.me/docs/)
 
-## 1. 意图理解范围
+## 第一步
 
-了解Homo自带的意图理解的范围，请阅读文档：[https://homo.codist.me/docs/intent/](https://homo.codist.me/docs/intent/)
+* [安装](https://homo.codist.me/docs/install/) - 安装Homo到你的平台
 
-# 自定义
+* [获取数据](https://homo.codist.me/docs/dataset/) - 获取Homo运行所需的数据
 
-## 1. 自定义唤醒词
+* [配置](https://homo.codist.me/docs/config/) - 详细了解Homo的配置项
 
-自定义唤醒Homo时的唤醒词，请阅读文档：[https://homo.codist.me/docs/wake-up/](https://homo.codist.me/docs/wake-up/)
+* [运行](https://homo.codist.me/docs/run/) - 使用不同模式启动Homo
 
-## 2. 扩展自然语言理解
+## 使用指南
 
-扩展Homo能理解的自然语言的范围，请阅读文档：[https://homo.codist.me/docs/nlu/](https://homo.codist.me/docs/nlu/)
+* [意图理解范围](https://homo.codist.me/docs/intent/) - Homo自带的意图理解的范围
 
-# 文件结构
+## 进阶
 
-* `cmd`：用户交互部分，Golang实现
-  * `interact`：控制台UI实现(已停止维护)
-  * `webview`：webview UI实现
-* `module`：主体架构各模块，Golang实现
-  * `audio`：底层音频硬件交互
-  * `baidu`：baidu在线语音识别&合成API交互
-  * `nlu`：自然语言理解引擎交互
-  * `sphinx`：语音识别引擎`sphinx`交互
-  * `com`：通用模块
-* `sentiment`：文本情感分析引擎，用到的数据集，模型构建和模型加载，用Python实现
-* `nlu`：自然语言理解引擎，用到的数据集，模型构建和模型加载，用Python实现
-* `sphinx`：离线唤醒模块，包括数据集及模块构建
+* [自定义唤醒词](https://homo.codist.me/docs/wake-up/) - 自定义唤醒Homo时的唤醒词
+
+* [扩展自然语言理解](https://homo.codist.me/docs/nlu/) - 扩展Homo能理解的自然语言的范围
 
 # 发展路线
 
@@ -166,7 +160,7 @@ $ ./run.sh -h
 
 # 捐赠
 
-如果你觉得这个项目对你有帮助，可以请作者喝一杯咖啡，支持作者继续开发
+如果你觉得这个项目对你有帮助，可以请作者喝一杯咖啡，支持作者持续开发
 
 ![donate.png](screenshot/donate.png)
 
