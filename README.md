@@ -87,6 +87,17 @@ cp conf/example_app.ini conf/app.ini
 ./run.sh -a
 ```
 
+`run.sh` 支持的命令：
+
+```bash
+$ ./run.sh -h
+ 附加命令:
+ -p/--pull      获取/更新 镜像，默认从docker hub获取，使用 '-p a' 或 '-p ali' 从阿里云获取
+ -a/--aliyun    运行阿里云Docker镜像(默认运行docker hub镜像)
+ -d/--debug     用于调试，会使用Docker容器内的bash，默认调试docker hub镜像，使用 '-d a' 或 '-d ali' 调试阿里云镜像
+ -h/--help      显示此帮助信息
+```
+
 手动在平台上安装和配置Homo请阅读文档: [https://homo.codist.me/docs/install/](https://homo.codist.me/docs/install/)
 
 # 使用指南

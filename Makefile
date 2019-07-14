@@ -3,21 +3,16 @@ IMPORT := github.com/countstarlight/homo
  
 GO ?= env GO111MODULE=on go
 SED_INPLACE := sed -i
-EXTRA_GOFLAGS ?=
 
 ifeq ($(OS), Windows_NT)
 	EXECUTABLE_INTERACT := homo-interact.exe
 	EXECUTABLE_WEBVIEW := homo-webview.exe
-	#EXTRA_GOFLAGS = -tags netgo -ldflags '-H=windowsgui -extldflags "-static" -s'
 else
 	EXECUTABLE_INTERACT := homo-interact
 	EXECUTABLE_WEBVIEW := homo-webview
 	UNAME_S := $(shell uname -s)
 	ifeq ($(UNAME_S),Darwin)
 		SED_INPLACE := sed -i ''
-		#EXTRA_GOFLAGS = -ldflags '-s -extldflags "-sectcreate __TEXT __info_plist Info.plist"'
-	else
-		#EXTRA_GOFLAGS = -tags netgo -ldflags '-extldflags "-static" -s'
 	endif
 endif
 
