@@ -3,5 +3,4 @@
 /log/
 /tmp/*
 /homo-*
-/module/view/bindata.go
-/conf/app.ini
+/conf/conf.yml

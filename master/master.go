@@ -5,12 +5,4 @@
 // Written by Codist <countstarlight@gmail.com>, December 2019
 //
 
-package main
-
-import (
-	"github.com/countstarlight/homo/master/cmd"
-)
-
-func main() {
-	cmd.Execute()
-}
+package master

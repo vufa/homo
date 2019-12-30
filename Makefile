@@ -81,6 +81,4 @@ watch: gen $(EXECUTABLE_WEBVIEW)
 build: $(EXECUTABLE_MASTER)
 
 $(EXECUTABLE_MASTER): $(SOURCES)
-	cd ./master; \
-	$(GO) build $(GOFLAGS) $(EXTRA_GOFLAGS) -o $@; \
-	mv $@ ../
+	$(GO) build $(GOFLAGS) $(EXTRA_GOFLAGS) -o $@;

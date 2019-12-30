@@ -1,7 +1,7 @@
 Homo
 ======== 
 
-一个基于离线唤醒，自然语言理解和情感分析的开源自然交互系统
+扩展人工智能应用和物联网结合
 
 <p align="center">
   <a href="https://travis-ci.org/countstarlight/homo">

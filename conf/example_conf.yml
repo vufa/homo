@@ -1,0 +1,23 @@
+mode: native
+server:
+  # unix://var/run/homo.sock
+  address: unix://var/run/homo.sock
+database:
+  driver: sqlite3
+  # var/lib/homo/db
+  path: data/db/
+api:
+  # unix://var/run/homo/api.sock
+  address: unix://var/run/homo/api.sock
+logger:
+  # var/log/homo/homo.log
+  path:
+  level: debug
+otalog:
+  # var/db/homo/ota.log
+  path:
+grace: 30s
+baidu:
+  asr_api: http://vop.baidu.com/server_api
+  tts_api: http://tsn.baidu.com/text2audio
+  voice_auth_url: https://openapi.baidu.com/oauth/2.0/token
