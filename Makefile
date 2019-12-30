@@ -5,11 +5,9 @@ GO ?= env GO111MODULE=on go
 SED_INPLACE := sed -i
 
 ifeq ($(OS), Windows_NT)
-	EXECUTABLE_INTERACT := homo-interact.exe
-	EXECUTABLE_WEBVIEW := homo-webview.exe
+	EXECUTABLE_MASTER := homo-master.exe
 else
-	EXECUTABLE_INTERACT := homo-interact
-	EXECUTABLE_WEBVIEW := homo-webview
+	EXECUTABLE_MASTER := homo-master
 	UNAME_S := $(shell uname -s)
 	ifeq ($(UNAME_S),Darwin)
 		SED_INPLACE := sed -i ''
@@ -51,8 +49,7 @@ gen:
 .PHONY: clean
 clean:
 	$(GO) clean -i ./...
-	rm -f $(EXECUTABLE_INTERACT)
-	rm -f $(EXECUTABLE_WEBVIEW)
+	rm -f $(EXECUTABLE_MASTER)
 
 .PHONY: docker
 docker:
@@ -76,22 +73,14 @@ fmt-check:
 		exit 1; \
 	fi;
 
-.PHONY: webview
-webview: $(EXECUTABLE_WEBVIEW)
-
 .PHONY: watch
 watch: gen $(EXECUTABLE_WEBVIEW)
 	./$(EXECUTABLE_WEBVIEW) -d
 
 .PHONY: build
-build: $(EXECUTABLE_INTERACT) $(EXECUTABLE_WEBVIEW)
+build: $(EXECUTABLE_MASTER)
 
-$(EXECUTABLE_INTERACT): $(SOURCES)
-	cd ./cmd/interact; \
+$(EXECUTABLE_MASTER): $(SOURCES)
+	cd ./master; \
 	$(GO) build $(GOFLAGS) $(EXTRA_GOFLAGS) -o $@; \
-	mv $@ ../../
-
-$(EXECUTABLE_WEBVIEW): $(SOURCES)
-	cd ./cmd/webview; \
-	$(GO) build $(GOFLAGS) $(EXTRA_GOFLAGS) -o $@; \
-	mv $@ ../../
+	mv $@ ../

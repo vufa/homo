@@ -1,89 +1,72 @@
-# github.com/faiface/beep v0.0.0-20190331160154-e59a7440241a
-github.com/faiface/beep
-github.com/faiface/beep/mp3
-github.com/faiface/beep/speaker
-github.com/faiface/beep/wav
-# github.com/gdamore/encoding v1.0.0
-github.com/gdamore/encoding
-# github.com/gdamore/tcell v1.1.1
-github.com/gdamore/tcell
-github.com/gdamore/tcell/terminfo
-# github.com/go-audio/audio v1.0.0
-github.com/go-audio/audio
-# github.com/go-audio/riff v1.0.0
-github.com/go-audio/riff
-# github.com/go-audio/wav v1.0.0
-github.com/go-audio/wav
-# github.com/go-ini/ini v1.42.0
+# github.com/BurntSushi/toml v0.3.1
+github.com/BurntSushi/toml
+# github.com/cpuguy83/go-md2man/v2 v2.0.0-20190314233015-f79a8a8ca69d
+github.com/cpuguy83/go-md2man/v2/md2man
+# github.com/go-ini/ini v1.51.1
 github.com/go-ini/ini
-# github.com/gopherjs/gopherjs v0.0.0-20190411002643-bd77b112433e
-github.com/gopherjs/gopherjs/js
-# github.com/gopherjs/gopherwasm v1.1.0
-github.com/gopherjs/gopherwasm/js
-# github.com/hajimehoshi/go-mp3 v0.2.0
-github.com/hajimehoshi/go-mp3
-github.com/hajimehoshi/go-mp3/internal/consts
-github.com/hajimehoshi/go-mp3/internal/frame
-github.com/hajimehoshi/go-mp3/internal/frameheader
-github.com/hajimehoshi/go-mp3/internal/bits
-github.com/hajimehoshi/go-mp3/internal/imdct
-github.com/hajimehoshi/go-mp3/internal/maindata
-github.com/hajimehoshi/go-mp3/internal/sideinfo
-github.com/hajimehoshi/go-mp3/internal/huffman
-# github.com/hajimehoshi/oto v0.3.3
-github.com/hajimehoshi/oto
-github.com/hajimehoshi/oto/internal/mux
-# github.com/konsorten/go-windows-terminal-sequences v1.0.2
-github.com/konsorten/go-windows-terminal-sequences
-# github.com/lucasb-eyer/go-colorful v1.0.2
-github.com/lucasb-eyer/go-colorful
-# github.com/marcusolsson/tui-go v0.4.0
-github.com/marcusolsson/tui-go
-github.com/marcusolsson/tui-go/wordwrap
-# github.com/mattn/go-runewidth v0.0.4
-github.com/mattn/go-runewidth
-# github.com/mitchellh/go-wordwrap v1.0.0
-github.com/mitchellh/go-wordwrap
-# github.com/pkg/errors v0.8.1
-github.com/pkg/errors
-# github.com/sirupsen/logrus v1.4.1
-github.com/sirupsen/logrus
-# github.com/urfave/cli v1.20.0
-github.com/urfave/cli
-# github.com/xlab/pocketsphinx-go v0.0.0-20190320212311-8abf820ce691
-github.com/xlab/pocketsphinx-go/sphinx
-github.com/xlab/pocketsphinx-go/pocketsphinx
-# github.com/xlab/portaudio-go v0.0.0-20170905165025-132d041879db
-github.com/xlab/portaudio-go/portaudio
-# github.com/zserge/webview v0.0.0-20190123072648-16c93bcaeaeb
-github.com/zserge/webview
-# golang.org/x/exp v0.0.0-20190411193353-0480eff6dd7c
-golang.org/x/exp/shiny/driver/gldriver
-golang.org/x/exp/shiny/screen
-golang.org/x/exp/shiny/driver/internal/drawer
-golang.org/x/exp/shiny/driver/internal/errscreen
-golang.org/x/exp/shiny/driver/internal/event
-golang.org/x/exp/shiny/driver/internal/lifecycler
-golang.org/x/exp/shiny/driver/internal/win32
-golang.org/x/exp/shiny/driver/internal/x11key
-# golang.org/x/image v0.0.0-20190321063152-3fc05d484e9f
-golang.org/x/image/math/f64
-# golang.org/x/mobile v0.0.0-20190312151609-d3739f865fa6
-golang.org/x/mobile/app
-golang.org/x/mobile/app/internal/callfn
-golang.org/x/mobile/event/key
-golang.org/x/mobile/event/lifecycle
-golang.org/x/mobile/event/mouse
-golang.org/x/mobile/event/paint
-golang.org/x/mobile/event/size
-golang.org/x/mobile/event/touch
-golang.org/x/mobile/geom
-golang.org/x/mobile/gl
-golang.org/x/mobile/internal/mobileinit
-# golang.org/x/sys v0.0.0-20190411185658-b44545bcd369
-golang.org/x/sys/unix
-golang.org/x/sys/windows
-# golang.org/x/text v0.3.0
-golang.org/x/text/encoding
-golang.org/x/text/transform
-golang.org/x/text/encoding/internal/identifier
+# github.com/russross/blackfriday/v2 v2.0.1
+github.com/russross/blackfriday/v2
+# github.com/shurcooL/sanitized_anchor_name v1.0.0
+github.com/shurcooL/sanitized_anchor_name
+# github.com/urfave/cli/v2 v2.1.1
+github.com/urfave/cli/v2
+# go.uber.org/atomic v1.5.0
+go.uber.org/atomic
+# go.uber.org/multierr v1.3.0
+go.uber.org/multierr
+# go.uber.org/tools v0.0.0-20190618225709-2cfd321de3ee
+go.uber.org/tools/update-license
+# go.uber.org/zap v1.13.0
+go.uber.org/zap
+go.uber.org/zap/buffer
+go.uber.org/zap/internal/bufferpool
+go.uber.org/zap/internal/color
+go.uber.org/zap/internal/exit
+go.uber.org/zap/zapcore
+# golang.org/x/lint v0.0.0-20190930215403-16217165b5de
+golang.org/x/lint
+golang.org/x/lint/golint
+# golang.org/x/tools v0.0.0-20191029190741-b9c20aec41a5
+golang.org/x/tools/go/analysis
+golang.org/x/tools/go/analysis/passes/inspect
+golang.org/x/tools/go/ast/astutil
+golang.org/x/tools/go/ast/inspector
+golang.org/x/tools/go/buildutil
+golang.org/x/tools/go/gcexportdata
+golang.org/x/tools/go/internal/gcimporter
+golang.org/x/tools/go/internal/packagesdriver
+golang.org/x/tools/go/packages
+golang.org/x/tools/go/types/objectpath
+golang.org/x/tools/go/types/typeutil
+golang.org/x/tools/internal/fastwalk
+golang.org/x/tools/internal/gopathwalk
+golang.org/x/tools/internal/semver
+golang.org/x/tools/internal/span
+# gopkg.in/natefinch/lumberjack.v2 v2.0.0
+gopkg.in/natefinch/lumberjack.v2
+# honnef.co/go/tools v0.0.1-2019.2.3
+honnef.co/go/tools/arg
+honnef.co/go/tools/cmd/staticcheck
+honnef.co/go/tools/config
+honnef.co/go/tools/deprecated
+honnef.co/go/tools/facts
+honnef.co/go/tools/functions
+honnef.co/go/tools/go/types/typeutil
+honnef.co/go/tools/internal/cache
+honnef.co/go/tools/internal/passes/buildssa
+honnef.co/go/tools/internal/renameio
+honnef.co/go/tools/internal/sharedcheck
+honnef.co/go/tools/lint
+honnef.co/go/tools/lint/lintdsl
+honnef.co/go/tools/lint/lintutil
+honnef.co/go/tools/lint/lintutil/format
+honnef.co/go/tools/loader
+honnef.co/go/tools/printf
+honnef.co/go/tools/simple
+honnef.co/go/tools/ssa
+honnef.co/go/tools/ssautil
+honnef.co/go/tools/staticcheck
+honnef.co/go/tools/staticcheck/vrp
+honnef.co/go/tools/stylecheck
+honnef.co/go/tools/unused
+honnef.co/go/tools/version
