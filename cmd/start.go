@@ -54,7 +54,7 @@ func startInternal(c *cli.Context) error {
 	}
 	m, err := master.New(WorkDirPath, *cfg, Version, Revision)
 	if err != nil {
-		log.Errorf("failed to start master %s", err.Error(), zap.String(homo.OTAKeyStep, homo.OTARollingBack))
+		log.Errorw("failed to start master", zap.Error(err), zap.String(homo.OTAKeyStep, homo.OTARollingBack))
 		/*rberr := master.RollBackMST()
 		if rberr != nil {
 			log.Errorf("failed to roll back %s", rberr, zap.String(homo.OTAKeyStep, homo.OTAFailure))

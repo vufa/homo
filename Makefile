@@ -1,16 +1,25 @@
 DIST := dist
 IMPORT := github.com/countstarlight/homo
- 
+
 GO ?= env GO111MODULE=on go
 SED_INPLACE := sed -i
+EXTRA_GOENVS ?=
+
+GIT_REV:=git-$(shell git rev-parse --short HEAD)
+GIT_TAG:=$(shell git tag --contains HEAD)
+VERSION:=$(if $(GIT_TAG),$(GIT_TAG),$(GIT_REV))
 
 ifeq ($(OS), Windows_NT)
 	EXECUTABLE_MASTER := homo-master.exe
+	EXTRA_GOENVS = CGO_ENABLED=0 GOOS=windows GOARCH=amd64
 else
 	EXECUTABLE_MASTER := homo-master
 	UNAME_S := $(shell uname -s)
 	ifeq ($(UNAME_S),Darwin)
 		SED_INPLACE := sed -i ''
+		EXTRA_GOENVS = CGO_ENABLED=0 GOOS=darwin GOARCH=amd64
+	else
+		EXTRA_GOENVS = CGO_ENABLED=0 GOOS=linux GOARCH=amd64
 	endif
 endif
 
@@ -19,24 +28,13 @@ GOBINS := ${GOPATH}/bin
 GOFMT ?= gofmt -s
 
 GOFLAGS := -mod=vendor -v
+LDFLAGS := $(LDFLAGS) -X "$(IMPORT)/cmd.Revision=$(GIT_REV)" -X "$(IMPORT)/cmd.Version=$(VERSION)"
 
 PACKAGES ?= $(shell $(GO) list ./... | grep -v /vendor/)
 SOURCES ?= $(shell find . -name "*.go" -type f)
 
 .PHONY: all
 all: build
-
-.PHONY: deps
-deps:
-	echo "Installing sphinxbase..."; \
-	git clone https://github.com/countstarlight/sphinxbase.git; \
-	cd sphinxbase && ./autogen.sh && ./configure && make -j 4 && sudo make install; \
-	cd .. && rm -rf sphinxbase; \
-	echo "Installing PocketSphinx..."; \
-	git clone https://github.com/countstarlight/pocketsphinx.git; \
-	cp -r pocketsphinx/model/en-us sphinx/; \
-	cd pocketsphinx && ./autogen.sh && ./configure && make -j 4 && sudo make install; \
-	cd .. && rm -rf pocketsphinx
 
 .PHONY: gen
 gen:
@@ -81,4 +79,4 @@ watch: gen $(EXECUTABLE_WEBVIEW)
 build: $(EXECUTABLE_MASTER)
 
 $(EXECUTABLE_MASTER): $(SOURCES)
-	$(GO) build $(GOFLAGS) $(EXTRA_GOFLAGS) -o $@;
+	$(EXTRA_GOENVS) $(GO) build $(GOFLAGS) $(EXTRA_GOFLAGS) -ldflags '-s -w $(LDFLAGS)' -o $@;

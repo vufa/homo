@@ -13,6 +13,7 @@ var (
 	Revision string
 )
 
-func version(c *cli.Context) {
+func version(c *cli.Context) error {
 	fmt.Printf("Version:      %s\nGit revision: %s\nGo version:   %s\nPlatform:     %s\n\n", Version, Revision, runtime.Version(), utils.GetHostInfo().FormatPlatformInfo())
+	return nil
 }

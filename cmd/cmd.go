@@ -15,12 +15,26 @@ import (
 
 // Execute execute
 func Execute() {
-	app := cli.NewApp()
-	app.Name = AppName
-	app.Version = AppVersion
-	app.Usage = "Expand the combination of artificial intelligence applications and the IoT"
-	app.Action = startInternal
-	app.Flags = flags
+	app := &cli.App{
+		Name:    AppName,
+		Version: Version,
+		Usage:   "Expand the combination of artificial intelligence applications and the IoT",
+		Flags:   flags,
+		Commands: []*cli.Command{
+			{
+				Name:    "start",
+				Aliases: []string{"s"},
+				Usage:   "start homo",
+				Action:  startInternal,
+			},
+			{
+				Name:    "version",
+				Aliases: []string{"v"},
+				Usage:   "show the version of homo",
+				Action:  version,
+			},
+		},
+	}
 	if err := app.Run(os.Args); err != nil {
 		logger.S.Fatal(err)
 	}

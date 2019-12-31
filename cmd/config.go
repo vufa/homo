@@ -53,8 +53,7 @@ var (
 )
 
 const (
-	AppName    = "Homo"
-	AppVersion = "0.0.1"
+	AppName = "Homo"
 )
 
 // execPath returns the executable path.
