@@ -13,6 +13,23 @@ const (
 	OTAMST = "MST"
 )
 
+// OTA steps
+const (
+	OTAKeyStep  = "step"
+	OTAKeyType  = "type"
+	OTAKeyTrace = "trace"
+
+	OTAReceived    = "RECEIVED"    // [agent] ota event is received
+	OTAUpdating    = "UPDATING"    // [master] to update app or master
+	OTAUpdated     = "UPDATED"     // [master][finished] app or master is updated
+	OTARestarting  = "RESTARTING"  // [master] to restart master
+	OTARestarted   = "RESTARTED"   // [master] master is restarted
+	OTARollingBack = "ROLLINGBACK" // [master] to roll back app or master
+	OTARolledBack  = "ROLLEDBACK"  // [master][finished] app or master is rolled back
+	OTAFailure     = "FAILURE"     // [master/agent][finished] failed to update app or master
+	OTATimeout     = "TIMEOUT"     // [agent][finished] ota is timed out
+)
+
 // Env keys
 const (
 	// deprecated

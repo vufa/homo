@@ -15,6 +15,8 @@ github.com/cpuguy83/go-md2man/v2/md2man
 github.com/creasty/defaults
 # github.com/davecgh/go-spew v1.1.1
 github.com/davecgh/go-spew/spew
+# github.com/docker/distribution v2.7.1+incompatible
+github.com/docker/distribution/uuid
 # github.com/docker/go-connections v0.4.0
 github.com/docker/go-connections/sockets
 github.com/docker/go-connections/tlsconfig
@@ -42,11 +44,15 @@ github.com/golang/protobuf/ptypes/timestamp
 github.com/gorilla/mux
 # github.com/konsorten/go-windows-terminal-sequences v1.0.1
 github.com/konsorten/go-windows-terminal-sequences
+# github.com/mattn/go-sqlite3 v2.0.2+incompatible
+github.com/mattn/go-sqlite3
 # github.com/opencontainers/go-digest v1.0.0-rc1
 github.com/opencontainers/go-digest
 # github.com/opencontainers/image-spec v1.0.1
 github.com/opencontainers/image-spec/specs-go
 github.com/opencontainers/image-spec/specs-go/v1
+# github.com/orcaman/concurrent-map v0.0.0-20190826125027-8c72a8bb44f6
+github.com/orcaman/concurrent-map
 # github.com/pkg/errors v0.8.1
 github.com/pkg/errors
 # github.com/pmezard/go-difflib v1.0.0

@@ -1,0 +1,18 @@
+package cmd
+
+import (
+	"fmt"
+	"github.com/countstarlight/homo/utils"
+	"github.com/urfave/cli/v2"
+	"runtime"
+)
+
+// Compile parameter
+var (
+	Version  string
+	Revision string
+)
+
+func version(c *cli.Context) {
+	fmt.Printf("Version:      %s\nGit revision: %s\nGo version:   %s\nPlatform:     %s\n\n", Version, Revision, runtime.Version(), utils.GetHostInfo().FormatPlatformInfo())
+}

@@ -3,4 +3,5 @@
 /log/
 /tmp/*
 /homo-*
+/var/
 /conf/conf.yml

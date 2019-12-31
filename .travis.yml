@@ -8,17 +8,6 @@ go:
 os:
   - linux
 
-addons:
-  apt:
-    packages:
-      - portaudio19-dev
-      - libwebkit2gtk-4.0-dev
-      - swig
-
-before_script:
-  - make deps
-
 script:
   - make fmt-check
-  - make gen
-  - make webview
+  - make

@@ -8,10 +8,13 @@
 package cmd
 
 import (
+	"fmt"
 	"github.com/countstarlight/homo/logger"
+	"github.com/countstarlight/homo/master"
 	"github.com/countstarlight/homo/sdk/homo-go"
 	"github.com/countstarlight/homo/utils"
 	"github.com/urfave/cli/v2"
+	"go.uber.org/zap"
 )
 
 var flags = []cli.Flag{
@@ -49,5 +52,16 @@ func startInternal(c *cli.Context) error {
 	if isOTA {
 		log = logger.New(cfg.OTALog, "type", homo.OTAMST)
 	}
-	return nil
+	m, err := master.New(WorkDirPath, *cfg, Version, Revision)
+	if err != nil {
+		log.Errorf("failed to start master %s", err.Error(), zap.String(homo.OTAKeyStep, homo.OTARollingBack))
+		/*rberr := master.RollBackMST()
+		if rberr != nil {
+			log.Errorf("failed to roll back %s", rberr, zap.String(homo.OTAKeyStep, homo.OTAFailure))
+			return fmt.Errorf("failed to start master: %s; failed to roll back: %s", err.Error(), rberr.Error())
+		}
+		log.Infof("master is restarting", zap.String(homo.OTAKeyStep, homo.OTARestarting))*/
+		return fmt.Errorf("failed to start master: %s", err.Error())
+	}
+	return m.Wait()
 }
