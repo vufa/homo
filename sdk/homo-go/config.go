@@ -11,6 +11,13 @@ import (
 	"time"
 )
 
+// RestartPolicies
+const (
+	RestartNo        = "no"
+	RestartAlways    = "always"
+	RestartOnFailure = "on-failure"
+)
+
 // RestartPolicyInfo holds the policy of a module
 type RestartPolicyInfo struct {
 	Retry struct {

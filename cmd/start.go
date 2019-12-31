@@ -27,13 +27,15 @@ var flags = []cli.Flag{
 	},
 	&cli.StringFlag{
 		EnvVars:     []string{"HOMO_CONFIG_FILE"},
-		Name:        "config, c",
+		Name:        "config",
+		Aliases:     []string{"c"},
 		Usage:       "set homo config file path",
 		Destination: &ConfFile,
 	},
 	&cli.StringFlag{
 		EnvVars:     []string{"HOMO_WORK_DIR"},
-		Name:        "workdir, w",
+		Name:        "workdir",
+		Aliases:     []string{"w"},
 		Usage:       "set homo work directory",
 		Destination: &WorkDirPath,
 	},

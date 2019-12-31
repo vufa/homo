@@ -11,15 +11,15 @@ VERSION:=$(if $(GIT_TAG),$(GIT_TAG),$(GIT_REV))
 
 ifeq ($(OS), Windows_NT)
 	EXECUTABLE_MASTER := homo-master.exe
-	EXTRA_GOENVS = CGO_ENABLED=0 GOOS=windows GOARCH=amd64
+	EXTRA_GOENVS = GOOS=windows GOARCH=amd64
 else
 	EXECUTABLE_MASTER := homo-master
 	UNAME_S := $(shell uname -s)
 	ifeq ($(UNAME_S),Darwin)
 		SED_INPLACE := sed -i ''
-		EXTRA_GOENVS = CGO_ENABLED=0 GOOS=darwin GOARCH=amd64
+		EXTRA_GOENVS = GOOS=darwin GOARCH=amd64
 	else
-		EXTRA_GOENVS = CGO_ENABLED=0 GOOS=linux GOARCH=amd64
+		EXTRA_GOENVS = GOOS=linux GOARCH=amd64
 	endif
 endif
 

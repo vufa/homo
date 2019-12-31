@@ -9,8 +9,11 @@ package main
 
 import (
 	"github.com/countstarlight/homo/cmd"
+	_ "github.com/countstarlight/homo/master/engine/native"
+	_ "github.com/mattn/go-sqlite3"
 )
 
+// TODO: use pgx instead of sqlite3
 func main() {
 	cmd.Execute()
 }

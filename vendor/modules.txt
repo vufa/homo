@@ -42,6 +42,8 @@ github.com/golang/protobuf/ptypes/duration
 github.com/golang/protobuf/ptypes/timestamp
 # github.com/gorilla/mux v1.7.3
 github.com/gorilla/mux
+# github.com/jpillora/backoff v1.0.0
+github.com/jpillora/backoff
 # github.com/konsorten/go-windows-terminal-sequences v1.0.1
 github.com/konsorten/go-windows-terminal-sequences
 # github.com/mattn/go-sqlite3 v2.0.2+incompatible
