@@ -11,9 +11,11 @@ VERSION:=$(if $(GIT_TAG),$(GIT_TAG),$(GIT_REV))
 
 ifeq ($(OS), Windows_NT)
 	EXECUTABLE_MASTER := homo-master.exe
+	EXECUTABLE_HUB := homo-hub.exe
 	EXTRA_GOENVS = GOOS=windows GOARCH=amd64
 else
 	EXECUTABLE_MASTER := homo-master
+	EXECUTABLE_HUB := homo-hub
 	UNAME_S := $(shell uname -s)
 	ifeq ($(UNAME_S),Darwin)
 		SED_INPLACE := sed -i ''
@@ -36,18 +38,10 @@ SOURCES ?= $(shell find . -name "*.go" -type f)
 .PHONY: all
 all: build
 
-.PHONY: gen
-gen:
-	@hash go-bindata > /dev/null 2>&1; if [ $$? -ne 0 ]; then \
-		$(GO) get -u github.com/jteeuwen/go-bindata; \
-		$(GO) get -u github.com/jteeuwen/go-bindata/...; \
-	fi
-	$(GO) generate github.com/countstarlight/homo/module/view
-
 .PHONY: clean
 clean:
 	$(GO) clean -i ./...
-	rm -f $(EXECUTABLE_MASTER)
+	rm -f $(EXECUTABLE_MASTER) $(EXECUTABLE_HUB)
 
 .PHONY: docker
 docker:
@@ -71,12 +65,13 @@ fmt-check:
 		exit 1; \
 	fi;
 
-.PHONY: watch
-watch: gen $(EXECUTABLE_WEBVIEW)
-	./$(EXECUTABLE_WEBVIEW) -d
-
 .PHONY: build
-build: $(EXECUTABLE_MASTER)
+build: $(EXECUTABLE_MASTER) $(EXECUTABLE_HUB)
 
 $(EXECUTABLE_MASTER): $(SOURCES)
 	$(EXTRA_GOENVS) $(GO) build $(GOFLAGS) $(EXTRA_GOFLAGS) -ldflags '-s -w $(LDFLAGS)' -o $@;
+
+$(EXECUTABLE_HUB): $(SOURCES)
+	cd ./hub; \
+	$(EXTRA_GOENVS) $(GO) build $(GOFLAGS) $(EXTRA_GOFLAGS) -ldflags '-s -w $(LDFLAGS)' -o $@;
+	mv $@ ../

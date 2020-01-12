@@ -7,6 +7,17 @@
 
 package homo
 
+import (
+	"fmt"
+	"github.com/countstarlight/homo/logger"
+	"github.com/countstarlight/homo/utils"
+	"go.uber.org/zap"
+	"io"
+	"os"
+	"os/signal"
+	"syscall"
+)
+
 // OTA types
 const (
 	OTAAPP = "APP"
@@ -104,3 +115,97 @@ const (
 	// PreviousLogDir  log dir of the service by default
 	PreviousLogDir = "var/log/openedge"
 )
+
+// Context of service
+type Context interface {
+	// returns the system configuration of the service, such as hub and logger
+	Config() *ServiceConfig
+	// loads the custom configuration of the service
+	LoadConfig(interface{}) error
+	// returns logger interface
+	Log() *zap.SugaredLogger
+	// waiting to exit, receiving SIGTERM and SIGINT signals
+	Wait()
+
+	// reports the stats of the instance of the service
+	ReportInstance(stats map[string]interface{}) error
+
+	io.Closer
+}
+
+type ctx struct {
+	sn  string // service name
+	in  string // instance name
+	md  string // running mode
+	cfg ServiceConfig
+	log *zap.SugaredLogger
+	*Client
+}
+
+func newContext() (*ctx, error) {
+	var cfg ServiceConfig
+	md := os.Getenv(EnvKeyServiceMode)
+	sn := os.Getenv(EnvKeyServiceName)
+	in := os.Getenv(EnvKeyServiceInstanceName)
+	if md == "" {
+		md = os.Getenv(EnvRunningModeKey)
+		sn = os.Getenv(EnvServiceNameKey)
+		in = os.Getenv(EnvServiceInstanceNameKey)
+	}
+
+	err := utils.LoadYAML(DefaultConfFile, &cfg)
+	if err != nil && !os.IsNotExist(err) {
+		fmt.Fprintf(os.Stderr, "[%s][%s] failed to load config: %s\n", sn, in, err.Error())
+	}
+	log := logger.New(cfg.Logger, "service", sn, "instance", in)
+	cli, err := NewEnvClient()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "[%s][%s] failed to create master client: %s\n", sn, in, err.Error())
+		log.Errorw("failed to create master client", zap.Error(err))
+	}
+	return &ctx{
+		sn:     sn,
+		in:     in,
+		md:     md,
+		cfg:    cfg,
+		log:    log,
+		Client: cli,
+	}, nil
+}
+
+func (c *ctx) LoadConfig(cfg interface{}) error {
+	return utils.LoadYAML(DefaultConfFile, cfg)
+}
+
+func (c *ctx) Config() *ServiceConfig {
+	return &c.cfg
+}
+
+func (c *ctx) Log() *zap.SugaredLogger {
+	return c.log
+}
+
+func (c *ctx) Wait() {
+	<-c.WaitChan()
+	c.Close()
+}
+
+func (c *ctx) WaitChan() <-chan os.Signal {
+	sig := make(chan os.Signal, 1)
+	signal.Notify(sig, syscall.SIGTERM, syscall.SIGINT)
+	signal.Ignore(syscall.SIGPIPE)
+	return sig
+}
+
+func (c *ctx) ReportInstance(stats map[string]interface{}) error {
+	return c.Client.ReportInstance(c.sn, c.in, stats)
+}
+
+func (c *ctx) Close() error {
+	if c.Client.Client != nil {
+		if err := c.Client.Close(); err != nil {
+			return err
+		}
+	}
+	return nil
+}

@@ -8,8 +8,16 @@
 package homo
 
 import (
+	"github.com/countstarlight/homo/logger"
+	"github.com/countstarlight/homo/protocol/mqtt"
 	"time"
 )
+
+// ServiceConfig base config of service
+type ServiceConfig struct {
+	Hub    mqtt.ClientInfo `yaml:"hub" json:"hub"`
+	Logger logger.LogInfo  `yaml:"logger" json:"logger"`
+}
 
 // RestartPolicies
 const (

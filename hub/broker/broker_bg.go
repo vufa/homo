@@ -7,7 +7,7 @@ import (
 
 	"github.com/countstarlight/homo/hub/common"
 	"github.com/countstarlight/homo/hub/persist"
-	"github.com/countstarlight/homo/hub/utils"
+	"github.com/countstarlight/homo/utils"
 	"github.com/golang/protobuf/proto"
 )
 

@@ -22,7 +22,7 @@ type Config struct {
 
 	Message Message `yaml:"message" json:"message"`
 	Storage struct {
-		Dir string `yaml:"dir" json:"dir" default:"var/db/baetyl/data"`
+		Dir string `yaml:"dir" json:"dir" default:"var/db/homo/data"`
 	} `yaml:"storage" json:"storage"`
 	Shutdown struct {
 		Timeout time.Duration `yaml:"timeout" json:"timeout" default:"10m"`

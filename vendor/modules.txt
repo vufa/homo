@@ -1,3 +1,9 @@
+# github.com/256dpi/gomqtt v0.14.1
+github.com/256dpi/gomqtt/packet
+github.com/256dpi/gomqtt/topic
+github.com/256dpi/gomqtt/transport
+# github.com/256dpi/mercury v0.2.0
+github.com/256dpi/mercury
 # github.com/BurntSushi/toml v0.3.1
 github.com/BurntSushi/toml
 # github.com/Microsoft/go-winio v0.4.14
@@ -15,6 +21,8 @@ github.com/cpuguy83/go-md2man/v2/md2man
 github.com/creasty/defaults
 # github.com/davecgh/go-spew v1.1.1
 github.com/davecgh/go-spew/spew
+# github.com/deckarep/golang-set v1.7.1
+github.com/deckarep/golang-set
 # github.com/docker/distribution v2.7.1+incompatible
 github.com/docker/distribution/uuid
 # github.com/docker/go-connections v0.4.0
@@ -22,6 +30,8 @@ github.com/docker/go-connections/sockets
 github.com/docker/go-connections/tlsconfig
 # github.com/docker/go-units v0.4.0
 github.com/docker/go-units
+# github.com/etcd-io/bbolt v1.3.3
+github.com/etcd-io/bbolt
 # github.com/go-ini/ini v1.51.1
 github.com/go-ini/ini
 # github.com/go-ole/go-ole v1.2.4
@@ -42,6 +52,8 @@ github.com/golang/protobuf/ptypes/duration
 github.com/golang/protobuf/ptypes/timestamp
 # github.com/gorilla/mux v1.7.3
 github.com/gorilla/mux
+# github.com/gorilla/websocket v1.4.1
+github.com/gorilla/websocket
 # github.com/jpillora/backoff v1.0.0
 github.com/jpillora/backoff
 # github.com/konsorten/go-windows-terminal-sequences v1.0.1
@@ -95,7 +107,7 @@ go.uber.org/zap/zapcore
 # golang.org/x/lint v0.0.0-20190930215403-16217165b5de
 golang.org/x/lint
 golang.org/x/lint/golint
-# golang.org/x/net v0.0.0-20190620200207-3b0461eec859
+# golang.org/x/net v0.0.0-20191209160850-c0dbc17a3553
 golang.org/x/net/context
 golang.org/x/net/http/httpguts
 golang.org/x/net/http2

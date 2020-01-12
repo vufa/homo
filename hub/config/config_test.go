@@ -62,10 +62,10 @@ M:
 
 func TestConfig(t *testing.T) {
 	var c Config
-	err := utils.LoadYAML("../../example/native/var/db/baetyl/localhub-conf/service.yml", &c)
+	err := utils.LoadYAML("../../example/native/var/db/homo/localhub-conf/service.yml", &c)
 	assert.NoError(t, err)
 
-	assert.Equal(t, "var/db/baetyl/data", c.Storage.Dir)
+	assert.Equal(t, "var/db/homo/data", c.Storage.Dir)
 
 	assert.Equal(t, 10000, c.Message.Ingress.Qos0.Buffer.Size)
 	assert.Equal(t, 100, c.Message.Ingress.Qos1.Buffer.Size)

@@ -8,8 +8,8 @@ import (
 	"github.com/countstarlight/homo/hub/common"
 	"github.com/countstarlight/homo/hub/config"
 	"github.com/countstarlight/homo/hub/persist"
-	"github.com/countstarlight/homo/hub/utils"
 	"github.com/countstarlight/homo/logger"
+	"github.com/countstarlight/homo/utils"
 )
 
 var errBrokerClosed = fmt.Errorf("broker already closed")
@@ -60,9 +60,9 @@ func NewBroker(c *config.Config, pf *persist.Factory, report Report) (b *Broker,
 		log:        logger.New(logger.LogInfo{Level: "debug"}, "broker", "mqtt"),
 	}
 	if report != nil {
-		return b, b.tomb.Gos(b.persistingMsgQos1, b.persistingOffset, b.cleaningMsgQos1, b.reporting)
+		return b, b.tomb.Go(b.persistingMsgQos1, b.persistingOffset, b.cleaningMsgQos1, b.reporting)
 	}
-	return b, b.tomb.Gos(b.persistingMsgQos1, b.persistingOffset, b.cleaningMsgQos1)
+	return b, b.tomb.Go(b.persistingMsgQos1, b.persistingOffset, b.cleaningMsgQos1)
 }
 
 // Config returns config
@@ -206,7 +206,7 @@ func (b *Broker) InitOffset(id string, persistent bool) (uint64, error) {
 // Close closes broker
 func (b *Broker) Close() {
 	b.log.Infof("broker closing")
-	b.tomb.Kill()
+	b.tomb.Kill(nil)
 	err := b.tomb.Wait()
 	b.log.Infof("broker closed", zap.Error(err))
 }
