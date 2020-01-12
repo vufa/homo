@@ -5,3 +5,4 @@
 /homo-*
 /module/view/bindata.go
 /conf/app.ini
+/data/
