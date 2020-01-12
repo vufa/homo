@@ -1,21 +1,17 @@
 mode: native
 server:
-  # unix://var/run/homo.sock
   address: unix://var/run/homo.sock
 database:
   driver: sqlite3
-  # var/lib/homo/db
-  path: data/db/
+  path: var/lib/homo/db
 api:
-  # unix://var/run/homo/api.sock
   address: unix://var/run/homo/api.sock
 logger:
-  # var/log/homo/homo.log
-  path:
-  level: debug
+  path: var/log/homo/homo.log
+  level: info
 otalog:
-  # var/db/homo/ota.log
-  path:
+  path: var/db/homo/ota.log
+  level: info
 grace: 30s
 baidu:
   asr_api: http://vop.baidu.com/server_api

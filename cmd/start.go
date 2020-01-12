@@ -46,9 +46,14 @@ func startInternal(c *cli.Context) error {
 	if err != nil {
 		return err
 	}
-	log := logger.New(cfg.Logger, "homo", "master")
+	var log *zap.SugaredLogger
 	if DebugMode {
-		log.Info("in debug mode")
+		cfg.Logger.Level = "debug"
+		cfg.OTALog.Level = "debug"
+		log = logger.New(cfg.Logger, "homo", "master")
+		log.Info("homo running in debug mode")
+	} else {
+		log = logger.New(cfg.Logger, "homo", "master")
 	}
 	isOTA := utils.IsFile(cfg.OTALog.Path)
 	if isOTA {
