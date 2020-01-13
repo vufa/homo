@@ -1,5 +1,8 @@
 # github.com/256dpi/gomqtt v0.14.1
+github.com/256dpi/gomqtt/client
+github.com/256dpi/gomqtt/client/future
 github.com/256dpi/gomqtt/packet
+github.com/256dpi/gomqtt/session
 github.com/256dpi/gomqtt/topic
 github.com/256dpi/gomqtt/transport
 # github.com/256dpi/mercury v0.2.0
@@ -49,11 +52,16 @@ github.com/golang/protobuf/proto
 github.com/golang/protobuf/ptypes
 github.com/golang/protobuf/ptypes/any
 github.com/golang/protobuf/ptypes/duration
+github.com/golang/protobuf/ptypes/empty
 github.com/golang/protobuf/ptypes/timestamp
 # github.com/gorilla/mux v1.7.3
 github.com/gorilla/mux
 # github.com/gorilla/websocket v1.4.1
 github.com/gorilla/websocket
+# github.com/jolestar/go-commons-pool v2.0.0+incompatible
+github.com/jolestar/go-commons-pool
+github.com/jolestar/go-commons-pool/collections
+github.com/jolestar/go-commons-pool/concurrent
 # github.com/jpillora/backoff v1.0.0
 github.com/jpillora/backoff
 # github.com/konsorten/go-windows-terminal-sequences v1.0.1

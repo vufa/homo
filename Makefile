@@ -35,20 +35,25 @@ LDFLAGS := $(LDFLAGS) -X "$(IMPORT)/cmd.Revision=$(GIT_REV)" -X "$(IMPORT)/cmd.V
 PACKAGES ?= $(shell $(GO) list ./... | grep -v /vendor/)
 SOURCES ?= $(shell find . -name "*.go" -type f)
 
-.PHONY: deps
-deps:
-	go get github.com/gogo/protobuf/proto
-	go get github.com/gogo/protobuf/jsonpb
-	go get github.com/gogo/protobuf/protoc-gen-gogo
-	go get github.com/gogo/protobuf/gogoproto
-
 .PHONY: all
 all: build
+
+.PHONY: deps
+deps:
+	go get -mod=readonly github.com/golang/protobuf/proto
+	go get -mod=readonly github.com/gogo/protobuf/proto
+	go get -mod=readonly github.com/gogo/protobuf/jsonpb
+	go get -mod=readonly github.com/gogo/protobuf/protoc-gen-gogo
+	go get -mod=readonly github.com/gogo/protobuf/gogoproto
 
 .PHONY: clean
 clean:
 	$(GO) clean -i ./...
 	rm -f $(EXECUTABLE_MASTER) $(EXECUTABLE_HUB)
+
+.PHONY: gen
+gen:
+	$(GO) generate -mod=vendor ./...
 
 .PHONY: docker
 docker:

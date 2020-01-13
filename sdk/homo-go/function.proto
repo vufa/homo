@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package baetyl;
+package homo;
 
 option (gogoproto.sizer_all) = true;
 option (gogoproto.marshaler_all) = true;

@@ -33,7 +33,7 @@ func main() {
 				}
 				functions := make(map[string]*Function)
 				for _, fi := range cfg.Functions {
-					functions[fi.Name] = NewFunction(fi, newProducer(ctx, fi))
+					functions[fi.Name] = NewFunction(fi, newProducer(ctx, fi), ctx.Log())
 				}
 				defer func() {
 					for _, f := range functions {
@@ -55,7 +55,7 @@ func main() {
 					if err != nil {
 						return fmt.Errorf("failed to create hub client: %s", err.Error())
 					}
-					rulers = append(rulers, newRuler(ri, c, f))
+					rulers = append(rulers, newRuler(ri, c, f, ctx.Log()))
 				}
 				for _, ruler := range rulers {
 					err := ruler.start()
@@ -64,7 +64,7 @@ func main() {
 					}
 				}
 				if cfg.Server.Address != "" {
-					svr, err := baetyl.NewFServer(cfg.Server, func(ctx context.Context, msg *baetyl.FunctionMessage) (*baetyl.FunctionMessage, error) {
+					svr, err := homo.NewFServer(cfg.Server, func(ctx context.Context, msg *homo.FunctionMessage) (*homo.FunctionMessage, error) {
 						f, ok := functions[msg.FunctionName]
 						if !ok {
 							return nil, fmt.Errorf("function (%s) not found", msg.FunctionName)

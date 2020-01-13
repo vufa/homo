@@ -69,7 +69,7 @@ func (s *session) saveWillMessage(p *packet.Connect) error {
 	return s.manager.recorder.setWill(s.id, p.Will)
 }
 
-// TODO: need to send will message after client reconnected if baetyl panicked
+// TODO: need to send will message after client reconnected if homo panicked
 // Situations in which the Will Message is published include, but are not limited to:
 // * An I/O error or network failure detected by the Server.
 // * The Client fails to communicate within the Keep Alive time.

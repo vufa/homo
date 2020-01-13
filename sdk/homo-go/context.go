@@ -10,6 +10,7 @@ package homo
 import (
 	"fmt"
 	"github.com/countstarlight/homo/logger"
+	"github.com/countstarlight/homo/protocol/mqtt"
 	"github.com/countstarlight/homo/utils"
 	"go.uber.org/zap"
 	"io"
@@ -122,6 +123,9 @@ type Context interface {
 	Config() *ServiceConfig
 	// loads the custom configuration of the service
 	LoadConfig(string, interface{}) error
+	// creates a Client that connects to the Hub through system configuration,
+	// you can specify the Client ID and the topic information of the subscription.
+	NewHubClient(string, []mqtt.TopicInfo) (*mqtt.Dispatcher, error)
 	// returns logger interface
 	Log() *zap.SugaredLogger
 	// waiting to exit, receiving SIGTERM and SIGINT signals
@@ -181,6 +185,20 @@ func (c *ctx) LoadConfig(cfgPath string, cfg interface{}) error {
 		cfgPath = DefaultConfFile
 	}
 	return utils.LoadYAML(cfgPath, cfg)
+}
+
+func (c *ctx) NewHubClient(cid string, subs []mqtt.TopicInfo) (*mqtt.Dispatcher, error) {
+	if c.cfg.Hub.Address == "" {
+		return nil, fmt.Errorf("hub not configured")
+	}
+	cc := c.cfg.Hub
+	if cid != "" {
+		cc.ClientID = cid
+	}
+	if subs != nil {
+		cc.Subscriptions = subs
+	}
+	return mqtt.NewDispatcher(cc, c.log.With("cid", cid)), nil
 }
 
 func (c *ctx) Config() *ServiceConfig {

@@ -13,11 +13,13 @@ require (
 	github.com/docker/go-connections v0.4.0
 	github.com/docker/go-units v0.4.0
 	github.com/etcd-io/bbolt v1.3.3
+	github.com/fortytw2/leaktest v1.3.0 // indirect
 	github.com/go-ini/ini v1.51.1
 	github.com/go-ole/go-ole v1.2.4 // indirect
 	github.com/gogo/protobuf v1.3.1
 	github.com/golang/protobuf v1.3.2
 	github.com/gorilla/mux v1.7.3
+	github.com/jolestar/go-commons-pool v2.0.0+incompatible
 	github.com/jpillora/backoff v1.0.0
 	github.com/mattn/go-sqlite3 v2.0.2+incompatible
 	github.com/opencontainers/go-digest v1.0.0-rc1 // indirect
@@ -30,7 +32,7 @@ require (
 	github.com/urfave/cli/v2 v2.1.1
 	go.etcd.io/bbolt v1.3.3 // indirect
 	go.uber.org/zap v1.13.0
-	golang.org/x/net v0.0.0-20191209160850-c0dbc17a3553 // indirect
+	golang.org/x/net v0.0.0-20191209160850-c0dbc17a3553
 	google.golang.org/grpc v1.26.0
 	gopkg.in/ini.v1 v1.51.1 // indirect
 	gopkg.in/natefinch/lumberjack.v2 v2.0.0
