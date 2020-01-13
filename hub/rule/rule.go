@@ -5,6 +5,7 @@ import (
 	"github.com/countstarlight/homo/hub/router"
 	"github.com/countstarlight/homo/logger"
 	"go.uber.org/zap"
+	"strconv"
 	"sync"
 )
 
@@ -63,6 +64,14 @@ func newRuleTopic(b broker, r *router.Trie) *rulebase {
 	return rb
 }
 
+func newRuleSess(id string, p bool, b broker, r *router.Trie, publish, republish common.Publish) base {
+	return newRuleBase(id, p, b, r, publish, republish)
+}
+
+func (r *rulebase) uid() string {
+	return r.id
+}
+
 func (r *rulebase) publish(msg common.Message) {
 	msg.QOS = msg.TargetQOS
 	msg.Topic = msg.TargetTopic
@@ -73,9 +82,61 @@ func (r *rulebase) publish(msg common.Message) {
 	r.broker.Flow(&msg)
 }
 
+func (r *rulebase) start() (err error) {
+	r.once.Do(func() {
+		err = r.msgchan.start()
+		if err != nil {
+			r.msgchan.close(true)
+		}
+		err = r.sink.start()
+		if err != nil {
+			r.stop()
+			r.wait(true)
+		}
+	})
+	return
+}
+
+func (r *rulebase) stop() {
+	r.log.Debugf("rule closing")
+	r.sink.stop()
+}
+
+func (r *rulebase) wait(force bool) {
+	r.sink.wait()
+	r.msgchan.close(force)
+	r.log.Debugf("rule closed")
+}
+
+func (r *rulebase) channel() *msgchan {
+	return r.msgchan
+}
+
+func (r *rulebase) register(sub *sinksub) {
+	r.sink.register(sub)
+}
+
+func (r *rulebase) remove(id, topic string) {
+	r.sink.remove(id, topic)
+}
+
 func (r *rulebase) persist(sid uint64) {
 	err := r.broker.PersistOffset(r.id, sid)
 	if err != nil {
 		r.log.Errorw("failed to persist offset", zap.Error(err))
+	}
+}
+
+func (r *rulebase) info() map[string]interface{} {
+	offsetPersisted := "-"
+	if v, _ := r.broker.OffsetPersisted(r.uid()); v != nil {
+		offsetPersisted = strconv.FormatUint(*v, 10)
+	}
+	return map[string]interface{}{
+		"persisted_offset":      offsetPersisted,
+		"buffered_offset":       r.sink.getOffset(),
+		"buffered_message_qos0": len(r.msgchan.msgq0),
+		"buffered_message_qos1": len(r.msgchan.msgq1),
+		"buffered_message_ack":  len(r.msgchan.msgack),
 	}
 }

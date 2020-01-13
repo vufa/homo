@@ -4,6 +4,7 @@ import (
 	"github.com/256dpi/gomqtt/topic"
 	"github.com/countstarlight/homo/hub/config"
 	"github.com/countstarlight/homo/utils"
+	"strings"
 )
 
 // all permit actions
@@ -66,6 +67,24 @@ func duplicatePubSubPermitRemove(permission []config.Permission) []config.Permis
 	}
 }
 
+// AuthenticateAccount auth client account, then return authorizer if pass
+func (a *Auth) AuthenticateAccount(username, password string) *Authorizer {
+	_account, ok := a.accounts[username]
+	if ok && len(password) > 0 && strings.Compare(password, _account.Password) == 0 {
+		return _account.Authorizer
+	}
+	return nil
+}
+
+// AuthenticateCert auth client cert, then return authorizer if pass
+func (a *Auth) AuthenticateCert(serialNumber string) *Authorizer {
+	_cert, ok := a.certs[serialNumber]
+	if ok {
+		return _cert.Authorizer
+	}
+	return nil
+}
+
 type account struct {
 	Password   string
 	Authorizer *Authorizer
@@ -83,4 +102,15 @@ type Authorizer struct {
 // NewAuthorizer create a new authorizer
 func NewAuthorizer() *Authorizer {
 	return &Authorizer{Tree: topic.NewStandardTree()}
+}
+
+// Authorize auth action
+func (p *Authorizer) Authorize(action, topic string) bool {
+	_actions := p.Match(topic)
+	for _, _action := range _actions {
+		if action == _action.(string) {
+			return true
+		}
+	}
+	return false
 }

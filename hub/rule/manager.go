@@ -96,6 +96,22 @@ func (m *Manager) Close() {
 	m.broker.WaitOffsetPersisted()
 }
 
+// StartRule starts a rule
+func (m *Manager) StartRule(id string) error {
+	if atomic.LoadInt32(&m.status) == closed {
+		return errRuleManagerClosed
+	} else if atomic.LoadInt32(&m.status) == initial {
+		return nil
+	}
+	item, ok := m.rules.Get(id)
+	if !ok {
+		return fmt.Errorf("rule (%s) not found", id)
+	}
+	r := item.(base)
+	// r.log.Info("To start rule")
+	return r.start()
+}
+
 // RemoveRule removes a sink for session
 func (m *Manager) RemoveRule(id string) error {
 	if atomic.LoadInt32(&m.status) == closed {
@@ -111,6 +127,18 @@ func (m *Manager) RemoveRule(id string) error {
 	return nil
 }
 
+// AddRuleSess adds a new rule for session during running
+func (m *Manager) AddRuleSess(id string, persistent bool, publish, republish common.Publish) error {
+	if atomic.LoadInt32(&m.status) == closed {
+		return errRuleManagerClosed
+	}
+	if _, ok := m.rules.Get(id); ok {
+		return fmt.Errorf("rule (%s) exists", id)
+	}
+	m.rules.Set(id, newRuleSess(id, persistent, m.broker, m.trieq0, publish, republish))
+	return nil
+}
+
 // AddSinkSub adds a sink subscription
 func (m *Manager) AddSinkSub(ruleid, subid string, subqos uint32, subtopic string, pubqos uint32, pubtopic string) error {
 	if atomic.LoadInt32(&m.status) == closed {
@@ -122,6 +150,19 @@ func (m *Manager) AddSinkSub(ruleid, subid string, subqos uint32, subtopic strin
 	}
 	r := item.(base)
 	r.register(newSinkSub(subid, subqos, subtopic, pubqos, pubtopic, r.channel()))
+	return nil
+}
+
+// RemoveSinkSub removes a sink subscription
+func (m *Manager) RemoveSinkSub(id, topic string) error {
+	if atomic.LoadInt32(&m.status) == closed {
+		return errRuleManagerClosed
+	}
+	item, ok := m.rules.Get(id)
+	if !ok {
+		return fmt.Errorf("rule (%s) not found", id)
+	}
+	item.(base).remove(id, topic)
 	return nil
 }
 

@@ -56,6 +56,15 @@ func (m *Manager) Close() {
 	m.log.Infof("session manager closed")
 }
 
+// Called by session during onConnect
+func (m *Manager) register(sess *session) error {
+	if old, ok := m.sessions.Get(sess.id); ok {
+		old.(*session).close(true)
+	}
+	m.sessions.Set(sess.id, sess)
+	return m.rules.AddRuleSess(sess.id, !sess.clean, sess.publish, sess.republish)
+}
+
 // Called by session when error raises
 func (m *Manager) remove(id string) {
 	m.sessions.Remove(id)

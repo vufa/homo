@@ -73,5 +73,5 @@ $(EXECUTABLE_MASTER): $(SOURCES)
 
 $(EXECUTABLE_HUB): $(SOURCES)
 	cd ./hub; \
-	$(EXTRA_GOENVS) $(GO) build $(GOFLAGS) $(EXTRA_GOFLAGS) -ldflags '-s -w $(LDFLAGS)' -o $@;
+	$(EXTRA_GOENVS) $(GO) build $(GOFLAGS) $(EXTRA_GOFLAGS) -ldflags '-s -w $(LDFLAGS)' -o $@; \
 	mv $@ ../

@@ -1,10 +1,12 @@
 package session
 
 import (
+	"fmt"
 	"github.com/256dpi/gomqtt/packet"
 	"github.com/256dpi/gomqtt/transport"
 	"github.com/countstarlight/homo/hub/auth"
 	"github.com/countstarlight/homo/hub/common"
+	"github.com/countstarlight/homo/hub/router"
 	"github.com/countstarlight/homo/logger"
 	"github.com/countstarlight/homo/utils"
 	"go.uber.org/zap"
@@ -43,6 +45,31 @@ func newSession(conn transport.Conn, manager *Manager) *session {
 	}
 }
 
+func (s *session) send(p packet.Generic, async bool) error {
+	s.Lock()
+	defer s.Unlock()
+	err := s.conn.Send(p, async)
+	if err != nil {
+		return fmt.Errorf("failed to send message: %s", err.Error())
+	}
+	return nil
+}
+
+func (s *session) sendConnack(code packet.ConnackCode) error {
+	ack := packet.Connack{
+		SessionPresent: false, // TODO: to support
+		ReturnCode:     code,
+	}
+	return s.send(&ack, false)
+}
+
+func (s *session) saveWillMessage(p *packet.Connect) error {
+	if p.Will == nil {
+		return nil
+	}
+	return s.manager.recorder.setWill(s.id, p.Will)
+}
+
 // TODO: need to send will message after client reconnected if baetyl panicked
 // Situations in which the Will Message is published include, but are not limited to:
 // * An I/O error or network failure detected by the Server.
@@ -68,6 +95,52 @@ func (s *session) retainMessage(msg *packet.Message) error {
 		return s.manager.recorder.removeRetained(msg.Topic)
 	}
 	return s.manager.recorder.setRetained(msg.Topic, msg)
+}
+
+// TODO: 存在安全问题？未做账号隔离？云端也存在这个问题
+func (s *session) sendRetainMessage(p *packet.Subscribe) error {
+	msgs, err := s.manager.recorder.getRetained()
+	if err != nil || len(msgs) == 0 {
+		return err
+	}
+	t := router.NewTrie()
+	for _, sub := range p.Subscriptions {
+		t.Add(router.NewNopSinkSub(s.id, uint32(sub.QOS), sub.Topic, uint32(sub.QOS), ""))
+	}
+	// TODO: improve and test, to resend if not acked?
+	for _, msg := range msgs {
+		if ok, qos := t.IsMatch(msg.Topic); ok {
+			m := common.NewMessage(uint32(msg.QOS), msg.Topic, msg.Payload, s.clientID)
+			if qos > m.QOS {
+				m.TargetQOS = m.QOS
+			} else {
+				m.TargetQOS = qos
+			}
+			m.TargetTopic = msg.Topic
+			m.Retain = true
+			s.publish(*m)
+		}
+	}
+	return nil
+}
+
+func (s *session) genSubAck(subs []packet.Subscription) []packet.QOS {
+	rv := make([]packet.QOS, len(subs))
+	for i, sub := range subs {
+		if !common.SubTopicValidate(sub.Topic) {
+			s.log.Errorf("subscribe topic (%s) invalid", sub.Topic)
+			rv[i] = packet.QOSFailure
+		} else if !s.authorizer.Authorize(auth.Subscribe, sub.Topic) {
+			s.log.Errorf("subscribe topic (%s) not permitted", sub.Topic)
+			rv[i] = packet.QOSFailure
+		} else if sub.QOS > 1 {
+			s.log.Errorf("subscribe QOS (%d) not supported", sub.QOS)
+			rv[i] = packet.QOSFailure
+		} else {
+			rv[i] = sub.QOS
+		}
+	}
+	return rv
 }
 
 // Close closes this session, only called by session manager
