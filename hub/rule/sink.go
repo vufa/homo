@@ -3,7 +3,6 @@ package rule
 import (
 	"github.com/countstarlight/homo/hub/common"
 	"github.com/countstarlight/homo/hub/router"
-	"github.com/countstarlight/homo/logger"
 	"github.com/countstarlight/homo/utils"
 	"go.uber.org/zap"
 	"sync/atomic"
@@ -21,14 +20,14 @@ type sink struct {
 	log     *zap.SugaredLogger
 }
 
-func newSink(id string, b broker, r *router.Trie, msgchan *msgchan) *sink {
+func newSink(id string, b broker, r *router.Trie, msgchan *msgchan, log *zap.SugaredLogger) *sink {
 	s := &sink{
 		id:      id,
 		broker:  b,
 		trieq0:  r,
 		trieq1:  router.NewTrie(),
 		msgchan: msgchan,
-		log:     logger.New(logger.LogInfo{Level: "debug"}, "sink", id),
+		log:     log.With("sink", id),
 	}
 	return s
 }
@@ -78,8 +77,8 @@ func (s *sink) wait() {
 }
 
 func (s *sink) goRoutingQ0() error {
-	s.log.Debugf("task of routing message (Q0) begins")
-	defer s.log.Debugf("task of routing message (Q0) stopped")
+	s.log.Debug("task of routing message (Q0) begins")
+	defer s.log.Debug("task of routing message (Q0) stopped")
 
 	var msg *common.Message
 	for {
@@ -97,7 +96,7 @@ func (s *sink) goRoutingQ0() error {
 
 func (s *sink) goRoutingQ1() error {
 	s.log.Debugf("task of routing message (Q1) begins with offset=%d", s.getOffset())
-	defer s.log.Debugf("task of routing message (Q1) stopped")
+	defer s.log.Debug("task of routing message (Q1) stopped")
 
 	var (
 		err    error

@@ -5,7 +5,6 @@ import (
 	"github.com/countstarlight/homo/hub/common"
 	"github.com/countstarlight/homo/hub/config"
 	"github.com/countstarlight/homo/hub/router"
-	"github.com/countstarlight/homo/logger"
 	"github.com/countstarlight/homo/utils"
 	cmap "github.com/orcaman/concurrent-map"
 	"go.uber.org/zap"
@@ -36,16 +35,16 @@ type Manager struct {
 }
 
 // NewManager creates a new rule manager
-func NewManager(c []config.Subscription, b broker, r report) (*Manager, error) {
+func NewManager(c []config.Subscription, b broker, r report, log *zap.SugaredLogger) (*Manager, error) {
 	m := &Manager{
 		broker: b,
 		report: r,
 		rules:  cmap.New(),
 		trieq0: router.NewTrie(),
-		log:    logger.New(logger.LogInfo{Level: "debug"}, "manager", "rule"),
+		log:    log.With("manager", "rule"),
 	}
-	m.rules.Set(common.RuleMsgQ0, newRuleQos0(m.broker, m.trieq0))
-	m.rules.Set(common.RuleTopic, newRuleTopic(m.broker, m.trieq0))
+	m.rules.Set(common.RuleMsgQ0, newRuleQos0(m.broker, m.trieq0, m.log))
+	m.rules.Set(common.RuleTopic, newRuleTopic(m.broker, m.trieq0, m.log))
 	for _, sub := range c {
 		err := m.AddSinkSub(common.RuleTopic, sub.Target.Topic, uint32(sub.Source.QOS), sub.Source.Topic, uint32(sub.Target.QOS), sub.Target.Topic)
 		if err != nil {
@@ -135,7 +134,7 @@ func (m *Manager) AddRuleSess(id string, persistent bool, publish, republish com
 	if _, ok := m.rules.Get(id); ok {
 		return fmt.Errorf("rule (%s) exists", id)
 	}
-	m.rules.Set(id, newRuleSess(id, persistent, m.broker, m.trieq0, publish, republish))
+	m.rules.Set(id, newRuleSess(id, persistent, m.broker, m.trieq0, publish, republish, m.log))
 	return nil
 }
 

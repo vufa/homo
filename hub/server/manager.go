@@ -2,7 +2,6 @@ package server
 
 import (
 	"github.com/256dpi/gomqtt/transport"
-	"github.com/countstarlight/homo/logger"
 	"github.com/countstarlight/homo/protocol/mqtt"
 	"github.com/countstarlight/homo/utils"
 	"go.uber.org/zap"
@@ -20,7 +19,7 @@ type Manager struct {
 }
 
 // NewManager creates a server manager
-func NewManager(addrs []string, cert utils.Certificate, handle Handle) (*Manager, error) {
+func NewManager(addrs []string, cert utils.Certificate, handle Handle, log *zap.SugaredLogger) (*Manager, error) {
 	launcher, err := mqtt.NewLauncher(cert)
 	if err != nil {
 		return nil, err
@@ -28,7 +27,7 @@ func NewManager(addrs []string, cert utils.Certificate, handle Handle) (*Manager
 	m := &Manager{
 		servers: make([]transport.Server, 0),
 		handle:  handle,
-		log:     logger.New(logger.LogInfo{Level: "debug"}, "manager", "server"),
+		log:     log.With("manager", "server"),
 	}
 	for _, addr := range addrs {
 		svr, err := launcher.Launch(addr)

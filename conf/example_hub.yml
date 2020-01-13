@@ -1,3 +1,13 @@
 logger:
-  path: var/log/homo/service.log
-  level: 'info'
+  path: var/log/homo/hub.log
+  level: 'debug'
+  mode: 'console'
+  format: 'text'
+  age:
+    max: 15
+  size:
+    max: 50
+  backup:
+    max: 15
+storage:
+  dir: var/db/homo/data

@@ -3,7 +3,6 @@ package rule
 import (
 	"github.com/countstarlight/homo/hub/common"
 	"github.com/countstarlight/homo/hub/router"
-	"github.com/countstarlight/homo/logger"
 	"go.uber.org/zap"
 	"strconv"
 	"sync"
@@ -29,12 +28,12 @@ type rulebase struct {
 	log     *zap.SugaredLogger
 }
 
-func newRuleBase(id string, persistent bool, b broker, r *router.Trie, publish, republish common.Publish) *rulebase {
-	log := logger.New(logger.LogInfo{Level: "debug"}, "rule", id)
+func newRuleBase(id string, persistent bool, b broker, r *router.Trie, publish, republish common.Publish, log *zap.SugaredLogger) *rulebase {
+	logRule := log.With("rule", id)
 	rb := &rulebase{
 		id:     id,
 		broker: b,
-		log:    log,
+		log:    logRule,
 	}
 	persist := rb.persist
 	if !persistent {
@@ -48,24 +47,24 @@ func newRuleBase(id string, persistent bool, b broker, r *router.Trie, publish, 
 		b.Config().Message.Egress.Qos1.Retry.Interval,
 		b.Config().Shutdown.Timeout,
 		persist,
-		log,
+		logRule,
 	)
-	rb.sink = newSink(id, b, r, rb.msgchan)
+	rb.sink = newSink(id, b, r, rb.msgchan, log)
 	return rb
 }
 
-func newRuleQos0(b broker, r *router.Trie) *rulebase {
-	return newRuleBase(common.RuleMsgQ0, false, b, r, nil, nil)
+func newRuleQos0(b broker, r *router.Trie, log *zap.SugaredLogger) *rulebase {
+	return newRuleBase(common.RuleMsgQ0, false, b, r, nil, nil, log)
 }
 
-func newRuleTopic(b broker, r *router.Trie) *rulebase {
-	rb := newRuleBase(common.RuleTopic, true, b, r, nil, nil)
+func newRuleTopic(b broker, r *router.Trie, log *zap.SugaredLogger) *rulebase {
+	rb := newRuleBase(common.RuleTopic, true, b, r, nil, nil, log)
 	rb.msgchan.publish = rb.publish
 	return rb
 }
 
-func newRuleSess(id string, p bool, b broker, r *router.Trie, publish, republish common.Publish) base {
-	return newRuleBase(id, p, b, r, publish, republish)
+func newRuleSess(id string, p bool, b broker, r *router.Trie, publish, republish common.Publish, log *zap.SugaredLogger) base {
+	return newRuleBase(id, p, b, r, publish, republish, log)
 }
 
 func (r *rulebase) uid() string {

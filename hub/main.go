@@ -44,22 +44,22 @@ func (m *mo) start() error {
 		m.log.Errorw("failed to new factory:", zap.Error(err))
 		return err
 	}
-	m.broker, err = broker.NewBroker(&m.cfg, m.factory, m.ctx.ReportInstance)
+	m.broker, err = broker.NewBroker(&m.cfg, m.factory, m.ctx.ReportInstance, m.log)
 	if err != nil {
 		m.log.Errorw("failed to new broker:", zap.Error(err))
 		return err
 	}
-	m.Rules, err = rule.NewManager(m.cfg.Subscriptions, m.broker, m.ctx.ReportInstance)
+	m.Rules, err = rule.NewManager(m.cfg.Subscriptions, m.broker, m.ctx.ReportInstance, m.log)
 	if err != nil {
 		m.log.Errorw("failed to new rule manager:", zap.Error(err))
 		return err
 	}
-	m.Sessions, err = session.NewManager(&m.cfg, m.broker.Flow, m.Rules, m.factory)
+	m.Sessions, err = session.NewManager(&m.cfg, m.broker.Flow, m.Rules, m.factory, m.log)
 	if err != nil {
 		m.log.Errorw("failed to new session manager:", zap.Error(err))
 		return err
 	}
-	m.servers, err = server.NewManager(m.cfg.Listen, m.cfg.Certificate, m.Sessions.Handle)
+	m.servers, err = server.NewManager(m.cfg.Listen, m.cfg.Certificate, m.Sessions.Handle, m.log)
 	if err != nil {
 		m.log.Errorw("failed to new server manager:", zap.Error(err))
 		return err

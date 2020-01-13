@@ -8,7 +8,6 @@ import (
 	"github.com/countstarlight/homo/hub/common"
 	"github.com/countstarlight/homo/hub/config"
 	"github.com/countstarlight/homo/hub/persist"
-	"github.com/countstarlight/homo/logger"
 	"github.com/countstarlight/homo/utils"
 )
 
@@ -40,7 +39,7 @@ type Broker struct {
 }
 
 // NewBroker NewBroker
-func NewBroker(c *config.Config, pf *persist.Factory, report Report) (b *Broker, err error) {
+func NewBroker(c *config.Config, pf *persist.Factory, report Report, log *zap.SugaredLogger) (b *Broker, err error) {
 	msgqos1DB, err := pf.NewDB("msgqos1.db")
 	if err != nil {
 		return nil, err
@@ -57,7 +56,7 @@ func NewBroker(c *config.Config, pf *persist.Factory, report Report) (b *Broker,
 		offsetDB:   offsetDB,
 		offsetChan: make(chan *Offset, c.Message.Offset.Buffer.Size),
 		report:     report,
-		log:        logger.New(logger.LogInfo{Level: "debug"}, "broker", "mqtt"),
+		log:        log.With("broker", "mqtt"),
 	}
 	if report != nil {
 		return b, b.tomb.Go(b.persistingMsgQos1, b.persistingOffset, b.cleaningMsgQos1, b.reporting)

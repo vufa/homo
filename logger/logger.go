@@ -65,46 +65,44 @@ func ParseLevel(level string) (zapcore.Level, error) {
 
 // New create a new Sugared logger
 func New(c LogInfo, fields ...string) *zap.SugaredLogger {
-	var core zapcore.Core
+	var (
+		format zapcore.Encoder
+		write  zapcore.WriteSyncer
+	)
 	logLevel, err := ParseLevel(c.Level)
 	if err != nil {
 		S.Warnf("failed to parse log level (%s), use default level (info)", c.Level)
 	}
-	if logLevel != zap.DebugLevel {
-		w := zapcore.AddSync(&lumberjack.Logger{
-			Filename:   c.Path,
-			MaxSize:    500,
-			MaxBackups: 3,
-			MaxAge:     28, // days
-		})
-		conf := zap.NewProductionEncoderConfig()
-		conf.EncodeTime = TimeEncoder
-		core = zapcore.NewCore(
-			zapcore.NewJSONEncoder(conf),
-			w,
-			logLevel,
-		)
-		if len(fields) > 0 && len(fields)%2 == 0 {
-			zapFields := []zap.Field{}
-			for index := 0; index < len(fields)-1; index = index + 2 {
-				zapFields = append(zapFields, zap.String(fields[index], fields[index+1]))
-			}
-			return zap.New(core, zap.Fields(zapFields...)).Sugar()
-		}
-		return zap.New(core).Sugar()
+	conf := zap.NewProductionEncoderConfig()
+	conf.EncodeTime = TimeEncoder
+
+	if c.Format == "json" {
+		format = zapcore.NewJSONEncoder(conf)
+	} else {
+		format = zapcore.NewConsoleEncoder(NewEncoderConfig())
 	}
 
-	core = zapcore.NewCore(
-		zapcore.NewConsoleEncoder(NewEncoderConfig()),
-		os.Stdout,
-		zap.DebugLevel,
+	if c.Mode == "file" {
+		write = zapcore.AddSync(&lumberjack.Logger{
+			Filename:   c.Path,
+			MaxAge:     c.Age.Max,  //days
+			MaxSize:    c.Size.Max, // megabytes
+			MaxBackups: c.Backup.Max,
+		})
+	} else {
+		write = os.Stdout
+	}
+	core := zapcore.NewCore(
+		format,
+		write,
+		logLevel,
 	)
-	if len(fields) > 0 {
+	if len(fields) > 0 && len(fields)%2 == 0 {
 		zapFields := []zap.Field{}
 		for index := 0; index < len(fields)-1; index = index + 2 {
 			zapFields = append(zapFields, zap.String(fields[index], fields[index+1]))
 		}
-		return zap.New(core, zap.AddCaller(), zap.Fields(zapFields...)).Sugar()
+		return zap.New(core, zap.Fields(zapFields...)).Sugar()
 	}
-	return zap.New(core, zap.AddCaller()).Sugar()
+	return zap.New(core).Sugar()
 }

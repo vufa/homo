@@ -7,7 +7,6 @@ import (
 	"github.com/countstarlight/homo/hub/config"
 	"github.com/countstarlight/homo/hub/persist"
 	"github.com/countstarlight/homo/hub/rule"
-	"github.com/countstarlight/homo/logger"
 	cmap "github.com/orcaman/concurrent-map"
 	"go.uber.org/zap"
 )
@@ -24,7 +23,7 @@ type Manager struct {
 }
 
 // NewManager creates a session manager
-func NewManager(conf *config.Config, flow common.Flow, rules *rule.Manager, pf *persist.Factory) (*Manager, error) {
+func NewManager(conf *config.Config, flow common.Flow, rules *rule.Manager, pf *persist.Factory, log *zap.SugaredLogger) (*Manager, error) {
 	sessionDB, err := pf.NewDB("session.db")
 	if err != nil {
 		return nil, err
@@ -34,9 +33,9 @@ func NewManager(conf *config.Config, flow common.Flow, rules *rule.Manager, pf *
 		rules:    rules,
 		flow:     flow,
 		conf:     &conf.Message,
-		recorder: newRecorder(sessionDB),
+		recorder: newRecorder(sessionDB, log),
 		sessions: cmap.New(),
-		log:      logger.New(logger.LogInfo{Level: "debug"}, "manager", "session"),
+		log:      log.With("manager", "session"),
 	}, nil
 }
 

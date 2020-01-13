@@ -6,7 +6,6 @@ import (
 	"github.com/256dpi/gomqtt/packet"
 	"github.com/countstarlight/homo/hub/common"
 	"github.com/countstarlight/homo/hub/persist"
-	"github.com/countstarlight/homo/logger"
 	"go.uber.org/zap"
 	"sync"
 )
@@ -19,10 +18,10 @@ type recorder struct {
 }
 
 // NewRecorder creates a recorder
-func newRecorder(db persist.Database) *recorder {
+func newRecorder(db persist.Database, log *zap.SugaredLogger) *recorder {
 	return &recorder{
 		db:  db,
-		log: logger.New(logger.LogInfo{Level: "debug"}, "session", "recorder"),
+		log: log.With("session", "recorder"),
 	}
 }
 

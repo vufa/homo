@@ -7,7 +7,6 @@ import (
 	"github.com/countstarlight/homo/hub/auth"
 	"github.com/countstarlight/homo/hub/common"
 	"github.com/countstarlight/homo/hub/router"
-	"github.com/countstarlight/homo/logger"
 	"github.com/countstarlight/homo/utils"
 	"go.uber.org/zap"
 	"sync"
@@ -40,7 +39,7 @@ func newSession(conn transport.Conn, manager *Manager) *session {
 		manager:                manager,
 		subs:                   make(map[string]packet.Subscription),
 		pids:                   common.NewPacketIDS(),
-		log:                    logger.New(logger.LogInfo{Level: "debug"}, "mqtt", "session"),
+		log:                    manager.log.With("mqtt", "session"),
 		permittedPublishTopics: make(map[string]struct{}),
 	}
 }
