@@ -10,6 +10,8 @@ package homo
 import (
 	"github.com/countstarlight/homo/logger"
 	"github.com/countstarlight/homo/protocol/mqtt"
+	"github.com/countstarlight/homo/utils"
+	"github.com/docker/go-units"
 	"time"
 )
 
@@ -69,6 +71,59 @@ type Memory struct {
 type memory struct {
 	Limit string `yaml:"limit" json:"limit"`
 	Swap  string `yaml:"swap" json:"swap"`
+}
+
+// UnmarshalYAML customizes unmarshal
+func (m *Memory) UnmarshalYAML(unmarshal func(interface{}) error) error {
+	var ms memory
+	err := unmarshal(&ms)
+	if err != nil {
+		return err
+	}
+	if ms.Limit != "" {
+		m.Limit, err = units.RAMInBytes(ms.Limit)
+		if err != nil {
+			return err
+		}
+	}
+	if ms.Swap != "" {
+		m.Swap, err = units.RAMInBytes(ms.Swap)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+/* function */
+
+// FunctionClientConfig function client config
+type FunctionClientConfig struct {
+	Address string `yaml:"address" json:"address"`
+	Message struct {
+		Length utils.Length `yaml:"length" json:"length" default:"{\"max\":4194304}"`
+	} `yaml:"message" json:"message"`
+	Backoff struct {
+		Max time.Duration `yaml:"max" json:"max" default:"1m"`
+	} `yaml:"backoff" json:"backoff"`
+	Timeout time.Duration `yaml:"timeout" json:"timeout" default:"30s"`
+}
+
+// FunctionServerConfig function server config
+type FunctionServerConfig struct {
+	Address string        `yaml:"address" json:"address"`
+	Timeout time.Duration `yaml:"timeout" json:"timeout" default:"2m"`
+	Message struct {
+		Length utils.Length `yaml:"length" json:"length" default:"{\"max\":4194304}"`
+	} `yaml:"message" json:"message"`
+	Concurrent struct {
+		Max uint32 `yaml:"max" json:"max"`
+	} `yaml:"concurrent" json:"concurrent"`
+	// for python function server
+	Workers struct {
+		Max uint32 `yaml:"max" json:"max"`
+	} `yaml:"workers" json:"workers"`
+	utils.Certificate `yaml:",inline" json:",inline"`
 }
 
 // NetworksInfo network configurations of service

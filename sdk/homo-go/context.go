@@ -129,6 +129,8 @@ type Context interface {
 
 	// reports the stats of the instance of the service
 	ReportInstance(stats map[string]interface{}) error
+	// stop the instance of the service
+	StopInstance(serviceName, instanceName string) error
 
 	io.Closer
 }

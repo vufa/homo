@@ -8,10 +8,26 @@ api:
   address: unix://var/run/homo/api.sock
 logger:
   path: var/log/homo/homo.log
-  level: info
+  level: 'debug'
+  mode: 'console'
+  format: 'text'
+  age:
+    max: 15
+  size:
+    max: 50
+  backup:
+    max: 15
 otalog:
   path: var/db/homo/ota.log
-  level: info
+  level: 'debug'
+  mode: 'console'
+  format: 'text'
+  age:
+    max: 15
+  size:
+    max: 50
+  backup:
+    max: 15
 grace: 30s
 baidu:
   asr_api: http://vop.baidu.com/server_api
