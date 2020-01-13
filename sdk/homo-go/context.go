@@ -121,7 +121,7 @@ type Context interface {
 	// returns the system configuration of the service, such as hub and logger
 	Config() *ServiceConfig
 	// loads the custom configuration of the service
-	LoadConfig(interface{}) error
+	LoadConfig(string, interface{}) error
 	// returns logger interface
 	Log() *zap.SugaredLogger
 	// waiting to exit, receiving SIGTERM and SIGINT signals
@@ -142,7 +142,7 @@ type ctx struct {
 	*Client
 }
 
-func newContext() (*ctx, error) {
+func newContext(s Service) (*ctx, error) {
 	var cfg ServiceConfig
 	md := os.Getenv(EnvKeyServiceMode)
 	sn := os.Getenv(EnvKeyServiceName)
@@ -152,16 +152,17 @@ func newContext() (*ctx, error) {
 		sn = os.Getenv(EnvServiceNameKey)
 		in = os.Getenv(EnvServiceInstanceNameKey)
 	}
-
-	err := utils.LoadYAML(DefaultConfFile, &cfg)
+	if s.CfgPath == "" {
+		s.CfgPath = DefaultConfFile
+	}
+	err := utils.LoadYAML(s.CfgPath, &cfg)
 	if err != nil && !os.IsNotExist(err) {
-		fmt.Fprintf(os.Stderr, "[%s][%s] failed to load config: %s\n", sn, in, err.Error())
+		logger.S.Fatalf("[%s][%s] failed to load config: %s\n", sn, in, err.Error())
 	}
 	log := logger.New(cfg.Logger, "service", sn, "instance", in)
 	cli, err := NewEnvClient()
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "[%s][%s] failed to create master client: %s\n", sn, in, err.Error())
-		log.Errorw("failed to create master client", zap.Error(err))
+		log.Errorw(fmt.Sprintf("[%s][%s] failed to create master client", sn, in), zap.Error(err))
 	}
 	return &ctx{
 		sn:     sn,
@@ -173,8 +174,11 @@ func newContext() (*ctx, error) {
 	}, nil
 }
 
-func (c *ctx) LoadConfig(cfg interface{}) error {
-	return utils.LoadYAML(DefaultConfFile, cfg)
+func (c *ctx) LoadConfig(cfgPath string, cfg interface{}) error {
+	if cfgPath == "" {
+		cfgPath = DefaultConfFile
+	}
+	return utils.LoadYAML(cfgPath, cfg)
 }
 
 func (c *ctx) Config() *ServiceConfig {

@@ -14,13 +14,17 @@ import (
 	"github.com/countstarlight/homo/hub/rule"
 	"github.com/countstarlight/homo/hub/server"
 	"github.com/countstarlight/homo/hub/session"
+	"github.com/countstarlight/homo/logger"
 	"github.com/countstarlight/homo/sdk/homo-go"
+	"github.com/urfave/cli/v2"
 	"go.uber.org/zap"
+	"os"
 )
 
 type mo struct {
 	ctx      homo.Context
 	cfg      config.Config
+	cfgPath  string
 	Rules    *rule.Manager
 	Sessions *session.Manager
 	broker   *broker.Broker
@@ -30,7 +34,7 @@ type mo struct {
 }
 
 func (m *mo) start() error {
-	err := m.ctx.LoadConfig(&m.cfg)
+	err := m.ctx.LoadConfig(m.cfgPath, &m.cfg)
 	if err != nil {
 		m.log.Errorw("failed to load config:", zap.Error(err))
 		return err
@@ -84,14 +88,35 @@ func (m *mo) close() {
 }
 
 func main() {
-	homo.Run(func(ctx homo.Context) error {
-		m := mo{ctx: ctx, log: ctx.Log()}
-		defer m.close()
-		err := m.start()
-		if err != nil {
-			return err
-		}
-		ctx.Wait()
-		return nil
-	})
+	var cfgPath string
+	hub := &cli.App{
+		Name:    "Homo Hub",
+		Version: "0.0.1",
+		Usage:   "Hub for homo",
+		Flags: []cli.Flag{
+			&cli.StringFlag{
+				EnvVars:     []string{"HOMO_HUB_CONFIG_FILE"},
+				Name:        "config",
+				Aliases:     []string{"c"},
+				Usage:       "set homo hub config file path",
+				Destination: &cfgPath,
+			},
+		},
+		Action: func(c *cli.Context) error {
+			homo.Run(homo.Service{CfgPath: cfgPath}, func(ctx homo.Context) error {
+				m := mo{ctx: ctx, log: ctx.Log(), cfgPath: cfgPath}
+				defer m.close()
+				err := m.start()
+				if err != nil {
+					return err
+				}
+				ctx.Wait()
+				return nil
+			})
+			return nil
+		},
+	}
+	if err := hub.Run(os.Args); err != nil {
+		logger.S.Fatal(err)
+	}
 }

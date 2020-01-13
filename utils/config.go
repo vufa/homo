@@ -3,7 +3,8 @@ package utils
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
+	"github.com/countstarlight/homo/logger"
+	"go.uber.org/zap"
 	"io/ioutil"
 	"os"
 	"strings"
@@ -22,7 +23,7 @@ func LoadYAML(path string, out interface{}) error {
 	}
 	res, err := ParseEnv(data)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "config parse error: %s", err.Error())
+		logger.S.Errorw("config parse error", zap.Error(err))
 		res = data
 	}
 	return UnmarshalYAML(res, out)

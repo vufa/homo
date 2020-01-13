@@ -14,23 +14,27 @@ import (
 	"runtime/debug"
 )
 
+type Service struct {
+	CfgPath string
+}
+
 // Run service
-func Run(handle func(Context) error) {
+func Run(s Service, handle func(Context) error) {
 	defer func() {
 		if r := recover(); r != nil {
 			logger.S.Errorf("service is stopped with panic: %s\n%s", r, string(debug.Stack()))
 		}
 	}()
-	c, err := newContext()
+	c, err := newContext(s)
 	if err != nil {
 		logger.S.Errorw("failed to create context", zap.Error(err))
 		return
 	}
-	logger.S.Info("service starting: ", os.Args)
+	c.log.Info("service starting: ", os.Args)
 	err = handle(c)
 	if err != nil {
-		logger.S.Errorw("service is stopped with error", zap.Error(err))
+		c.log.Errorw("service is stopped with error", zap.Error(err))
 	} else {
-		logger.S.Info("service stopped")
+		c.log.Info("service stopped")
 	}
 }
