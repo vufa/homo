@@ -131,8 +131,12 @@ type Context interface {
 	// waiting to exit, receiving SIGTERM and SIGINT signals
 	Wait()
 
+	// gets an available port of the host
+	GetAvailablePort() (string, error)
 	// reports the stats of the instance of the service
 	ReportInstance(stats map[string]interface{}) error
+	// starts an instance of the service
+	StartInstance(serviceName, instanceName string, dynamicConfig map[string]string) error
 	// stop the instance of the service
 	StopInstance(serviceName, instanceName string) error
 

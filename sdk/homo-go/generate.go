@@ -5,4 +5,4 @@ import (
 )
 
 //go:generate protoc -I=. -I=$GOPATH/src --go_out=plugins=grpc:. function.proto
-//go:generate protoc -I=. -I=$GOPATH/src --go_out=plugins=grpc:. api/kv.proto
+//go:generate protoc -I=. -I=$GOPATH/src -I=$GOPATH/src/github.com/gogo/protobuf/protobuf --go_out=plugins=grpc,Mgoogle/protobuf/empty.proto=github.com/gogo/protobuf/types:. api/kv.proto

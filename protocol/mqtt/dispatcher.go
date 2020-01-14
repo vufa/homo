@@ -1,6 +1,7 @@
 package mqtt
 
 import (
+	"fmt"
 	"github.com/256dpi/gomqtt/packet"
 	"github.com/countstarlight/homo/logger"
 	"github.com/countstarlight/homo/utils"
@@ -8,6 +9,9 @@ import (
 	"go.uber.org/zap"
 	"time"
 )
+
+// ErrDispatcherClosed is returned if the dispatcher is closed
+var ErrDispatcherClosed = fmt.Errorf("dispatcher already closed")
 
 // Dispatcher dispatcher of mqtt client
 type Dispatcher struct {
@@ -33,6 +37,16 @@ func NewDispatcher(cc ClientInfo, log *zap.SugaredLogger) *Dispatcher {
 		},
 		log: log.With("mqtt", "dispatcher").With("cid", cc.ClientID),
 	}
+}
+
+// Send sends a generic packet
+func (d *Dispatcher) Send(pkt packet.Generic) error {
+	select {
+	case d.channel <- pkt:
+	case <-d.tomb.Dying():
+		return ErrDispatcherClosed
+	}
+	return nil
 }
 
 // Start starts dispatcher

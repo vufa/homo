@@ -1,6 +1,8 @@
 package main
 
 import (
+	"encoding/json"
+	"fmt"
 	"github.com/256dpi/gomqtt/packet"
 	"github.com/countstarlight/homo/protocol/mqtt"
 	"github.com/countstarlight/homo/sdk/homo-go"
@@ -52,4 +54,42 @@ func (rr *ruler) ProcessError(err error) {
 
 func (rr *ruler) close() {
 	rr.hub.Close()
+}
+
+func (rr *ruler) callback(in, out *homo.FunctionMessage, err error) {
+	if err != nil {
+		for index := 1; index < rr.cfg.Retry.Max && err != nil; index++ {
+			rr.log.Debugf("function (%s) is retried %d time(s)", rr.fun.cfg.Name, index)
+			out, err = rr.fun.Call(in)
+		}
+	}
+	pkt := packet.NewPublish()
+	pkt.ID = packet.ID(in.ID)
+	pkt.Message.QOS = packet.QOS(rr.cfg.Publish.QOS)
+	if in.QOS < rr.cfg.Publish.QOS {
+		pkt.Message.QOS = packet.QOS(in.QOS)
+	}
+	pkt.Message.Topic = rr.cfg.Publish.Topic
+	if err != nil {
+		s := map[string]interface{}{
+			"functionMessage": in,
+			"errorMessage":    err.Error(),
+			"errorType":       fmt.Sprintf("%T", err),
+		}
+		pkt.Message.Payload, _ = json.Marshal(s)
+	} else if out.Payload != nil {
+		pkt.Message.Payload = out.Payload
+	}
+	// filter
+	if pkt.Message.Payload != nil {
+		err := rr.hub.Send(pkt)
+		if err != nil {
+			return
+		}
+	}
+	if in.QOS == 1 && (pkt.Message.QOS == 0 || pkt.Message.Payload == nil) {
+		puback := packet.NewPuback()
+		puback.ID = packet.ID(in.ID)
+		rr.hub.Send(puback)
+	}
 }

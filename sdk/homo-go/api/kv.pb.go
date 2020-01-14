@@ -6,8 +6,8 @@ package api
 import (
 	fmt "fmt"
 	_ "github.com/gogo/protobuf/gogoproto"
+	types "github.com/gogo/protobuf/types"
 	proto "github.com/golang/protobuf/proto"
-	empty "github.com/golang/protobuf/ptypes/empty"
 	context "golang.org/x/net/context"
 	grpc "google.golang.org/grpc"
 	math "math"
@@ -154,9 +154,9 @@ const _ = grpc.SupportPackageIsVersion4
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type KVServiceClient interface {
-	Set(ctx context.Context, in *KV, opts ...grpc.CallOption) (*empty.Empty, error)
+	Set(ctx context.Context, in *KV, opts ...grpc.CallOption) (*types.Empty, error)
 	Get(ctx context.Context, in *KV, opts ...grpc.CallOption) (*KV, error)
-	Del(ctx context.Context, in *KV, opts ...grpc.CallOption) (*empty.Empty, error)
+	Del(ctx context.Context, in *KV, opts ...grpc.CallOption) (*types.Empty, error)
 	List(ctx context.Context, in *KV, opts ...grpc.CallOption) (*KVs, error)
 }
 
@@ -168,8 +168,8 @@ func NewKVServiceClient(cc *grpc.ClientConn) KVServiceClient {
 	return &kVServiceClient{cc}
 }
 
-func (c *kVServiceClient) Set(ctx context.Context, in *KV, opts ...grpc.CallOption) (*empty.Empty, error) {
-	out := new(empty.Empty)
+func (c *kVServiceClient) Set(ctx context.Context, in *KV, opts ...grpc.CallOption) (*types.Empty, error) {
+	out := new(types.Empty)
 	err := c.cc.Invoke(ctx, "/api.KVService/Set", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -186,8 +186,8 @@ func (c *kVServiceClient) Get(ctx context.Context, in *KV, opts ...grpc.CallOpti
 	return out, nil
 }
 
-func (c *kVServiceClient) Del(ctx context.Context, in *KV, opts ...grpc.CallOption) (*empty.Empty, error) {
-	out := new(empty.Empty)
+func (c *kVServiceClient) Del(ctx context.Context, in *KV, opts ...grpc.CallOption) (*types.Empty, error) {
+	out := new(types.Empty)
 	err := c.cc.Invoke(ctx, "/api.KVService/Del", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -206,9 +206,9 @@ func (c *kVServiceClient) List(ctx context.Context, in *KV, opts ...grpc.CallOpt
 
 // KVServiceServer is the server API for KVService service.
 type KVServiceServer interface {
-	Set(context.Context, *KV) (*empty.Empty, error)
+	Set(context.Context, *KV) (*types.Empty, error)
 	Get(context.Context, *KV) (*KV, error)
-	Del(context.Context, *KV) (*empty.Empty, error)
+	Del(context.Context, *KV) (*types.Empty, error)
 	List(context.Context, *KV) (*KVs, error)
 }
 

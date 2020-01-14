@@ -43,6 +43,15 @@ func NewFunction(cfg FunctionInfo, p Producer, log *zap.SugaredLogger) *Function
 	return f
 }
 
+// Call calls function to handle message and return result message
+func (f *Function) Call(msg *homo.FunctionMessage) (*homo.FunctionMessage, error) {
+	item, err := f.BorrowObjectWithRetry()
+	if err != nil {
+		return nil, err
+	}
+	return f.call(item.(Instance), msg, nil)
+}
+
 // CallAsync calls function to handle message and return result message
 func (f *Function) CallAsync(msg *homo.FunctionMessage, cb func(in, out *homo.FunctionMessage, err error)) error {
 	item, err := f.BorrowObjectWithRetry()

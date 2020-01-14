@@ -12,10 +12,12 @@ VERSION:=$(if $(GIT_TAG),$(GIT_TAG),$(GIT_REV))
 ifeq ($(OS), Windows_NT)
 	EXECUTABLE_MASTER := homo-master.exe
 	EXECUTABLE_HUB := homo-hub.exe
+	EXECUTABLE_FUNCTION := homo-function.exe
 	EXTRA_GOENVS = GOOS=windows GOARCH=amd64
 else
 	EXECUTABLE_MASTER := homo-master
 	EXECUTABLE_HUB := homo-hub
+	EXECUTABLE_FUNCTION := homo-function
 	UNAME_S := $(shell uname -s)
 	ifeq ($(UNAME_S),Darwin)
 		SED_INPLACE := sed -i ''
@@ -49,7 +51,7 @@ deps:
 .PHONY: clean
 clean:
 	$(GO) clean -i ./...
-	rm -f $(EXECUTABLE_MASTER) $(EXECUTABLE_HUB)
+	rm -f $(EXECUTABLE_MASTER) $(EXECUTABLE_HUB) $(EXECUTABLE_FUNCTION)
 
 .PHONY: gen
 gen:
@@ -78,12 +80,16 @@ fmt-check:
 	fi;
 
 .PHONY: build
-build: $(EXECUTABLE_MASTER) $(EXECUTABLE_HUB)
+build: $(EXECUTABLE_MASTER) $(EXECUTABLE_HUB) $(EXECUTABLE_FUNCTION)
 
 $(EXECUTABLE_MASTER): $(SOURCES)
 	$(EXTRA_GOENVS) $(GO) build $(GOFLAGS) $(EXTRA_GOFLAGS) -ldflags '-s -w $(LDFLAGS)' -o $@;
 
 $(EXECUTABLE_HUB): $(SOURCES)
 	cd ./hub; \
+	$(EXTRA_GOENVS) $(GO) build $(GOFLAGS) $(EXTRA_GOFLAGS) -ldflags '-s -w $(LDFLAGS)' -o $@; \
+	mv $@ ../
+$(EXECUTABLE_FUNCTION): $(SOURCES)
+	cd ./function; \
 	$(EXTRA_GOENVS) $(GO) build $(GOFLAGS) $(EXTRA_GOFLAGS) -ldflags '-s -w $(LDFLAGS)' -o $@; \
 	mv $@ ../
