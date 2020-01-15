@@ -12,7 +12,7 @@ import (
 
 func main() {
 	var cfgPath string
-	hub := &cli.App{
+	function := &cli.App{
 		Name:    "Homo Function",
 		Version: "0.0.1",
 		Usage:   "Function manager for homo",
@@ -50,7 +50,7 @@ func main() {
 				for _, ri := range cfg.Rules {
 					f, ok := functions[ri.Function.Name]
 					if !ok {
-						return fmt.Errorf("function (%s) not found", f.cfg.Name)
+						return fmt.Errorf("function (%s) not found", ri.Function.Name)
 					}
 					c, err := ctx.NewHubClient(ri.ClientID, []mqtt.TopicInfo{ri.Subscribe})
 					if err != nil {
@@ -83,7 +83,7 @@ func main() {
 			return nil
 		},
 	}
-	if err := hub.Run(os.Args); err != nil {
+	if err := function.Run(os.Args); err != nil {
 		logger.S.Fatal(err)
 	}
 }

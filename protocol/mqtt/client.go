@@ -108,13 +108,13 @@ func (c *Client) connect() (err error) {
 	if err != nil {
 		return c.die(fmt.Errorf("failed to wait connect ack: %s", err.Error()))
 	}
-	c.log.Debugf("connected")
+	c.log.Debug("connected")
 
 	err = c.subscribeFuture.Wait(c.config.Timeout)
 	if err != nil {
 		return c.die(fmt.Errorf("failed to wait subscribe ack: %s", err.Error()))
 	}
-	c.log.Debugf("subscribed")
+	c.log.Debug("subscribed")
 	return nil
 }
 

@@ -79,6 +79,9 @@ fmt-check:
 		exit 1; \
 	fi;
 
+.PHONY: func
+func: $(EXECUTABLE_FUNCTION)
+
 .PHONY: build
 build: $(EXECUTABLE_MASTER) $(EXECUTABLE_HUB) $(EXECUTABLE_FUNCTION)
 
