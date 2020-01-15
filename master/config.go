@@ -84,8 +84,6 @@ func (c *Config) Validate() error {
 			unixPrefix += "/"
 		}
 		utils.SetEnv(homo.EnvKeyMasterAPIAddress, unixPrefix+homo.DefaultSockFile)
-		// TODO: remove, backward compatibility
-		utils.SetEnv(homo.EnvMasterAPIKey, unixPrefix+homo.DefaultSockFile)
 
 		// grpc
 		grpcSock, err := filepath.Abs(grpcUrl.Host)
@@ -107,8 +105,6 @@ func (c *Config) Validate() error {
 		}
 		utils.SetEnv(homo.EnvKeyMasterAPIAddress, addr)
 		utils.SetEnv(homo.EnvKeyMasterGRPCAPIAddress, grpcUrl.Host)
-		// TODO: remove, backward compatibility
-		utils.SetEnv(homo.EnvMasterAPIKey, addr)
 	}
 
 	if c.SNFile != "" {
@@ -124,16 +120,10 @@ func (c *Config) Validate() error {
 	utils.SetEnv(homo.EnvKeyMasterAPIVersion, "v1")
 	utils.SetEnv(homo.EnvKeyHostOS, runtime.GOOS)
 	utils.SetEnv(homo.EnvKeyServiceMode, c.Mode)
-	// TODO: remove, backward compatibility
-	utils.SetEnv(homo.EnvMasterAPIVersionKey, "v1")
-	utils.SetEnv(homo.EnvHostOSKey, runtime.GOOS)
-	utils.SetEnv(homo.EnvRunningModeKey, c.Mode)
 
 	hi := utils.GetHostInfo()
 	if hi.HostID != "" {
 		utils.SetEnv(homo.EnvKeyHostID, hi.HostID)
-		// TODO: remove, backward compatibility
-		utils.SetEnv(homo.EnvHostID, hi.HostID)
 	}
 	return nil
 }

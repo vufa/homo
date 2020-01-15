@@ -32,9 +32,6 @@ func (m *Master) startServices(cur homo.ComposeAppConfig) error {
 		m.accounts.Set(name, token)
 		s.Environment.Envs[homo.EnvKeyServiceName] = name
 		s.Environment.Envs[homo.EnvKeyServiceToken] = token
-		// TODO: remove, backward compatibility
-		s.Environment.Envs[homo.EnvServiceNameKey] = name
-		s.Environment.Envs[homo.EnvServiceTokenKey] = token
 		nxt, err := m.engine.Run(name, s, cur.Volumes)
 		if err != nil {
 			m.log.Infof("failed to start service (%s)", name)

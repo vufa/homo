@@ -36,8 +36,7 @@ func (p *producer) StartInstance(id uint32) (Instance, error) {
 	port := "50051"
 	serverHost := "0.0.0.0"
 	clientHost := name
-	if os.Getenv(homo.EnvKeyServiceMode) == "native" ||
-		/*backward compatibility*/ os.Getenv(homo.EnvRunningModeKey) == "native" {
+	if os.Getenv(homo.EnvKeyServiceMode) == "native" {
 		var err error
 		port, err = p.ctx.GetAvailablePort()
 		if err != nil {
@@ -49,9 +48,6 @@ func (p *producer) StartInstance(id uint32) (Instance, error) {
 
 	address := fmt.Sprintf("%s:%s", serverHost, port)
 	dc := map[string]string{
-		// TODO: remove
-		homo.EnvServiceAddressKey:         address, // deprecated, for v0.1.2
-		homo.EnvServiceInstanceAddressKey: address, // deprecated, for v0.1.3~5
 		homo.EnvKeyServiceInstanceAddress: address,
 	}
 	err := p.ctx.StartInstance(p.cfg.Service, name, dc)

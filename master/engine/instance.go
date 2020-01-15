@@ -46,15 +46,13 @@ func GenerateInstanceEnv(name string, static []string, dynamic map[string]string
 	for _, v := range static {
 		// remove auth token info for dynamic instances
 		if dyn {
-			if strings.HasPrefix(v, homo.EnvKeyServiceToken) || strings.HasPrefix(v, homo.EnvServiceTokenKey) {
+			if strings.HasPrefix(v, homo.EnvKeyServiceToken) {
 				continue
 			}
 		}
 		env = append(env, v)
 	}
 	env = append(env, fmt.Sprintf("%s=%s", homo.EnvKeyServiceInstanceName, name))
-	// TODO: remove, backward compatibility
-	env = append(env, fmt.Sprintf("%s=%s", homo.EnvServiceInstanceNameKey, name))
 	if dyn {
 		for k, v := range dynamic {
 			env = append(env, fmt.Sprintf("%s=%s", k, v))

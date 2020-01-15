@@ -8,7 +8,7 @@ import (
 )
 
 func TestGenerate(t *testing.T) {
-	static := []string{"name=homo", "org=linux", homo.EnvKeyServiceToken + "=key", homo.EnvServiceTokenKey + "=key"}
+	static := []string{"name=homo", "org=linux", homo.EnvKeyServiceToken + "=key"}
 	dyn := map[string]string{
 		"repo":    "github",
 		"project": "homo",
@@ -20,5 +20,4 @@ func TestGenerate(t *testing.T) {
 	assert.Contains(t, envs, "project=homo")
 	assert.Contains(t, envs, homo.EnvKeyServiceInstanceName+"="+t.Name())
 	assert.NotContains(t, envs, homo.EnvKeyServiceToken+"=key")
-	assert.NotContains(t, envs, homo.EnvServiceTokenKey+"=key")
 }

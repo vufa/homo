@@ -44,19 +44,6 @@ const (
 
 // Env keys
 const (
-	// deprecated
-	EnvHostID                    = "OPENEDGE_HOST_ID"
-	EnvHostOSKey                 = "OPENEDGE_HOST_OS"
-	EnvMasterAPIKey              = "OPENEDGE_MASTER_API"
-	EnvMasterAPIVersionKey       = "OPENEDGE_MASTER_API_VERSION"
-	EnvRunningModeKey            = "OPENEDGE_RUNNING_MODE"
-	EnvServiceNameKey            = "OPENEDGE_SERVICE_NAME"
-	EnvServiceTokenKey           = "OPENEDGE_SERVICE_TOKEN"
-	EnvServiceAddressKey         = "OPENEDGE_SERVICE_ADDRESS" // deprecated
-	EnvServiceInstanceNameKey    = "OPENEDGE_SERVICE_INSTANCE_NAME"
-	EnvServiceInstanceAddressKey = "OPENEDGE_SERVICE_INSTANCE_ADDRESS"
-
-	// new envs
 	EnvKeyHostID                 = "HOMO_HOST_ID"
 	EnvKeyHostOS                 = "HOMO_HOST_OS"
 	EnvKeyHostSN                 = "HOMO_HOST_SN"
@@ -157,11 +144,6 @@ func newContext(s Service) (*ctx, error) {
 	md := os.Getenv(EnvKeyServiceMode)
 	sn := os.Getenv(EnvKeyServiceName)
 	in := os.Getenv(EnvKeyServiceInstanceName)
-	if md == "" {
-		md = os.Getenv(EnvRunningModeKey)
-		sn = os.Getenv(EnvServiceNameKey)
-		in = os.Getenv(EnvServiceInstanceNameKey)
-	}
 	if s.CfgPath == "" {
 		s.CfgPath = DefaultConfFile
 	}

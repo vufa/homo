@@ -37,17 +37,11 @@ class mo(function_pb2_grpc.FunctionServicer):
         # overwrite config from env
         if 'HOMO_SERVICE_INSTANCE_NAME' in os.environ:
             self.config['name'] = os.environ['HOMO_SERVICE_INSTANCE_NAME']
-        elif 'OPENEDGE_SERVICE_INSTANCE_NAME' in os.environ:
-            self.config['name'] = os.environ['OPENEDGE_SERVICE_INSTANCE_NAME']
 
         if 'HOMO_SERVICE_INSTANCE_ADDRESS' in os.environ:
             if 'server' not in self.config:
                 self.config['server'] = {}
             self.config['server']['address'] = os.environ['HOMO_SERVICE_INSTANCE_ADDRESS']
-        elif 'OPENEDGE_SERVICE_INSTANCE_ADDRESS' in os.environ:
-            if 'server' not in self.config:
-                self.config['server'] = {}
-            self.config['server']['address'] = os.environ['OPENEDGE_SERVICE_INSTANCE_ADDRESS']
 
         if 'name' not in self.config:
             raise Exception('config invalid, missing name')
