@@ -79,6 +79,12 @@ fmt-check:
 		exit 1; \
 	fi;
 
+.PHONY: master
+master: $(EXECUTABLE_MASTER)
+
+.PHONY: hub
+hub: $(EXECUTABLE_HUB)
+
 .PHONY: func
 func: $(EXECUTABLE_FUNCTION)
 

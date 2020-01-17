@@ -53,12 +53,15 @@ github.com/golang/protobuf/protoc-gen-go/descriptor
 github.com/golang/protobuf/ptypes
 github.com/golang/protobuf/ptypes/any
 github.com/golang/protobuf/ptypes/duration
-github.com/golang/protobuf/ptypes/empty
 github.com/golang/protobuf/ptypes/timestamp
 # github.com/gorilla/mux v1.7.3
 github.com/gorilla/mux
 # github.com/gorilla/websocket v1.4.1
 github.com/gorilla/websocket
+# github.com/inconshreveable/go-update v0.0.0-20160112193335-8152e7eb6ccf
+github.com/inconshreveable/go-update
+github.com/inconshreveable/go-update/internal/binarydist
+github.com/inconshreveable/go-update/internal/osext
 # github.com/jolestar/go-commons-pool v2.0.0+incompatible
 github.com/jolestar/go-commons-pool
 github.com/jolestar/go-commons-pool/collections

@@ -5,7 +5,6 @@ import (
 	"go.uber.org/zap"
 	"os"
 
-	"github.com/countstarlight/homo/logger"
 	"github.com/countstarlight/homo/master/engine"
 	"github.com/countstarlight/homo/utils"
 	"github.com/shirou/gopsutil/process"
@@ -37,8 +36,7 @@ type nativeInstance struct {
 }
 
 func (s *nativeService) newInstance(name string, params processConfigs) (*nativeInstance, error) {
-	// TODO: need to optimize create logger with fields
-	log := logger.New(logger.LogInfo{Level: "debug"}, "instance", name)
+	log := s.log.With("instance", name)
 	p, err := s.engine.startProcess(params)
 	if err != nil {
 		log.Warn("failed to start instance", zap.Error(err))
@@ -54,11 +52,10 @@ func (s *nativeService) newInstance(name string, params processConfigs) (*native
 		service: s,
 		params:  params,
 		proc:    p,
-		// TODO: need to optimize set logger config
-		log: logger.New(logger.LogInfo{Level: "debug"}, "pid", fmt.Sprintf("%d", p.Pid)),
+		log:     log.With("pid", fmt.Sprintf("%d", p.Pid)),
 	}
 	err = i.tomb.Go(func() error {
-		return engine.Supervising(i)
+		return engine.Supervising(i, log)
 	})
 	if err != nil {
 		i.Close()
@@ -111,7 +108,7 @@ func (i *nativeInstance) Restart() error {
 		return err
 	}
 	i.proc = p
-	i.log = logger.New(logger.LogInfo{Level: "debug"}, "pid", fmt.Sprintf("%d", p.Pid))
+	i.log = i.log.With("pid", fmt.Sprintf("%d", p.Pid))
 	i.log.Infof("instance restarted")
 	return nil
 }

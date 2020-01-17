@@ -95,6 +95,25 @@ func New(pwd string, cfg Config, ver string, revision string) (*Master, error) {
 		return nil, err
 	}
 	log.Info("api server started")
+
+	m.server, err = api.New(m.cfg.Server, m, log)
+	if err != nil {
+		m.Close()
+		return nil, err
+	}
+	log.Info("server started")
+
+	// TODO: implement recover logic when master restarts
+	// Now it will stop all old services
+	m.engine.Recover()
+
+	// start application
+	err = m.UpdateAPP("", "")
+	if err != nil {
+		m.Close()
+		return nil, err
+	}
+	log.Info("services started")
 	return m, nil
 }
 

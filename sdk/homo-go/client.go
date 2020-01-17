@@ -13,6 +13,7 @@ import (
 	"github.com/countstarlight/homo/protocol/http"
 	"github.com/countstarlight/homo/sdk/homo-go/api"
 	"os"
+	"strings"
 )
 
 // HTTPClient client of http server
@@ -31,14 +32,23 @@ type Client struct {
 
 // NewEnvClient creates a new client by env
 func NewEnvClient() (*Client, error) {
+	addr := os.Getenv(EnvKeyMasterAPIAddress)
 	grpcAddr := os.Getenv(EnvKeyMasterGRPCAPIAddress)
 	name := os.Getenv(EnvKeyServiceName)
 	token := os.Getenv(EnvKeyServiceToken)
+	version := os.Getenv(EnvKeyMasterAPIVersion)
 
-	var (
-		gcli *api.Client
-		err  error
-	)
+	c := http.ClientInfo{
+		Address:  addr,
+		Username: name,
+		Password: token,
+	}
+	cli, err := NewClient(c, version)
+	if err != nil {
+		return nil, err
+	}
+
+	var gcli *api.Client
 	if len(grpcAddr) != 0 {
 		cc := api.ClientConfig{
 			Address:  grpcAddr,
@@ -47,11 +57,28 @@ func NewEnvClient() (*Client, error) {
 		}
 		gcli, err = api.NewClient(cc)
 		if err != nil {
+			fmt.Println("api.NewClient error:", err)
 			return nil, err
 		}
 	}
 	return &Client{
-		Client: gcli,
+		Client:     gcli,
+		HTTPClient: cli,
+	}, nil
+}
+
+// NewClient creates a new client
+func NewClient(c http.ClientInfo, ver string) (*HTTPClient, error) {
+	cli, err := http.NewClient(c)
+	if err != nil {
+		return nil, err
+	}
+	if ver != "" && !strings.HasPrefix(ver, "/") {
+		ver = "/" + ver
+	}
+	return &HTTPClient{
+		cli: cli,
+		ver: ver,
 	}, nil
 }
 

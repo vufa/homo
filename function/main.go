@@ -29,6 +29,7 @@ func main() {
 			homo.Run(homo.Service{CfgPath: cfgPath}, func(ctx homo.Context) error {
 				var cfg Config
 				err := ctx.LoadConfig(cfgPath, &cfg)
+				logger.S.Info("mode:", os.Getenv(homo.EnvKeyServiceMode))
 				if err != nil {
 					return err
 				}

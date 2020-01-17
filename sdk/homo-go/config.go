@@ -8,10 +8,13 @@
 package homo
 
 import (
+	"encoding/json"
 	"github.com/countstarlight/homo/logger"
 	"github.com/countstarlight/homo/protocol/mqtt"
 	"github.com/countstarlight/homo/utils"
 	"github.com/docker/go-units"
+	"reflect"
+	"strings"
 	"time"
 )
 
@@ -164,7 +167,7 @@ type ComposeService struct {
 	// specifies the number of instances started
 	Replica int `yaml:"replica,omitempty" json:"replica,omitempty" validate:"min=0"`
 	// specifies the storage volumes that the service needs, map the storage volume to the directory in the container
-	Volumes []*ServiceVolume `yaml:"volumes,omitempty" json:"volumes,omitempty"`
+	Volumes []ServiceVolume `yaml:"volumes,omitempty" json:"volumes,omitempty"`
 	// specifies the network mode of the service
 	NetworkMode string `yaml:"network_mode,omitempty" json:"network_mode,omitempty" validate:"regexp=^(bridge|host|none)?$"`
 	// specifies the network that the service needs
@@ -176,9 +179,9 @@ type ComposeService struct {
 	// specified other depended services
 	DependsOn []string `yaml:"depends_on,omitempty" json:"depends_on,omitempty" default:"[]"`
 	// specifies the startup arguments of the service program, but does not include `arg[0]`
-	Command *Command `yaml:"command,omitempty" json:"command,omitempty"`
+	Command Command `yaml:"command,omitempty" json:"command,omitempty" default:"{}"`
 	// specifies the environment variable of the service program
-	Environment *Environment `yaml:"environment,omitempty" json:"environment,omitempty" default:"{}"`
+	Environment Environment `yaml:"environment,omitempty" json:"environment,omitempty" default:"{}"`
 	// specifies the restart policy of the instance of the service
 	Restart RestartPolicyInfo `yaml:"restart,omitempty" json:"restart,omitempty"`
 	// specifies resource limits for a single instance of the service,  only for Docker container mode
@@ -227,4 +230,77 @@ type ServiceVolume struct {
 // Command command configuration of the service
 type Command struct {
 	Cmd []string `yaml:"cmd" json:"cmd" default:"[]"`
+}
+
+func (c Command) MarshalYAML() (interface{}, error) {
+	return c.Cmd, nil
+}
+
+//UnmarshalYAML customize Command unmarshal
+func (c *Command) UnmarshalYAML(unmarshal func(interface{}) error) error {
+	if c.Cmd == nil {
+		c.Cmd = make([]string, 0)
+	}
+	var cmd interface{}
+	err := unmarshal(&cmd)
+	if err != nil {
+		return err
+	}
+	switch reflect.ValueOf(cmd).Kind() {
+	case reflect.String:
+		c.Cmd = strings.Split(cmd.(string), " ")
+	case reflect.Slice:
+		return unmarshal(&c.Cmd)
+	}
+	return nil
+}
+
+//UnmarshalJSON customize Command unmarshal
+func (c *Command) UnmarshalJSON(b []byte) error {
+	if c.Cmd == nil {
+		c.Cmd = make([]string, 0)
+	}
+	var cmd interface{}
+	err := json.Unmarshal(b, &cmd)
+	if err != nil {
+		return err
+	}
+	switch reflect.ValueOf(cmd).Kind() {
+	case reflect.String:
+		c.Cmd = strings.Split(cmd.(string), " ")
+	case reflect.Slice:
+		return json.Unmarshal(b, &c.Cmd)
+	}
+	return nil
+}
+
+// VolumeInfo storage volume configuration
+type VolumeInfo struct {
+	// specifies a unique name for the storage volume
+	Name string `yaml:"name" json:"name" validate:"regexp=^[a-zA-Z0-9][a-zA-Z0-9_-]{0\\,63}$"`
+	// specifies the directory where the storage volume is on the host
+	Path string `yaml:"path" json:"path" validate:"nonzero"`
+	// specifies the metadata of the storage volume
+	Meta Meta `yaml:"meta" json:"meta"`
+}
+
+type Meta struct {
+	URL     string `yaml:"url" json:"url"`
+	MD5     string `yaml:"md5" json:"md5"`
+	Version string `yaml:"version" json:"version"`
+}
+
+// LoadComposeAppConfigCompatible load compose app config or old compatible config
+func LoadComposeAppConfigCompatible(configFile string) (ComposeAppConfig, error) {
+	var cfg ComposeAppConfig
+	err := utils.LoadYAML(configFile, &cfg)
+	if err != nil {
+		var c AppConfig
+		err = utils.LoadYAML(configFile, &c)
+		if err != nil {
+			return cfg, err
+		}
+		cfg = c.ToComposeAppConfig()
+	}
+	return cfg, nil
 }

@@ -2,15 +2,15 @@ package engine
 
 import (
 	"fmt"
+	"go.uber.org/zap"
 	"time"
 
-	"github.com/countstarlight/homo/logger"
 	"github.com/countstarlight/homo/sdk/homo-go"
 	"github.com/jpillora/backoff"
 )
 
 // Supervising supervise an instance
-func Supervising(instance Instance) error {
+func Supervising(instance Instance, log *zap.SugaredLogger) error {
 	service := instance.Service()
 	_engine := service.Engine()
 	serviceName := service.Name()
@@ -25,7 +25,7 @@ func Supervising(instance Instance) error {
 		Max:    p.Backoff.Max,
 		Factor: p.Backoff.Factor,
 	}
-	l := logger.New(logger.LogInfo{Level: "debug"}, "service", serviceName, "instance", instanceName)
+	l := log.With("service", serviceName, "instance", instanceName)
 	s := make(chan error, 1)
 	for {
 		instanceInfo := instance.Info()

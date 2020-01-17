@@ -16,7 +16,7 @@ logger:
 rules:
   - clientid: localfunc-1
     subscribe:
-      topic: py
+      topic: t
     function:
       name: sayhi3
     publish:

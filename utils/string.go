@@ -7,8 +7,6 @@
 
 package utils
 
-import "os"
-
 // IfStringInArray return whether a string in string array
 func IfStringInArray(a string, list []string) bool {
 	for _, sub := range list {
@@ -17,13 +15,4 @@ func IfStringInArray(a string, list []string) bool {
 		}
 	}
 	return false
-}
-
-// PathExists return true if given path exist.
-func PathExists(path string) bool {
-	_, err := os.Stat(path)
-	if err == nil {
-		return true
-	}
-	return !os.IsNotExist(err)
 }

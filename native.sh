@@ -65,6 +65,7 @@ StopHub()
 
 StartFunction()
 {
+    SetEnv
     CheckProcess "homo-function"
     Check_RET=$?
     if [ $Check_RET -eq 0 ]; then
@@ -98,6 +99,14 @@ StopAll()
     StopFunction
 }
 
+SetEnv()
+{
+    export HOMO_SERVICE_MODE="native"
+    export HOMO_MASTER_API_ADDRESS="unix://var/run/homo.sock"
+    export HOMO_API_ADDRESS="unix://var/run/homo/api.sock"
+    export HOMO_MASTER_API_VERSION="v1"
+}
+
 HelpApp()
 {
     echo " Extra Commands:"
@@ -106,6 +115,7 @@ HelpApp()
     echo " -b/--hub            Start homo-hub"
     echo " -f/--function       Start homo-function"
     echo " -k/--kill           Stop all module of homo"
+    echo " -e/--env            Set env"
     echo " -h/--help           Show program help info"
 }
 
@@ -128,6 +138,9 @@ case $1 in
     ;;
     "-k" | "--kill")
         StopAll
+    ;;
+    "-e" | "--env")
+        SetEnv
     ;;
     "-h" | "--help")
         HelpApp

@@ -42,6 +42,9 @@ const (
 	OTATimeout     = "TIMEOUT"     // [agent][finished] ota is timed out
 )
 
+// CheckOK print OK if binary is valid
+const CheckOK = "OK!"
+
 // Env keys
 const (
 	EnvKeyHostID                 = "HOMO_HOST_ID"

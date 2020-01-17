@@ -2,7 +2,6 @@ package http
 
 import (
 	"context"
-	"github.com/countstarlight/homo/logger"
 	"github.com/countstarlight/homo/utils"
 	"go.uber.org/zap"
 	"io/ioutil"
@@ -34,7 +33,7 @@ type Server struct {
 }
 
 // NewServer creates a new http server
-func NewServer(c ServerInfo, a func(u, p string) bool) (*Server, error) {
+func NewServer(c ServerInfo, a func(u, p string) bool, log *zap.SugaredLogger) (*Server, error) {
 	defaults.Set(&c)
 
 	uri, err := utils.ParseURL(c.Address)
@@ -57,7 +56,7 @@ func NewServer(c ServerInfo, a func(u, p string) bool) (*Server, error) {
 			TLSConfig:    tls,
 			Handler:      router,
 		},
-		log: logger.New(logger.LogInfo{Level: "info"}, "api", "server"),
+		log: log.With("api", "server"),
 	}, nil
 }
 

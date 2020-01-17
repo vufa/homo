@@ -142,7 +142,7 @@ func (e *nativeEngine) Close() error {
 	return nil
 }
 
-func mountAll(epwd, spwd string, ms []*homo.ServiceVolume) error {
+func mountAll(epwd, spwd string, ms []homo.ServiceVolume) error {
 	for _, m := range ms {
 		if len(m.Source) == 0 {
 			return fmt.Errorf("host path is empty")

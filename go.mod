@@ -19,6 +19,7 @@ require (
 	github.com/gogo/protobuf v1.3.1
 	github.com/golang/protobuf v1.3.2
 	github.com/gorilla/mux v1.7.3
+	github.com/inconshreveable/go-update v0.0.0-20160112193335-8152e7eb6ccf
 	github.com/jolestar/go-commons-pool v2.0.0+incompatible
 	github.com/jpillora/backoff v1.0.0
 	github.com/mattn/go-sqlite3 v2.0.2+incompatible
