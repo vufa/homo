@@ -127,7 +127,7 @@ func (e *nativeEngine) Run(name string, cfg homo.ComposeService, _ map[string]ho
 		engine:    e,
 		params:    params,
 		instances: cmap.New(),
-		log:       e.log.With(zap.String("service", name)),
+		log:       e.log.With("service", name),
 	}
 	err = s.Start()
 	if err != nil {

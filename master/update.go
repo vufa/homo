@@ -183,11 +183,7 @@ func RollBackMST() error {
 	// backward compatibility
 	backup := homo.DefaultBinBackupFile
 	if !utils.FileExists(backup) {
-		if !utils.FileExists(homo.PreviousBinBackupFile) {
-			return nil
-		} else {
-			backup = homo.PreviousBinBackupFile
-		}
+		return nil
 	}
 	err := apply(backup, "")
 	if err != nil {

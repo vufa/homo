@@ -68,8 +68,9 @@ func (s *Server) Start() error {
 	}
 
 	if uri.Scheme == "unix" {
-		if err := syscall.Unlink(uri.Host); err != nil {
-			logger.S.Errorf(err.Error())
+		if err := syscall.Unlink(uri.Host); err != nil && !os.IsNotExist(err) {
+			logger.S.Error(err.Error())
+			return err
 		}
 		dir := filepath.Dir(uri.Host)
 		err := os.MkdirAll(dir, 0755)

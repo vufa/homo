@@ -8,6 +8,7 @@ import (
 	"net"
 	"net/http"
 	"net/url"
+	"os"
 	"syscall"
 	"time"
 
@@ -97,8 +98,9 @@ func (s *Server) Handle(handle func(Params, []byte) ([]byte, error), method, pat
 // Start starts server
 func (s *Server) Start() error {
 	if s.uri.Scheme == "unix" {
-		if err := syscall.Unlink(s.uri.Host); err != nil {
+		if err := syscall.Unlink(s.uri.Host); err != nil && !os.IsNotExist(err) {
 			s.log.Errorf(err.Error())
+			return err
 		}
 	}
 

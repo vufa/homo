@@ -73,11 +73,9 @@ func New(c LogInfo, fields ...string) *zap.SugaredLogger {
 	if err != nil {
 		S.Warnf("failed to parse log level (%s), use default level (info)", c.Level)
 	}
-	conf := zap.NewProductionEncoderConfig()
-	conf.EncodeTime = TimeEncoder
 
 	if c.Format == "json" {
-		format = zapcore.NewJSONEncoder(conf)
+		format = zapcore.NewJSONEncoder(NewEncoderConfig())
 	} else {
 		format = zapcore.NewConsoleEncoder(NewEncoderConfig())
 	}
@@ -97,12 +95,16 @@ func New(c LogInfo, fields ...string) *zap.SugaredLogger {
 		write,
 		logLevel,
 	)
+	var options []zap.Option
 	if len(fields) > 0 && len(fields)%2 == 0 {
 		zapFields := []zap.Field{}
 		for index := 0; index < len(fields)-1; index = index + 2 {
 			zapFields = append(zapFields, zap.String(fields[index], fields[index+1]))
 		}
-		return zap.New(core, zap.Fields(zapFields...)).Sugar()
+		options = append(options, zap.Fields(zapFields...))
 	}
-	return zap.New(core).Sugar()
+	if logLevel == zap.DebugLevel {
+		options = append(options, zap.AddCaller())
+	}
+	return zap.New(core, options...).Sugar()
 }

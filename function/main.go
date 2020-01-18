@@ -21,6 +21,7 @@ func main() {
 				EnvVars:     []string{"HOMO_FUNCTION_CONFIG_FILE"},
 				Name:        "config",
 				Aliases:     []string{"c"},
+				DefaultText: homo.DefaultConfFile,
 				Usage:       "set homo function config file path",
 				Destination: &cfgPath,
 			},

@@ -93,18 +93,6 @@ const (
 	DefaultMasterConfDir = "etc/homo"
 	// DefaultMasterConfFile master config file by default
 	DefaultMasterConfFile = "etc/homo/conf.yml"
-
-	// backward compatibility
-	// PreviousDBDir previous db dir of the service
-	PreviousDBDir = "var/db/openedge"
-	// PreviousMasterConfDir previous master config dir
-	PreviousMasterConfDir = "etc/openedge"
-	// PreviousMasterConfFile previous master config file
-	PreviousMasterConfFile = "etc/openedge/openedge.yml"
-	// PreviousBinBackupFile the backup file path of master binary
-	PreviousBinBackupFile = "bin/openedge.old"
-	// PreviousLogDir  log dir of the service by default
-	PreviousLogDir = "var/log/openedge"
 )
 
 // Context of service
