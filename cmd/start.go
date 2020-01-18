@@ -29,6 +29,7 @@ var flags = []cli.Flag{
 		EnvVars:     []string{"HOMO_CONFIG_FILE"},
 		Name:        "config",
 		Aliases:     []string{"c"},
+		DefaultText: defaultConfFile,
 		Usage:       "set homo config file path",
 		Destination: &ConfFile,
 	},
@@ -37,7 +38,7 @@ var flags = []cli.Flag{
 		Name:        "workdir",
 		Aliases:     []string{"w"},
 		Usage:       "set homo work directory",
-		Destination: &WorkDirPath,
+		Destination: &workDir,
 	},
 }
 
@@ -59,7 +60,7 @@ func startInternal(c *cli.Context) error {
 	if isOTA {
 		log = logger.New(cfg.OTALog, "type", homo.OTAMST)
 	}
-	m, err := master.New(WorkDirPath, *cfg, Version, Revision)
+	m, err := master.New(workDir, *cfg, Version, Revision)
 	if err != nil {
 		log.Errorw("failed to start master", zap.Error(err), zap.String(homo.OTAKeyStep, homo.OTARollingBack))
 		/*rberr := master.RollBackMST()

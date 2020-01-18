@@ -11,7 +11,6 @@ import (
 	"fmt"
 	"github.com/countstarlight/homo/master"
 	"github.com/countstarlight/homo/utils"
-	"github.com/go-ini/ini"
 	"log"
 	"os"
 	"os/exec"
@@ -30,9 +29,7 @@ var (
 	DebugMode bool
 
 	// Global config
-	Cfg         *ini.File
-	ConfFile    string
-	WorkDirPath string
+	ConfFile string
 
 	// Nlu
 	ConversationAPI string
@@ -56,6 +53,12 @@ const (
 	AppName = "Homo"
 )
 
+// compile variables
+var (
+	workDir string
+	cfgFile string
+)
+
 // execPath returns the executable path.
 func execPath() (string, error) {
 	file, err := exec.LookPath(os.Args[0])
@@ -76,43 +79,45 @@ func init() {
 	AppPath = strings.Replace(AppPath, "\\", "/", -1)
 }
 
-// WorkDir returns absolute path of work directory.
-func WorkDir() (string, error) {
-	wd := os.Getenv("HOMO_WORK_DIR")
-	if len(wd) > 0 {
-		return wd, nil
-	}
-
-	i := strings.LastIndex(AppPath, "/")
-	if i == -1 {
-		return AppPath, nil
-	}
-	return AppPath[:i], nil
-}
+const defaultConfFile = "etc/homo/conf.yml"
 
 func LoadConfig() (*master.Config, error) {
-	var err error
-	if WorkDirPath == "" {
-		WorkDirPath, err = WorkDir()
-		if err != nil {
-			return nil, fmt.Errorf("Get work directory failed: %s", err.Error())
-		}
-	}
-
-	cfg := &master.Config{}
-	// ConfFile = path.Join(WorkDirPath, "conf/app.ini")
 	if ConfFile == "" {
-		ConfFile = path.Join(WorkDirPath, "conf/conf.yml")
+		ConfFile = defaultConfFile
 	}
 
-	if !utils.IsFile(ConfFile) {
-		return nil, fmt.Errorf("config file %s not found, using default config", ConfFile)
-	}
-	cfg.File = ConfFile
-
-	err = utils.LoadYAML(cfg.File, cfg)
+	cfg := &master.Config{File: ConfFile}
+	utils.UnmarshalYAML(nil, cfg) // default config
+	exe, err := os.Executable()
 	if err != nil {
-		return nil, fmt.Errorf("Parse config file %s failed: %s", ConfFile, err.Error())
+		return cfg, fmt.Errorf("failed to get executable: %s", err.Error())
+	}
+	exe, err = filepath.EvalSymlinks(exe)
+	if err != nil {
+		return cfg, fmt.Errorf("failed to get path of executable: %s", err.Error())
+	}
+	if workDir == "" {
+		workDir = path.Dir(path.Dir(exe))
+	}
+	workDir, err = filepath.Abs(workDir)
+	if err != nil {
+		return cfg, fmt.Errorf("failed to get absolute path of work directory: %s", err.Error())
+	}
+
+	if err = os.Chdir(workDir); err != nil {
+		return cfg, fmt.Errorf("failed to change work directory: %s", err.Error())
+	}
+
+	if cfgFile != "" {
+		cfg.File = cfgFile
+	}
+	if utils.FileExists(cfg.File) {
+		err = utils.LoadYAML(cfg.File, cfg)
+		if err != nil {
+			return cfg, fmt.Errorf("failed to load config: %s", err.Error())
+		}
+	} else {
+		log.Printf("config file (%s) not found, to use default config", cfg.File)
 	}
 
 	if err = cfg.Validate(); err != nil {

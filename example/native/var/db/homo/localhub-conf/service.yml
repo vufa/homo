@@ -1,0 +1,40 @@
+listen:
+  - tcp://0.0.0.0:1883
+  - ssl://0.0.0.0:8883
+  - ws://0.0.0.0:8080/mqtt
+certificate:
+  ca: var/db/homo/cert/ca.pem
+  cert: var/db/homo/cert/server.pem
+  key: var/db/homo/cert/server.key
+principals:
+  - username: two-way-tls
+    permissions:
+      - action: 'pub'
+        permit: ['tls/#']
+      - action: 'sub'
+        permit: ['tls/#']
+  - username: test
+    password: hahaha
+    permissions:
+      - action: 'pub'
+        permit: ['#']
+      - action: 'sub'
+        permit: ['#']
+subscriptions:
+  - source:
+      topic: 't'
+    target:
+      topic: 't/topic'
+logger:
+  path: var/log/homo/hub.log
+  level: 'debug'
+  mode: 'console'
+  format: 'text'
+  age:
+    max: 15
+  size:
+    max: 50
+  backup:
+    max: 15
+storage:
+  dir: var/db/homo/data

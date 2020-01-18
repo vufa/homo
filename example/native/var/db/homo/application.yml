@@ -1,0 +1,33 @@
+version: v1
+services:
+  - name: localhub
+    image: homo-hub
+    replica: 1
+    mounts:
+      - name: localhub-conf
+        path: etc/homo
+        readonly: true
+      - name: localhub-cert
+        path: var/db/homo/cert
+        readonly: true
+      - name: localhub-data
+        path: var/db/homo/data
+      - name: localhub-log
+        path: var/log/homo
+      # native process mode only
+      - name: homo-hub-bin
+        path: lib/homo/homo-hub
+        readonly: true
+volumes:
+  # hub
+  - name: localhub-conf
+    path: var/db/homo/localhub-conf
+  - name: localhub-data
+    path: var/db/homo/localhub-data
+  - name: localhub-cert
+    path: var/db/homo/localhub-cert-only-for-test
+  - name: localhub-log
+    path: var/db/homo/localhub-log
+  # bin, native process mode only
+  - name: homo-hub-bin
+    path: var/db/homo/homo-hub
