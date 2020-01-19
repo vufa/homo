@@ -10,6 +10,7 @@ package cmd
 import (
 	"fmt"
 	"github.com/countstarlight/homo/master"
+	"github.com/countstarlight/homo/sdk/homo-go"
 	"github.com/countstarlight/homo/utils"
 	"log"
 	"os"
@@ -103,6 +104,7 @@ func LoadConfig() (*master.Config, error) {
 	if err != nil {
 		return cfg, fmt.Errorf("failed to get absolute path of work directory: %s", err.Error())
 	}
+	utils.SetEnv(homo.EnvKeyWorkDir, workDir)
 
 	if err = os.Chdir(workDir); err != nil {
 		return cfg, fmt.Errorf("failed to change work directory: %s", err.Error())

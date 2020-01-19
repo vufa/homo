@@ -60,6 +60,7 @@ const (
 	EnvKeyHostID                 = "HOMO_HOST_ID"
 	EnvKeyHostOS                 = "HOMO_HOST_OS"
 	EnvKeyHostSN                 = "HOMO_HOST_SN"
+	EnvKeyWorkDir                = "HOMO_WORK_DIR"
 	EnvKeyMasterAPISocket        = "HOMO_MASTER_API_SOCKET"
 	EnvKeyMasterGRPCAPISocket    = "HOMO_API_SOCKET"
 	EnvKeyMasterAPIAddress       = "HOMO_MASTER_API_ADDRESS"

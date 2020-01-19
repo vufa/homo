@@ -2,9 +2,13 @@ package api
 
 import (
 	"context"
+	"fmt"
 	"github.com/countstarlight/homo/utils"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
+	"os"
+	"path"
+	"strings"
 )
 
 // NewClient creates a new client
@@ -38,6 +42,22 @@ func NewClient(conf ClientConfig) (*Client, error) {
 				headerKeyPassword: conf.Password,
 			},
 		}))
+	}
+	url, err := utils.ParseURL(conf.Address)
+	if err != nil {
+		return nil, err
+	}
+	if url.Scheme == "unix" {
+		if !strings.HasPrefix(url.Host, "/") {
+			conf.Address = fmt.Sprintf("unix://%s", path.Join(os.Getenv("HOMO_WORK_DIR"), url.Host))
+			url, err = utils.ParseURL(conf.Address)
+			if err != nil {
+				return nil, err
+			}
+		}
+		if !utils.IsFile(url.Host) {
+			return nil, os.ErrNotExist
+		}
 	}
 
 	conn, err := grpc.DialContext(ctx, conf.Address, opts...)

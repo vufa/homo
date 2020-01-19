@@ -34,7 +34,7 @@ var flags = []cli.Flag{
 		Destination: &ConfFile,
 	},
 	&cli.StringFlag{
-		EnvVars:     []string{"HOMO_WORK_DIR"},
+		EnvVars:     []string{homo.EnvKeyWorkDir},
 		Name:        "workdir",
 		Aliases:     []string{"w"},
 		Usage:       "set homo work directory",
