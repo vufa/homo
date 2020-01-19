@@ -116,6 +116,8 @@ type Context interface {
 	NewHubClient(string, []mqtt.TopicInfo) (*mqtt.Dispatcher, error)
 	// returns logger interface
 	Log() *zap.SugaredLogger
+	// check running mode
+	IsNative() bool
 	// waiting to exit, receiving SIGTERM and SIGINT signals
 	Wait()
 	// returns wait channel

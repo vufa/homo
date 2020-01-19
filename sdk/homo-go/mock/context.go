@@ -154,6 +154,20 @@ func (mr *MockContextMockRecorder) InspectSystem() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InspectSystem", reflect.TypeOf((*MockContext)(nil).InspectSystem))
 }
 
+// IsNative mocks base method
+func (m *MockContext) IsNative() bool {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "IsNative")
+	ret0, _ := ret[0].(bool)
+	return ret0
+}
+
+// IsNative indicates an expected call of IsNative
+func (mr *MockContextMockRecorder) IsNative() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsNative", reflect.TypeOf((*MockContext)(nil).IsNative))
+}
+
 // ListKV mocks base method
 func (m *MockContext) ListKV(arg0 []byte) ([]*api.KV, error) {
 	m.ctrl.T.Helper()

@@ -13,6 +13,7 @@ import (
 	"strings"
 )
 
+// TODO: need test
 var appDir = path.Join("var", "db", "homo")
 var appConfigFile = path.Join(appDir, homo.AppConfFileName)
 var appBackupFile = path.Join(appDir, homo.AppBackupFileName)

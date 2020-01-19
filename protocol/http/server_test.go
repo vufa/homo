@@ -1,6 +1,7 @@
 package http
 
 import (
+	"github.com/countstarlight/homo/logger"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -9,7 +10,7 @@ import (
 func TestAPIHttp(t *testing.T) {
 	s, err := NewServer(ServerInfo{Address: "tcp://127.0.0.1:0"}, func(u, p string) bool {
 		return u == "u" && p == "p"
-	})
+	}, logger.S)
 	assert.NoError(t, err)
 	defer s.Close()
 

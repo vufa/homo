@@ -3,6 +3,7 @@
 package http
 
 import (
+	"github.com/countstarlight/homo/logger"
 	"os"
 	"testing"
 
@@ -16,7 +17,7 @@ func TestAPIHttpUnix(t *testing.T) {
 
 	s, err := NewServer(ServerInfo{Address: addr}, func(u, p string) bool {
 		return u == "u" && p == "p"
-	})
+	}, logger.S)
 	assert.NoError(t, err)
 	defer s.Close()
 

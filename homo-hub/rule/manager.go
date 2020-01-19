@@ -95,6 +95,18 @@ func (m *Manager) Close() {
 	m.broker.WaitOffsetPersisted()
 }
 
+// AddRuleSess adds a new rule for session during running
+func (m *Manager) AddRuleSess(id string, persistent bool, publish, republish common.Publish) error {
+	if atomic.LoadInt32(&m.status) == closed {
+		return errRuleManagerClosed
+	}
+	if _, ok := m.rules.Get(id); ok {
+		return fmt.Errorf("rule (%s) exists", id)
+	}
+	m.rules.Set(id, newRuleSess(id, persistent, m.broker, m.trieq0, publish, republish, m.log))
+	return nil
+}
+
 // StartRule starts a rule
 func (m *Manager) StartRule(id string) error {
 	if atomic.LoadInt32(&m.status) == closed {
@@ -123,18 +135,6 @@ func (m *Manager) RemoveRule(id string) error {
 		r.stop()
 		r.wait(true)
 	}
-	return nil
-}
-
-// AddRuleSess adds a new rule for session during running
-func (m *Manager) AddRuleSess(id string, persistent bool, publish, republish common.Publish) error {
-	if atomic.LoadInt32(&m.status) == closed {
-		return errRuleManagerClosed
-	}
-	if _, ok := m.rules.Get(id); ok {
-		return fmt.Errorf("rule (%s) exists", id)
-	}
-	m.rules.Set(id, newRuleSess(id, persistent, m.broker, m.trieq0, publish, republish, m.log))
 	return nil
 }
 

@@ -52,6 +52,11 @@ func (s *sink) remove(id, topic string) {
 	s.trieq1.Remove(id, topic)
 }
 
+// RemoveAll removes all subscriptions by id
+func (s *sink) removeAll(id string) {
+	s.trieq0.RemoveAll(id)
+}
+
 func (s *sink) start() error {
 	if s.id == common.RuleMsgQ0 {
 		return s.tomb.Go(s.goRoutingQ0)
