@@ -7,5 +7,3 @@ BIN_FILE:={{.MODULE}}.py
 BIN_CMD=install -m 0755 $(SRC_FILES) $(dir $@) && cd $(dir $@)
 COPY_DIR:=.
 PLATFORM_ALL:=darwin/amd64 linux/amd64 linux/arm64 linux/386 linux/arm/v7
-
-

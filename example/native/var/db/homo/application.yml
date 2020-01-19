@@ -18,6 +18,33 @@ services:
       - name: homo-hub-bin
         path: lib/homo/homo-hub
         readonly: true
+  - name: function
+    image: homo-function
+    replica: 1
+    mounts:
+      - name: function-conf
+        path: etc/homo
+        readonly: true
+      - name: function-log
+        path: var/log/homo
+      # native process mode only
+      - name: homo-function-bin
+        path: lib/homo/homo-function
+        readonly: true
+  - name: function-python3-sayhi
+    image: homo-function-python3
+    replica: 0
+    mounts:
+      - name: function-sayhi-conf
+        path: etc/homo
+        readonly: true
+      - name: function-sayhi-code
+        path: var/db/homo/function-sayhi
+        readonly: true
+      # native process mode only
+      - name: homo-function-python3-bin
+        path: lib/homo/homo-function-python3
+        readonly: true
 volumes:
   # hub
   - name: localhub-conf
@@ -28,6 +55,19 @@ volumes:
     path: var/db/homo/localhub-cert-only-for-test
   - name: localhub-log
     path: var/db/homo/localhub-log
+  # function
+  - name: function-conf
+    path: var/db/homo/function-conf
+  - name: function-log
+    path: var/db/homo/function-log
+  - name: function-sayhi-conf
+    path: var/db/homo/function-sayhi-conf
+  - name: function-sayhi-code
+    path: var/db/homo/function-sayhi-code
   # bin, native process mode only
   - name: homo-hub-bin
     path: var/db/homo/homo-hub
+  - name: homo-function-bin
+    path: var/db/homo/homo-function
+  - name: homo-function-python3-bin
+    path: var/db/homo/homo-function-python3

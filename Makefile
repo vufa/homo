@@ -1,6 +1,6 @@
 PREFIX?=/usr/local
 MODE?=native
-MODULES?=hub function
+MODULES?=hub function function-python3
 SRC_FILES:=$(shell find main.go cmd master logger sdk protocol utils -type f -name '*.go')
 PLATFORM_ALL:=darwin/amd64 linux/amd64 linux/arm64 linux/386 linux/arm/v7 linux/arm/v6 linux/arm/v5 linux/ppc64le linux/s390x
 

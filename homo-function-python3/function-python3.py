@@ -32,7 +32,6 @@ class mo(function_pb2_grpc.FunctionServicer):
         load config and init module
         """
         self.config = yaml.load(open(conf, 'r').read(), Loader=yaml.FullLoader)
-        print(self.config)
 
         # overwrite config from env
         if 'HOMO_SERVICE_INSTANCE_NAME' in os.environ:
