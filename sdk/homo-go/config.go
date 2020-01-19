@@ -9,6 +9,7 @@ package homo
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/countstarlight/homo/logger"
 	"github.com/countstarlight/homo/protocol/mqtt"
 	"github.com/countstarlight/homo/utils"
@@ -140,6 +141,30 @@ type ServiceNetwork struct {
 	Ipv4Address string   `yaml:"ipv4_address" json:"ipv4_address"`
 }
 
+// UnmarshalYAML customizes unmarshal
+func (sn *NetworksInfo) UnmarshalYAML(unmarshal func(interface{}) error) error {
+	if sn.ServiceNetworks == nil {
+		sn.ServiceNetworks = make(map[string]ServiceNetwork)
+	}
+	var networks interface{}
+	err := unmarshal(&networks)
+	if err != nil {
+		return err
+	}
+	switch reflect.ValueOf(networks).Kind() {
+	case reflect.Slice:
+		for _, item := range networks.([]interface{}) {
+			name := item.(string)
+			sn.ServiceNetworks[name] = ServiceNetwork{}
+		}
+	case reflect.Map:
+		return unmarshal(&sn.ServiceNetworks)
+	default:
+		return fmt.Errorf("failed to parse service network: unexpected type")
+	}
+	return nil
+}
+
 // ComposeAppConfig application configuration of compose
 type ComposeAppConfig struct {
 	// specifies the version of compose file
@@ -215,6 +240,71 @@ type Environment struct {
 	Envs map[string]string `yaml:"envs" json:"envs" default:"{}"`
 }
 
+func (e Environment) MarshalYAML() (interface{}, error) {
+	return e.Envs, nil
+}
+
+// UnmarshalYAML customize unmarshal
+func (e *Environment) UnmarshalYAML(unmarshal func(interface{}) error) error {
+	if e.Envs == nil {
+		e.Envs = make(map[string]string)
+	}
+	var envs interface{}
+	err := unmarshal(&envs)
+	if err != nil {
+		return err
+	}
+	if envs == nil {
+		return nil
+	}
+	switch reflect.ValueOf(envs).Kind() {
+	case reflect.Slice:
+		for _, env := range envs.([]interface{}) {
+			envStr := env.(string)
+			es := strings.Split(envStr, "=")
+			if len(es) != 2 {
+				return fmt.Errorf("environment format error")
+			}
+			e.Envs[es[0]] = es[1]
+		}
+	case reflect.Map:
+		return unmarshal(&e.Envs)
+	default:
+		return fmt.Errorf("failed to parse environment: unexpected type")
+	}
+	return nil
+}
+
+func (e *Environment) UnmarshalJSON(b []byte) error {
+	if e.Envs == nil {
+		e.Envs = make(map[string]string)
+	}
+	var envs interface{}
+	err := json.Unmarshal(b, &envs)
+	if err != nil {
+		return err
+	}
+	if envs == nil {
+		return nil
+	}
+	switch reflect.ValueOf(envs).Kind() {
+	case reflect.Slice:
+		for _, env := range envs.([]interface{}) {
+			envStr := env.(string)
+			es := strings.Split(envStr, "=")
+			if len(es) != 2 {
+				return fmt.Errorf("environment format error")
+			}
+			e.Envs[es[0]] = es[1]
+		}
+	case reflect.Map:
+		return json.Unmarshal(b, &e.Envs)
+	default:
+		return fmt.Errorf("failed to parse environment: unexpected type")
+	}
+	return nil
+}
+
 // ServiceVolume specific volume configuration of service
 type ServiceVolume struct {
 	// specifies type of volume
@@ -225,6 +315,52 @@ type ServiceVolume struct {
 	Target string `yaml:"target,omitempty" json:"target,omitempty"`
 	// specifies if the volume is read-only
 	ReadOnly bool `yaml:"read_only,omitempty" json:"read_only,omitempty"`
+}
+
+// UnmarshalYAML customize ServiceVolume unmarshal
+func (sv *ServiceVolume) UnmarshalYAML(unmarshal func(interface{}) error) error {
+	var volume interface{}
+	err := unmarshal(&volume)
+	if err != nil {
+		return err
+	}
+	if volume == nil {
+		return nil
+	}
+	switch reflect.ValueOf(volume).Kind() {
+	case reflect.String:
+		volumeStr := volume.(string)
+		info := strings.Split(volumeStr, ":")
+		length := len(info)
+		if length < 2 || length > 3 {
+			return fmt.Errorf("servie volume format error")
+		}
+		sv.Source = info[0]
+		sv.Target = info[1]
+		if length == 3 && info[2] == "ro" {
+			sv.ReadOnly = true
+		}
+	case reflect.Map:
+		type VolumeInfo ServiceVolume
+		var volumeInfo VolumeInfo
+		err := unmarshal(&volumeInfo)
+		if err != nil {
+			return err
+		}
+		*sv = ServiceVolume(volumeInfo)
+	default:
+		return fmt.Errorf("failed to parse service volume: unexpected type")
+	}
+	return nil
+}
+
+// MarshalYAML customize ServiceVolume marshal
+func (sv ServiceVolume) MarshalYAML() (interface{}, error) {
+	res := sv.Source + ":" + sv.Target
+	if sv.ReadOnly {
+		res += ":ro"
+	}
+	return res, nil
 }
 
 // Command command configuration of the service

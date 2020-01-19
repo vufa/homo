@@ -2,7 +2,6 @@ package api
 
 import (
 	"context"
-
 	"github.com/countstarlight/homo/utils"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
@@ -10,7 +9,10 @@ import (
 
 // NewClient creates a new client
 func NewClient(conf ClientConfig) (*Client, error) {
-	utils.SetDefaults(&conf)
+	err := utils.SetDefaults(&conf)
+	if err != nil {
+		return nil, err
+	}
 	ctx, cel := context.WithTimeout(context.Background(), conf.Timeout)
 	defer cel()
 

@@ -8,15 +8,25 @@
 package homo
 
 import (
+	"context"
 	"fmt"
 	"github.com/countstarlight/homo/logger"
 	"github.com/countstarlight/homo/protocol/mqtt"
+	"github.com/countstarlight/homo/sdk/homo-go/api"
 	"github.com/countstarlight/homo/utils"
 	"go.uber.org/zap"
 	"io"
 	"os"
 	"os/signal"
 	"syscall"
+)
+
+//go:generate mockgen -destination=mock/context.go -package=homo github.com/countstarlight/homo/sdk/homo-go Context
+
+// Mode keys
+const (
+	ModeNative = "native"
+	ModeDocker = "docker"
 )
 
 // OTA types
@@ -108,7 +118,15 @@ type Context interface {
 	Log() *zap.SugaredLogger
 	// waiting to exit, receiving SIGTERM and SIGINT signals
 	Wait()
+	// returns wait channel
+	WaitChan() <-chan os.Signal
 
+	// Master RESTful API
+
+	// updates application or master
+	UpdateSystem(trace, tp, path string) error
+	// inspects system stats
+	InspectSystem() (*Inspect, error)
 	// gets an available port of the host
 	GetAvailablePort() (string, error)
 	// reports the stats of the instance of the service
@@ -117,6 +135,25 @@ type Context interface {
 	StartInstance(serviceName, instanceName string, dynamicConfig map[string]string) error
 	// stop the instance of the service
 	StopInstance(serviceName, instanceName string) error
+
+	// Master KV API
+
+	// set kv
+	SetKV(kv api.KV) error
+	// set kv which supports context
+	SetKVConext(ctx context.Context, kv api.KV) error
+	// get kv
+	GetKV(k []byte) (*api.KV, error)
+	// get kv which supports context
+	GetKVConext(ctx context.Context, k []byte) (*api.KV, error)
+	// del kv
+	DelKV(k []byte) error
+	// del kv which supports context
+	DelKVConext(ctx context.Context, k []byte) error
+	// list kv with prefix
+	ListKV(p []byte) ([]*api.KV, error)
+	// list kv with prefix which supports context
+	ListKVContext(ctx context.Context, p []byte) ([]*api.KV, error)
 
 	io.Closer
 }
@@ -157,13 +194,6 @@ func newContext(s Service) (*ctx, error) {
 	}, nil
 }
 
-func (c *ctx) LoadConfig(cfgPath string, cfg interface{}) error {
-	if cfgPath == "" {
-		cfgPath = DefaultConfFile
-	}
-	return utils.LoadYAML(cfgPath, cfg)
-}
-
 func (c *ctx) NewHubClient(cid string, subs []mqtt.TopicInfo) (*mqtt.Dispatcher, error) {
 	if c.cfg.Hub.Address == "" {
 		return nil, fmt.Errorf("hub not configured")
@@ -178,6 +208,13 @@ func (c *ctx) NewHubClient(cid string, subs []mqtt.TopicInfo) (*mqtt.Dispatcher,
 	return mqtt.NewDispatcher(cc, c.log.With("cid", cid)), nil
 }
 
+func (c *ctx) LoadConfig(cfgPath string, cfg interface{}) error {
+	if cfgPath == "" {
+		cfgPath = DefaultConfFile
+	}
+	return utils.LoadYAML(cfgPath, cfg)
+}
+
 func (c *ctx) Config() *ServiceConfig {
 	return &c.cfg
 }
@@ -189,6 +226,10 @@ func (c *ctx) Log() *zap.SugaredLogger {
 func (c *ctx) Wait() {
 	<-c.WaitChan()
 	c.Close()
+}
+
+func (c *ctx) IsNative() bool {
+	return c.md == ModeNative
 }
 
 func (c *ctx) WaitChan() <-chan os.Signal {

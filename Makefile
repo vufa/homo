@@ -62,6 +62,11 @@ endif
 .PHONY: rebuild
 rebuild: clean all
 
+.PHONY: test
+test:
+	@go test ${GO_TEST_FLAGS} ${GO_TEST_PKGS}
+	@go tool cover -func=coverage.out | grep total
+
 .PHONY: install $(NATIVE_MODS)
 install: all
 	@install -d -m 0755 ${PREFIX}/bin
@@ -78,6 +83,7 @@ $(NATIVE_MODS):
 
 .PHONY: deps
 deps:
+	go get -mod=readonly github.com/golang/mock/mockgen
 	go get -mod=readonly github.com/golang/protobuf/proto
 	go get -mod=readonly github.com/gogo/protobuf/proto
 	go get -mod=readonly github.com/gogo/protobuf/jsonpb

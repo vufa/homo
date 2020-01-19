@@ -5,6 +5,7 @@ github.com/256dpi/gomqtt/packet
 github.com/256dpi/gomqtt/session
 github.com/256dpi/gomqtt/topic
 github.com/256dpi/gomqtt/transport
+github.com/256dpi/gomqtt/transport/flow
 # github.com/256dpi/mercury v0.2.0
 github.com/256dpi/mercury
 # github.com/BurntSushi/toml v0.3.1
@@ -35,8 +36,6 @@ github.com/docker/go-connections/tlsconfig
 github.com/docker/go-units
 # github.com/etcd-io/bbolt v1.3.3
 github.com/etcd-io/bbolt
-# github.com/go-ini/ini v1.51.1
-github.com/go-ini/ini
 # github.com/go-ole/go-ole v1.2.4
 github.com/go-ole/go-ole
 github.com/go-ole/go-ole/oleutil
@@ -47,6 +46,8 @@ github.com/gogo/protobuf/proto
 github.com/gogo/protobuf/protoc-gen-gogo/descriptor
 github.com/gogo/protobuf/sortkeys
 github.com/gogo/protobuf/types
+# github.com/golang/mock v1.1.1
+github.com/golang/mock/gomock
 # github.com/golang/protobuf v1.3.2
 github.com/golang/protobuf/proto
 github.com/golang/protobuf/protoc-gen-go/descriptor

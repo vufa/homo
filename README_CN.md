@@ -1,18 +1,18 @@
-Homo
+Homo(智人)
 ======== 
-English | [简体中文](README_CN.md)
+[English](README.md) | 简体中文
 
-The design of service management, instance control and runtime system comes from [baetyl](https://github.com/baetyl/baetyl), it's license at [LICENSES/baetyl](LICENSES/baetyl).
+服务管理，实例控制以及运行时系统等设计来自[baetyl](https://github.com/baetyl/baetyl)，它的协议位于[LICENSES/baetyl](LICENSES/baetyl)
 
 <!-- TOC -->
 
-- [Installation](#installation)
+- [安装](#安装)
     - [Native](#native)
-- [License](#license)
+- [协议](#协议)
 
 <!-- /TOC -->
 
-# Installation
+# 安装
 
 ## Native
 
@@ -26,7 +26,7 @@ make install MODE=native PREFIX=out
 ./out/bin/homo -w out start
 ```
 
-# License
+# 协议
 
 [MIT](https://github.com/countstarlight/homo/blob/master/LICENSE)
 
