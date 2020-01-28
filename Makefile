@@ -108,7 +108,7 @@ fmt:
 fmt-check:
 	# get all go files and run go fmt on them
 	@diff=$$(go fmt  ./...); \
-	@if [ -n "$$diff" ]; then \
+	if [ -n "$$diff" ]; then \
 		echo "Please run 'make fmt' and commit the result:"; \
 		echo "$${diff}"; \
 		exit 1; \
