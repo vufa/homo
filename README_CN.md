@@ -2,7 +2,7 @@ Homo(智人)
 ======== 
 [English](README.md) | 简体中文
 
-服务管理，实例控制以及运行时系统等设计来自[baetyl](https://github.com/baetyl/baetyl)，它的协议位于[LICENSES/baetyl](LICENSES/baetyl)
+服务管理，实例控制，运行时系统等的设计来自[baetyl](https://github.com/baetyl/baetyl)，它的协议位于[LICENSES/baetyl](LICENSES/baetyl)
 
 <!-- TOC -->
 

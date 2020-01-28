@@ -60,6 +60,7 @@ volumes:
     path: var/db/homo/function-conf
   - name: function-log
     path: var/db/homo/function-log
+  # function-sayhi
   - name: function-sayhi-conf
     path: var/db/homo/function-sayhi-conf
   - name: function-sayhi-code

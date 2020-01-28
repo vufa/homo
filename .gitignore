@@ -1,5 +1,6 @@
 /.idea/
 /.vscode/
-/tmp/*
-/out/*
+/tmp/
+/out/
 /cover*.out
+__pycache__/

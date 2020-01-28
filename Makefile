@@ -45,7 +45,7 @@ $(OUTPUT_BINS): $(SRC_FILES)
 	@echo "BUILD $@"
 	@mkdir -p $(dir $@)
 	@# homo failed to collect cpu related data on darwin if set 'CGO_ENABLED=0' in compilation
-	@$(shell echo $(@:$(OUTPUT)/%/homo/bin/homo=%)  | sed 's:/v:/:g' | awk -F '/' '{print GO111MODULE=on "GOOS="$$1" GOARCH="$$2" GOARM="$$3" go build"}') -o $@ ${GO_FLAGS} .
+	@$(shell echo $(@:$(OUTPUT)/%/homo/bin/homo=%)  | sed 's:/v:/:g' | awk -F '/' '{print "GO111MODULE=on GOOS="$$1" GOARCH="$$2" GOARM="$$3" go build"}') -o $@ ${GO_FLAGS} .
 
 $(OUTPUT_MODS):
 	@${MAKE} -C $@
@@ -54,9 +54,9 @@ $(OUTPUT_MODS):
 build: $(SRC_FILES)
 	@echo "BUILD homo"
 ifneq ($(GO_OS),darwin)
-	@GO111MODULE=on @CGO_ENABLED=1 go build -o homo $(GO_FLAGS_STATIC) .
+	@GO111MODULE=on CGO_ENABLED=1 go build -o homo $(GO_FLAGS_STATIC) .
 else
-	@GO111MODULE=on @CGO_ENABLED=1 go build -o homo $(GO_FLAGS) .
+	@GO111MODULE=on CGO_ENABLED=1 go build -o homo $(GO_FLAGS) .
 endif
 
 .PHONY: rebuild
@@ -74,7 +74,9 @@ install: all
 ifeq ($(MODE),native)
 	@${MAKE} $(NATIVE_MODS)
 endif
-	@tar cf - -C example/$(MODE) etc var | tar xvf - -C ${PREFIX}/
+	#@tar cf - -C example/$(MODE) etc var | tar xvf - -C ${PREFIX}/
+	ln -s ${CURDIR}/example/$(MODE)/etc ${PREFIX}/etc
+	ln -s ${CURDIR}/example/$(MODE)/var/db/homo/* ${PREFIX}/var/db/homo/
 
 $(NATIVE_MODS):
 	@install -d -m 0755 ${PREFIX}/var/db/homo/$(notdir $@)/bin
