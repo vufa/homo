@@ -46,7 +46,7 @@ github.com/gogo/protobuf/proto
 github.com/gogo/protobuf/protoc-gen-gogo/descriptor
 github.com/gogo/protobuf/sortkeys
 github.com/gogo/protobuf/types
-# github.com/golang/mock v1.1.1
+# github.com/golang/mock v1.4.0
 github.com/golang/mock/gomock
 # github.com/golang/protobuf v1.3.2
 github.com/golang/protobuf/proto
@@ -71,7 +71,7 @@ github.com/jolestar/go-commons-pool/concurrent
 github.com/jpillora/backoff
 # github.com/konsorten/go-windows-terminal-sequences v1.0.1
 github.com/konsorten/go-windows-terminal-sequences
-# github.com/mattn/go-sqlite3 v2.0.2+incompatible
+# github.com/mattn/go-sqlite3 v2.0.3+incompatible
 github.com/mattn/go-sqlite3
 # github.com/opencontainers/go-digest v1.0.0-rc1
 github.com/opencontainers/go-digest
@@ -86,7 +86,7 @@ github.com/pkg/errors
 github.com/pmezard/go-difflib/difflib
 # github.com/russross/blackfriday/v2 v2.0.1
 github.com/russross/blackfriday/v2
-# github.com/shirou/gopsutil v2.19.11+incompatible
+# github.com/shirou/gopsutil v2.19.12+incompatible
 github.com/shirou/gopsutil/cpu
 github.com/shirou/gopsutil/disk
 github.com/shirou/gopsutil/host
@@ -94,11 +94,9 @@ github.com/shirou/gopsutil/internal/common
 github.com/shirou/gopsutil/mem
 github.com/shirou/gopsutil/net
 github.com/shirou/gopsutil/process
-# github.com/shirou/w32 v0.0.0-20160930032740-bb4de0191aa4
-github.com/shirou/w32
 # github.com/shurcooL/sanitized_anchor_name v1.0.0
 github.com/shurcooL/sanitized_anchor_name
-# github.com/sirupsen/logrus v1.4.1
+# github.com/sirupsen/logrus v1.4.2
 github.com/sirupsen/logrus
 # github.com/stretchr/testify v1.4.0
 github.com/stretchr/testify/assert
@@ -120,7 +118,7 @@ go.uber.org/zap/zapcore
 # golang.org/x/lint v0.0.0-20190930215403-16217165b5de
 golang.org/x/lint
 golang.org/x/lint/golint
-# golang.org/x/net v0.0.0-20191209160850-c0dbc17a3553
+# golang.org/x/net v0.0.0-20200114155413-6afb5195e5aa
 golang.org/x/net/context
 golang.org/x/net/http/httpguts
 golang.org/x/net/http2
@@ -201,7 +199,7 @@ gopkg.in/natefinch/lumberjack.v2
 gopkg.in/tomb.v2
 # gopkg.in/validator.v2 v2.0.0-20191107172027-c3144fdedc21
 gopkg.in/validator.v2
-# gopkg.in/yaml.v2 v2.2.2
+# gopkg.in/yaml.v2 v2.2.8
 gopkg.in/yaml.v2
 # honnef.co/go/tools v0.0.1-2019.2.3
 honnef.co/go/tools/arg

@@ -11,10 +11,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/homo/homo/logger"
-	"github.com/homo/homo/protocol/http"
-	"github.com/homo/homo/sdk/homo-go/api"
-	"github.com/homo/homo/utils"
+	"github.com/countstarlight/homo/logger"
+	"github.com/countstarlight/homo/protocol/http"
+	"github.com/countstarlight/homo/sdk/homo-go/api"
+	"github.com/countstarlight/homo/utils"
 	"github.com/stretchr/testify/assert"
 )
 

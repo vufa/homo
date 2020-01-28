@@ -75,8 +75,8 @@ ifeq ($(MODE),native)
 	@${MAKE} $(NATIVE_MODS)
 endif
 	#@tar cf - -C example/$(MODE) etc var | tar xvf - -C ${PREFIX}/
-	ln -s ${CURDIR}/example/$(MODE)/etc ${PREFIX}/etc
-	ln -s ${CURDIR}/example/$(MODE)/var/db/homo/* ${PREFIX}/var/db/homo/
+	@ln -s ${CURDIR}/example/$(MODE)/etc ${PREFIX}/etc
+	@ln -s ${CURDIR}/example/$(MODE)/var/db/homo/* ${PREFIX}/var/db/homo/
 
 $(NATIVE_MODS):
 	@install -d -m 0755 ${PREFIX}/var/db/homo/$(notdir $@)/bin
@@ -98,17 +98,17 @@ clean:
 
 .PHONY: gen
 gen:
-	go generate -mod=vendor ./...
+	@go generate -mod=vendor ./...
 
 .PHONY: fmt
 fmt:
-	go fmt  ./...
+	@go fmt  ./...
 
 .PHONY: fmt-check
 fmt-check:
 	# get all go files and run go fmt on them
 	@diff=$$(go fmt  ./...); \
-	if [ -n "$$diff" ]; then \
+	@if [ -n "$$diff" ]; then \
 		echo "Please run 'make fmt' and commit the result:"; \
 		echo "$${diff}"; \
 		exit 1; \
