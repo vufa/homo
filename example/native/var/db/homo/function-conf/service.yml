@@ -22,6 +22,15 @@ rules:
       name: python3-sayhi
     publish:
       topic: t/py3hi
+  - clientid: application-nlu-1
+    subscribe:
+      topic: t
+    function:
+      name: application-nlu
+    publish:
+      topic: t/nlu
 functions:
   - name: python3-sayhi
     service: function-python3-sayhi
+  - name: application-nlu
+    service: application-nlu

@@ -35,11 +35,27 @@ services:
     image: homo-function-python3
     replica: 0
     mounts:
+      # function-sayhi
       - name: function-sayhi-conf
         path: etc/homo
         readonly: true
       - name: function-sayhi-code
         path: var/db/homo/function-sayhi
+        readonly: true
+      # native process mode only
+      - name: homo-function-python3-bin
+        path: lib/homo/homo-function-python3
+        readonly: true
+  - name: application-nlu
+    image: homo-function-python3
+    replica: 0
+    mounts:
+      # application-nlu
+      - name: application-nlu-conf
+        path: etc/homo
+        readonly: true
+      - name: application-nlu-code
+        path: var/db/homo/application-nlu
         readonly: true
       # native process mode only
       - name: homo-function-python3-bin
@@ -65,6 +81,11 @@ volumes:
     path: var/db/homo/function-sayhi-conf
   - name: function-sayhi-code
     path: var/db/homo/function-sayhi-code
+  # application-nlu
+  - name: application-nlu-conf
+    path: var/db/homo/application-nlu-conf
+  - name: application-nlu-code
+    path: var/db/homo/application-nlu-code
   # bin, native process mode only
   - name: homo-hub-bin
     path: var/db/homo/homo-hub

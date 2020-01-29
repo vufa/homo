@@ -74,7 +74,7 @@ install: all
 ifeq ($(MODE),native)
 	@${MAKE} $(NATIVE_MODS)
 endif
-	#@tar cf - -C example/$(MODE) etc var | tar xvf - -C ${PREFIX}/
+	@#@tar cf - -C example/$(MODE) etc var | tar xvf - -C ${PREFIX}/
 	@ln -s ${CURDIR}/example/$(MODE)/etc ${PREFIX}/etc
 	@ln -s ${CURDIR}/example/$(MODE)/var/db/homo/* ${PREFIX}/var/db/homo/
 

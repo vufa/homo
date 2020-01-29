@@ -4,11 +4,14 @@
 function to say hi in python
 """
 
+from rasa_nlu.model import Interpreter
+
 
 def handler(event, context):
     """
     function handler
-    """ 
+    """
+    interpreter = Interpreter.load("models/")
     res = {}
     if isinstance(event, dict):
         if "err" in event:
@@ -28,5 +31,5 @@ def handler(event, context):
     if 'functionInvokeID' in context:
         res['functionInvokeID'] = context['functionInvokeID']
 
-    res['Say'] = 'Hello Homo'
+    res['Say'] = interpreter.parse(u"你好")
     return res

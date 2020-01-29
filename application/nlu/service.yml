@@ -1,0 +1,7 @@
+functions:
+  - name: 'application-nlu'
+    handler: 'index.handler'
+    codedir: 'var/db/homo/application-nlu'
+logger:
+  path: var/log/homo/service.log
+  level: "debug"
