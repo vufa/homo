@@ -26,9 +26,9 @@ REGISTRY?=
 XFLAGS?=--load
 XPLATFORMS:=$(shell echo $(filter-out darwin/amd64,$(PLATFORMS)) | sed 's: :,:g')
 
-YML_FILE=package.yml
 CONF_FILE=service.yml
 SRC_FILES:=index.py
+MODEL_FILE:=$(shell find models/ -type f -printf '%T@ %p\n' | sort -n | tail -1 | cut -f2- -d" ")
 
 OUTPUT:=../../out
 #OUTPUT_MODS:=$(PLATFORMS:%=$(OUTPUT)/%/$(MODULE))
@@ -43,6 +43,10 @@ all: $(OUTPUT_BINS) $(OUTPUT_CONF_FILES)
 $(OUTPUT_BINS): $(SRC_FILES)
 	@echo "BUILD $@"
 	@install -d -m 0755 $(dir $@)
+	@$(if $(strip $(MODEL_FILE)),,echo -e "\033[0;31mcan't find nlu model file in models/\033[0m" && exit 1)
+	@rm -rf tmp && mkdir tmp && tar xvzf $(MODEL_FILE) -C tmp/
+	@ln -s $(abspath tmp/nlu) $(OUTPUT_CODE)/models
+	@ln -s $(abspath data) $(OUTPUT_CODE)/data
 	@ln -s $(abspath $(SRC_FILES)) $(OUTPUT_CODE)/
 	@#$(BIN_CMD)
 

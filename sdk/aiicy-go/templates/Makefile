@@ -36,7 +36,7 @@ $(OUTPUT_BINS): $(SRC_FILES)
 $(OUTPUT_PKGS): $(OUTPUT_BINS) $(YML_FILE)
 	@echo "PACKAGE $@"
 	@install -m 0755 $(YML_FILE) $(dir $@)
-	#@cd $(dir $@) && zip -q -r $(notdir $@) bin $(YML_FILE) # TODO: don't need package yet
+	@#@cd $(dir $@) && zip -q -r $(notdir $@) bin $(YML_FILE) # TODO: don't need package yet
 
 .PHONY: image
 image: $(OUTPUT_BINS)

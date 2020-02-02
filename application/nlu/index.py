@@ -4,7 +4,7 @@
 function to say hi in python
 """
 
-from rasa_nlu.model import Interpreter
+from rasa.nlu.model import Interpreter
 
 
 def handler(event, context):

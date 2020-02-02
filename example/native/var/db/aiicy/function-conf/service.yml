@@ -4,7 +4,7 @@ hub:
   password: hahaha
   keepalive: -1 # no ping/pong
 logger:
-  path: var/log/aiicy/hub.log
+  path: var/log/aiicy/function.log
   level: 'debug'
   mode: 'console'
   format: 'text'
@@ -15,13 +15,6 @@ logger:
   backup:
     max: 15
 rules:
-  - clientid: func-python3-sayhi-1
-    subscribe:
-      topic: t
-    function:
-      name: python3-sayhi
-    publish:
-      topic: t/py3hi
   - clientid: application-nlu-1
     subscribe:
       topic: t
@@ -30,7 +23,5 @@ rules:
     publish:
       topic: t/nlu
 functions:
-  - name: python3-sayhi
-    service: function-python3-sayhi
   - name: application-nlu
     service: application-nlu
