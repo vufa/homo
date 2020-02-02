@@ -1,8 +1,8 @@
 /cmusphinx-zh-cn-5.2/
 /en-us/
 
-/homo/homo.vocab
-/homo/homo.idngram
-/homo/homo.arpa
+/aiicy/aiicy.vocab
+/aiicy/aiicy.idngram
+/aiicy/aiicy.arpa
 
 /*.log

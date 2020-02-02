@@ -1,4 +1,4 @@
-Homo(智人)
+Aiicy
 ======== 
 [English](README.md) | 简体中文
 
@@ -17,17 +17,17 @@ Homo(智人)
 ## Native
 
 ```bash
-git clone https://github.com/countstarlight/homo.git
-cd homo
+git clone https://github.com/aiicy/aiicy.git
+cd aiicy
 make install MODE=native PREFIX=out
 ```
 
 ```bash
-./out/bin/homo -w out start
+./out/bin/aiicy -w out start
 ```
 
 # 协议
 
-[MIT](https://github.com/countstarlight/homo/blob/master/LICENSE)
+[MIT](https://github.com/aiicy/aiicy/blob/master/LICENSE)
 
 Copyright (c) 2019-present Codist

@@ -11,11 +11,11 @@ import (
 	"testing"
 	"time"
 
-	"github.com/countstarlight/homo/logger"
-	"github.com/countstarlight/homo/protocol/http"
-	"github.com/countstarlight/homo/sdk/homo-go"
-	"github.com/countstarlight/homo/sdk/homo-go/api"
-	"github.com/countstarlight/homo/utils"
+	"github.com/aiicy/aiicy/logger"
+	"github.com/aiicy/aiicy/protocol/http"
+	"github.com/aiicy/aiicy/sdk/aiicy-go"
+	"github.com/aiicy/aiicy/sdk/aiicy-go/api"
+	"github.com/aiicy/aiicy/utils"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -46,13 +46,13 @@ func TestDefaultConfig(t *testing.T) {
 			assert.Equal(t, "docker", cfg.Mode)
 
 			if runtime.GOOS == "linux" {
-				assert.Equal(t, "unix:///var/run/homo.sock", cfg.Server.Address)
+				assert.Equal(t, "unix:///var/run/aiicy.sock", cfg.Server.Address)
 			} else {
 				assert.Equal(t, "tcp://127.0.0.1:50050", cfg.Server.Address)
 			}
 			assert.Equal(t, time.Duration(5*60*1000*1000000), cfg.Server.Timeout)
 
-			assert.Equal(t, "var/log/homo/homo.log", cfg.Logger.Path)
+			assert.Equal(t, "var/log/aiicy/aiicy.log", cfg.Logger.Path)
 			assert.Equal(t, "info", cfg.Logger.Level)
 			assert.Equal(t, "text", cfg.Logger.Format)
 			assert.Equal(t, 15, cfg.Logger.Age.Max)
@@ -71,10 +71,10 @@ func TestConfig(t *testing.T) {
 
 	conf := Config{
 		Server: http.ServerInfo{
-			Address: "homo://127.0.0.1:51150",
+			Address: "aiicy://127.0.0.1:51150",
 		},
 		API: api.ServerConfig{
-			Address: "homo://127.0.0.1:51150",
+			Address: "aiicy://127.0.0.1:51150",
 		},
 	}
 	err = conf.Validate()
@@ -82,7 +82,7 @@ func TestConfig(t *testing.T) {
 	assert.Equal(t, "only support unix domian socket or tcp socket", err.Error())
 
 	filepath := path.Join(dir, "sn")
-	sn := "homo"
+	sn := "aiicy"
 	f, err := os.Create(filepath)
 	assert.NoError(t, err)
 
@@ -95,46 +95,46 @@ func TestConfig(t *testing.T) {
 	conf = Config{
 		Mode: "docker",
 		Server: http.ServerInfo{
-			Address: "unix:///tmp/run/homo.sock",
+			Address: "unix:///tmp/run/aiicy.sock",
 		},
 		API: api.ServerConfig{
-			Address: "unix:///tmp/run/homo/api.sock",
+			Address: "unix:///tmp/run/aiicy/api.sock",
 		},
 		SNFile: filepath,
 	}
 	err = conf.Validate()
 	assert.NoError(t, err)
 
-	assert.Equal(t, "unix:///"+homo.DefaultSockFile, utils.GetEnv(homo.EnvKeyMasterAPIAddress))
-	assert.Equal(t, "unix:///"+homo.DefaultGRPCSockFile, utils.GetEnv(homo.EnvKeyMasterGRPCAPIAddress))
-	assert.Equal(t, "/tmp/run/homo.sock", utils.GetEnv(homo.EnvKeyMasterAPISocket))
-	assert.Equal(t, "/tmp/run/homo/api.sock", utils.GetEnv(homo.EnvKeyMasterGRPCAPISocket))
-	assert.Equal(t, sn, utils.GetEnv(homo.EnvKeyHostSN))
-	assert.Equal(t, "v1", utils.GetEnv(homo.EnvKeyMasterAPIVersion))
-	assert.Equal(t, runtime.GOOS, utils.GetEnv(homo.EnvKeyHostOS))
-	assert.Equal(t, conf.Mode, utils.GetEnv(homo.EnvKeyServiceMode))
+	assert.Equal(t, "unix:///"+aiicy.DefaultSockFile, utils.GetEnv(aiicy.EnvKeyMasterAPIAddress))
+	assert.Equal(t, "unix:///"+aiicy.DefaultGRPCSockFile, utils.GetEnv(aiicy.EnvKeyMasterGRPCAPIAddress))
+	assert.Equal(t, "/tmp/run/aiicy.sock", utils.GetEnv(aiicy.EnvKeyMasterAPISocket))
+	assert.Equal(t, "/tmp/run/aiicy/api.sock", utils.GetEnv(aiicy.EnvKeyMasterGRPCAPISocket))
+	assert.Equal(t, sn, utils.GetEnv(aiicy.EnvKeyHostSN))
+	assert.Equal(t, "v1", utils.GetEnv(aiicy.EnvKeyMasterAPIVersion))
+	assert.Equal(t, runtime.GOOS, utils.GetEnv(aiicy.EnvKeyHostOS))
+	assert.Equal(t, conf.Mode, utils.GetEnv(aiicy.EnvKeyServiceMode))
 
 	conf = Config{
 		Mode: "native",
 		Server: http.ServerInfo{
-			Address: "unix:///tmp/run/homo.sock",
+			Address: "unix:///tmp/run/aiicy.sock",
 		},
 		API: api.ServerConfig{
-			Address: "unix:///tmp/run/homo/api.sock",
+			Address: "unix:///tmp/run/aiicy/api.sock",
 		},
 		SNFile: filepath,
 	}
 	err = conf.Validate()
 	assert.NoError(t, err)
 
-	assert.Equal(t, "unix://"+homo.DefaultSockFile, utils.GetEnv(homo.EnvKeyMasterAPIAddress))
-	assert.Equal(t, "unix://"+homo.DefaultGRPCSockFile, utils.GetEnv(homo.EnvKeyMasterGRPCAPIAddress))
-	assert.Equal(t, "/tmp/run/homo.sock", utils.GetEnv(homo.EnvKeyMasterAPISocket))
-	assert.Equal(t, "/tmp/run/homo/api.sock", utils.GetEnv(homo.EnvKeyMasterGRPCAPISocket))
-	assert.Equal(t, sn, utils.GetEnv(homo.EnvKeyHostSN))
-	assert.Equal(t, "v1", utils.GetEnv(homo.EnvKeyMasterAPIVersion))
-	assert.Equal(t, runtime.GOOS, utils.GetEnv(homo.EnvKeyHostOS))
-	assert.Equal(t, conf.Mode, utils.GetEnv(homo.EnvKeyServiceMode))
+	assert.Equal(t, "unix://"+aiicy.DefaultSockFile, utils.GetEnv(aiicy.EnvKeyMasterAPIAddress))
+	assert.Equal(t, "unix://"+aiicy.DefaultGRPCSockFile, utils.GetEnv(aiicy.EnvKeyMasterGRPCAPIAddress))
+	assert.Equal(t, "/tmp/run/aiicy.sock", utils.GetEnv(aiicy.EnvKeyMasterAPISocket))
+	assert.Equal(t, "/tmp/run/aiicy/api.sock", utils.GetEnv(aiicy.EnvKeyMasterGRPCAPISocket))
+	assert.Equal(t, sn, utils.GetEnv(aiicy.EnvKeyHostSN))
+	assert.Equal(t, "v1", utils.GetEnv(aiicy.EnvKeyMasterAPIVersion))
+	assert.Equal(t, runtime.GOOS, utils.GetEnv(aiicy.EnvKeyHostOS))
+	assert.Equal(t, conf.Mode, utils.GetEnv(aiicy.EnvKeyServiceMode))
 
 	conf = Config{
 		Mode: "docker",
@@ -148,12 +148,12 @@ func TestConfig(t *testing.T) {
 	}
 	err = conf.Validate()
 	assert.NoError(t, err)
-	assert.Equal(t, "tcp://host.docker.internal:51150", utils.GetEnv(homo.EnvKeyMasterAPIAddress))
-	assert.Equal(t, "host.docker.internal:51151", utils.GetEnv(homo.EnvKeyMasterGRPCAPIAddress))
-	assert.Equal(t, sn, utils.GetEnv(homo.EnvKeyHostSN))
-	assert.Equal(t, "v1", utils.GetEnv(homo.EnvKeyMasterAPIVersion))
-	assert.Equal(t, runtime.GOOS, utils.GetEnv(homo.EnvKeyHostOS))
-	assert.Equal(t, conf.Mode, utils.GetEnv(homo.EnvKeyServiceMode))
+	assert.Equal(t, "tcp://host.docker.internal:51150", utils.GetEnv(aiicy.EnvKeyMasterAPIAddress))
+	assert.Equal(t, "host.docker.internal:51151", utils.GetEnv(aiicy.EnvKeyMasterGRPCAPIAddress))
+	assert.Equal(t, sn, utils.GetEnv(aiicy.EnvKeyHostSN))
+	assert.Equal(t, "v1", utils.GetEnv(aiicy.EnvKeyMasterAPIVersion))
+	assert.Equal(t, runtime.GOOS, utils.GetEnv(aiicy.EnvKeyHostOS))
+	assert.Equal(t, conf.Mode, utils.GetEnv(aiicy.EnvKeyServiceMode))
 
 	conf = Config{
 		Mode: "native",
@@ -167,12 +167,12 @@ func TestConfig(t *testing.T) {
 	}
 	err = conf.Validate()
 	assert.NoError(t, err)
-	assert.Equal(t, conf.Server.Address, utils.GetEnv(homo.EnvKeyMasterAPIAddress))
-	assert.Equal(t, "127.0.0.1:51151", utils.GetEnv(homo.EnvKeyMasterGRPCAPIAddress))
-	assert.Equal(t, sn, utils.GetEnv(homo.EnvKeyHostSN))
-	assert.Equal(t, "v1", utils.GetEnv(homo.EnvKeyMasterAPIVersion))
-	assert.Equal(t, runtime.GOOS, utils.GetEnv(homo.EnvKeyHostOS))
-	assert.Equal(t, conf.Mode, utils.GetEnv(homo.EnvKeyServiceMode))
+	assert.Equal(t, conf.Server.Address, utils.GetEnv(aiicy.EnvKeyMasterAPIAddress))
+	assert.Equal(t, "127.0.0.1:51151", utils.GetEnv(aiicy.EnvKeyMasterGRPCAPIAddress))
+	assert.Equal(t, sn, utils.GetEnv(aiicy.EnvKeyHostSN))
+	assert.Equal(t, "v1", utils.GetEnv(aiicy.EnvKeyMasterAPIVersion))
+	assert.Equal(t, runtime.GOOS, utils.GetEnv(aiicy.EnvKeyHostOS))
+	assert.Equal(t, conf.Mode, utils.GetEnv(aiicy.EnvKeyServiceMode))
 }
 
 func TestOTALog(t *testing.T) {

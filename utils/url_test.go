@@ -15,26 +15,26 @@ func TestParseURL(t *testing.T) {
 	}{
 		{
 			name: "unix-1",
-			addr: "unix:///var/run/homo.sock",
+			addr: "unix:///var/run/aiicy.sock",
 			want: &url.URL{
 				Scheme: "unix",
-				Host:   "/var/run/homo.sock",
+				Host:   "/var/run/aiicy.sock",
 			},
 		},
 		{
 			name: "unix-2",
-			addr: "unix://./var/run/homo.sock",
+			addr: "unix://./var/run/aiicy.sock",
 			want: &url.URL{
 				Scheme: "unix",
-				Host:   "./var/run/homo.sock",
+				Host:   "./var/run/aiicy.sock",
 			},
 		},
 		{
 			name: "unix-3",
-			addr: "unix://var/run/homo.sock",
+			addr: "unix://var/run/aiicy.sock",
 			want: &url.URL{
 				Scheme: "unix",
-				Host:   "var/run/homo.sock",
+				Host:   "var/run/aiicy.sock",
 			},
 		},
 		{

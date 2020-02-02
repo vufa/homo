@@ -9,8 +9,8 @@ package master
 
 import (
 	"fmt"
-	"github.com/countstarlight/homo/sdk/homo-go"
-	"github.com/countstarlight/homo/utils"
+	"github.com/aiicy/aiicy/sdk/aiicy-go"
+	"github.com/aiicy/aiicy/utils"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -51,12 +51,12 @@ func (c *Config) Validate() error {
 		if err != nil {
 			return err
 		}
-		utils.SetEnv(homo.EnvKeyMasterAPISocket, sock)
+		utils.SetEnv(aiicy.EnvKeyMasterAPISocket, sock)
 		unixPrefix := "unix://"
 		if c.Mode != "native" {
 			unixPrefix += "/"
 		}
-		utils.SetEnv(homo.EnvKeyMasterAPIAddress, unixPrefix+homo.DefaultSockFile)
+		utils.SetEnv(aiicy.EnvKeyMasterAPIAddress, unixPrefix+aiicy.DefaultSockFile)
 
 		// grpc
 		grpcSock, err := filepath.Abs(grpcUrl.Host)
@@ -67,8 +67,8 @@ func (c *Config) Validate() error {
 		if err != nil {
 			return err
 		}
-		utils.SetEnv(homo.EnvKeyMasterGRPCAPISocket, grpcSock)
-		utils.SetEnv(homo.EnvKeyMasterGRPCAPIAddress, unixPrefix+homo.DefaultGRPCSockFile)
+		utils.SetEnv(aiicy.EnvKeyMasterGRPCAPISocket, grpcSock)
+		utils.SetEnv(aiicy.EnvKeyMasterGRPCAPIAddress, unixPrefix+aiicy.DefaultGRPCSockFile)
 	} else {
 		if c.Mode != "native" {
 			parts := strings.SplitN(url.Host, ":", 2)
@@ -76,8 +76,8 @@ func (c *Config) Validate() error {
 			parts = strings.SplitN(grpcUrl.Host, ":", 2)
 			grpcUrl.Host = fmt.Sprintf("host.docker.internal:%s", parts[1])
 		}
-		utils.SetEnv(homo.EnvKeyMasterAPIAddress, addr)
-		utils.SetEnv(homo.EnvKeyMasterGRPCAPIAddress, grpcUrl.Host)
+		utils.SetEnv(aiicy.EnvKeyMasterAPIAddress, addr)
+		utils.SetEnv(aiicy.EnvKeyMasterGRPCAPIAddress, grpcUrl.Host)
 	}
 
 	if c.SNFile != "" {
@@ -86,17 +86,17 @@ func (c *Config) Validate() error {
 			fmt.Printf("failed to load SN file: %s", err.Error())
 		} else {
 			sn := strings.TrimSpace(string(snByte))
-			utils.SetEnv(homo.EnvKeyHostSN, sn)
+			utils.SetEnv(aiicy.EnvKeyHostSN, sn)
 		}
 	}
 
-	utils.SetEnv(homo.EnvKeyMasterAPIVersion, "v1")
-	utils.SetEnv(homo.EnvKeyHostOS, runtime.GOOS)
-	utils.SetEnv(homo.EnvKeyServiceMode, c.Mode)
+	utils.SetEnv(aiicy.EnvKeyMasterAPIVersion, "v1")
+	utils.SetEnv(aiicy.EnvKeyHostOS, runtime.GOOS)
+	utils.SetEnv(aiicy.EnvKeyServiceMode, c.Mode)
 
 	hi := utils.GetHostInfo()
 	if hi.HostID != "" {
-		utils.SetEnv(homo.EnvKeyHostID, hi.HostID)
+		utils.SetEnv(aiicy.EnvKeyHostID, hi.HostID)
 	}
 	return nil
 }

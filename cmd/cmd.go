@@ -8,7 +8,7 @@
 package cmd
 
 import (
-	"github.com/countstarlight/homo/logger"
+	"github.com/aiicy/aiicy/logger"
 	"github.com/urfave/cli/v2"
 	"os"
 )
@@ -24,13 +24,13 @@ func Execute() {
 			{
 				Name:    "start",
 				Aliases: []string{"s"},
-				Usage:   "start homo",
+				Usage:   "start aiicy",
 				Action:  startInternal,
 			},
 			{
 				Name:    "version",
 				Aliases: []string{"v"},
-				Usage:   "show the version of homo",
+				Usage:   "show the version of aiicy",
 				Action:  version,
 			},
 		},

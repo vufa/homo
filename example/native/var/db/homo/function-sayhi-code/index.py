@@ -28,5 +28,5 @@ def handler(event, context):
     if 'functionInvokeID' in context:
         res['functionInvokeID'] = context['functionInvokeID']
 
-    res['Say'] = 'Hello Homo'
+    res['Say'] = 'Hello Aiicy'
     return res

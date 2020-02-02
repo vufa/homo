@@ -5,13 +5,13 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/countstarlight/homo/sdk/homo-go"
+	"github.com/aiicy/aiicy/sdk/aiicy-go"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestInspect(t *testing.T) {
 	info := infoStats{
-		Inspect:  homo.Inspect{},
+		Inspect:  aiicy.Inspect{},
 		services: nil,
 		file:     path.Join("testdata", "application_docker.stats"),
 		RWMutex:  sync.RWMutex{},

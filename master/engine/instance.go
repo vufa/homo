@@ -5,7 +5,7 @@ import (
 	"io"
 	"strings"
 
-	"github.com/countstarlight/homo/sdk/homo-go"
+	"github.com/aiicy/aiicy/sdk/aiicy-go"
 )
 
 // all status
@@ -46,13 +46,13 @@ func GenerateInstanceEnv(name string, static []string, dynamic map[string]string
 	for _, v := range static {
 		// remove auth token info for dynamic instances
 		if dyn {
-			if strings.HasPrefix(v, homo.EnvKeyServiceToken) {
+			if strings.HasPrefix(v, aiicy.EnvKeyServiceToken) {
 				continue
 			}
 		}
 		env = append(env, v)
 	}
-	env = append(env, fmt.Sprintf("%s=%s", homo.EnvKeyServiceInstanceName, name))
+	env = append(env, fmt.Sprintf("%s=%s", aiicy.EnvKeyServiceInstanceName, name))
 	if dyn {
 		for k, v := range dynamic {
 			env = append(env, fmt.Sprintf("%s=%s", k, v))

@@ -1,13 +1,13 @@
 mode: native
 server:
-  address: unix://var/run/homo.sock
+  address: unix://var/run/aiicy.sock
 database:
   driver: sqlite3
-  path: var/lib/homo/db
+  path: var/lib/aiicy/db
 api:
-  address: unix://var/run/homo/api.sock
+  address: unix://var/run/aiicy/api.sock
 logger:
-  path: var/log/homo/homo.log
+  path: var/log/aiicy/aiicy.log
   level: 'debug'
   mode: 'console'
   format: 'text'
@@ -18,7 +18,7 @@ logger:
   backup:
     max: 15
 otalog:
-  path: var/db/homo/ota.log
+  path: var/db/aiicy/ota.log
   level: 'debug'
   mode: 'console'
   format: 'text'

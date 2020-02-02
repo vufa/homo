@@ -8,7 +8,7 @@ import (
 	"path"
 	"testing"
 
-	"github.com/countstarlight/homo/sdk/homo-go/api"
+	"github.com/aiicy/aiicy/sdk/aiicy-go/api"
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/stretchr/testify/assert"
 )
@@ -72,7 +72,7 @@ func TestDatabaseSQLiteKV(t *testing.T) {
 	assert.Error(t, err)
 
 	// Put: value is empty
-	err = db.Set(&api.KV{Key: []byte("homo")})
+	err = db.Set(&api.KV{Key: []byte("aiicy")})
 	assert.NoError(t, err)
 
 	// Del: del k1

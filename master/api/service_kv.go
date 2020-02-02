@@ -3,7 +3,7 @@ package api
 import (
 	"context"
 
-	"github.com/countstarlight/homo/sdk/homo-go/api"
+	"github.com/aiicy/aiicy/sdk/aiicy-go/api"
 	"github.com/gogo/protobuf/types"
 )
 

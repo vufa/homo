@@ -9,12 +9,12 @@ package master
 
 import (
 	"fmt"
-	"github.com/countstarlight/homo/logger"
-	"github.com/countstarlight/homo/master/api"
-	"github.com/countstarlight/homo/master/database"
-	"github.com/countstarlight/homo/master/engine"
-	"github.com/countstarlight/homo/sdk/homo-go"
-	grpcapi "github.com/countstarlight/homo/sdk/homo-go/api"
+	"github.com/aiicy/aiicy/logger"
+	"github.com/aiicy/aiicy/master/api"
+	"github.com/aiicy/aiicy/master/database"
+	"github.com/aiicy/aiicy/master/engine"
+	"github.com/aiicy/aiicy/sdk/aiicy-go"
+	grpcapi "github.com/aiicy/aiicy/sdk/aiicy-go/api"
 	cmap "github.com/orcaman/concurrent-map"
 	"go.uber.org/zap"
 	"os"
@@ -41,12 +41,12 @@ type Master struct {
 
 // New creates a new master
 func New(pwd string, cfg Config, ver string, revision string) (*Master, error) {
-	err := os.MkdirAll(homo.DefaultDBDir, 0755)
+	err := os.MkdirAll(aiicy.DefaultDBDir, 0755)
 	if err != nil {
 		return nil, fmt.Errorf("failed to make db directory: %s", err.Error())
 	}
 
-	log := logger.New(cfg.Logger, "homo", "master")
+	log := logger.New(cfg.Logger, "aiicy", "master")
 	m := &Master{
 		cfg:       cfg,
 		ver:       ver,
@@ -55,7 +55,7 @@ func New(pwd string, cfg Config, ver string, revision string) (*Master, error) {
 		sig:       make(chan os.Signal, 1),
 		services:  cmap.New(),
 		accounts:  cmap.New(),
-		infostats: newInfoStats(pwd, cfg.Mode, ver, revision, path.Join(homo.DefaultDBDir, homo.AppStatsFileName)),
+		infostats: newInfoStats(pwd, cfg.Mode, ver, revision, path.Join(aiicy.DefaultDBDir, aiicy.AppStatsFileName)),
 	}
 	log.Infof("mode: %s; grace: %d; pwd: %s; api: %s", cfg.Mode, cfg.Grace, pwd, cfg.Server.Address)
 

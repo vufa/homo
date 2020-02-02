@@ -3,7 +3,7 @@ package engine
 import (
 	"testing"
 
-	"github.com/countstarlight/homo/sdk/homo-go"
+	"github.com/aiicy/aiicy/sdk/aiicy-go"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -32,7 +32,7 @@ func (*mockEngine) Recover() {
 	return
 }
 
-func (*mockEngine) Prepare(homo.ComposeAppConfig) {
+func (*mockEngine) Prepare(aiicy.ComposeAppConfig) {
 	return
 }
 
@@ -48,7 +48,7 @@ func (*mockEngine) DelServiceStats(serviceName string, persist bool) {
 	return
 }
 
-func (*mockEngine) Run(string, homo.ComposeService, map[string]homo.ComposeVolume) (Service, error) {
+func (*mockEngine) Run(string, aiicy.ComposeService, map[string]aiicy.ComposeVolume) (Service, error) {
 	return nil, nil
 }
 

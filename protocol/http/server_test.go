@@ -1,7 +1,7 @@
 package http
 
 import (
-	"github.com/countstarlight/homo/logger"
+	"github.com/aiicy/aiicy/logger"
 	"testing"
 
 	"github.com/stretchr/testify/assert"

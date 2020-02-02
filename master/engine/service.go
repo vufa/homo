@@ -1,12 +1,12 @@
 package engine
 
-import "github.com/countstarlight/homo/sdk/homo-go"
+import "github.com/aiicy/aiicy/sdk/aiicy-go"
 
 // Service interfaces of service
 type Service interface {
 	Name() string
 	Engine() Engine
-	RestartPolicy() homo.RestartPolicyInfo
+	RestartPolicy() aiicy.RestartPolicyInfo
 	Start() error
 	Stop()
 	Stats()

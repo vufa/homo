@@ -3,9 +3,9 @@ listen:
   - ssl://0.0.0.0:8883
   - ws://0.0.0.0:8080/mqtt
 certificate:
-  ca: var/db/homo/cert/ca.pem
-  cert: var/db/homo/cert/server.pem
-  key: var/db/homo/cert/server.key
+  ca: var/db/aiicy/cert/ca.pem
+  cert: var/db/aiicy/cert/server.pem
+  key: var/db/aiicy/cert/server.key
 principals:
   - username: two-way-tls
     permissions:
@@ -26,7 +26,7 @@ subscriptions:
     target:
       topic: 't/topic'
 logger:
-  path: var/log/homo/hub.log
+  path: var/log/aiicy/hub.log
   level: 'debug'
   mode: 'console'
   format: 'text'
@@ -37,4 +37,4 @@ logger:
   backup:
     max: 15
 storage:
-  dir: var/db/homo/data
+  dir: var/db/aiicy/data

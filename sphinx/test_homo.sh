@@ -1,5 +1,5 @@
 #! /bin/sh
 
 gortana --hmm "en-us/en-us" \
-          --dict "homo/homo.dic" \
-          --lm "homo/homo.lm.bin"
+          --dict "aiicy/aiicy.dic" \
+          --lm "aiicy/aiicy.lm.bin"

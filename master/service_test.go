@@ -4,8 +4,8 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/countstarlight/homo/sdk/homo-go"
-	"github.com/countstarlight/homo/utils"
+	"github.com/aiicy/aiicy/sdk/aiicy-go"
+	"github.com/aiicy/aiicy/utils"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -13,25 +13,25 @@ var cfgV1 = `
 version: V1
 services:
   - name: a
-    image: 'homo-a:latest'
+    image: 'aiicy-a:latest'
     replica: 1
     mounts:
       - name: a-conf-V1
-        path: etc/homo
+        path: etc/aiicy
         readonly: true
   - name: b
-    image: 'homo-b:latest'
+    image: 'aiicy-b:latest'
     replica: 1
     mounts:
       - name: b-conf-V1
-        path: etc/homo
+        path: etc/aiicy
         readonly: true
   - name: c
-    image: 'homo-c:latest'
+    image: 'aiicy-c:latest'
     replica: 1
     mounts:
       - name: c-conf-V1
-        path: etc/homo
+        path: etc/aiicy
         readonly: true
 volumes:
   - name: a-conf-V1
@@ -46,25 +46,25 @@ var cfgV2 = `
 version: V2
 services:
   - name: a
-    image: 'homo-a:latest'
+    image: 'aiicy-a:latest'
     replica: 1
     mounts:
       - name: a-conf-V1
-        path: etc/homo
+        path: etc/aiicy
         readonly: true
   - name: b
-    image: 'homo-b:0.1.4'
+    image: 'aiicy-b:0.1.4'
     replica: 1
     mounts:
       - name: b-conf-V1
-        path: etc/homo
+        path: etc/aiicy
         readonly: true
   - name: d
-    image: 'homo-d:latest'
+    image: 'aiicy-d:latest'
     replica: 1
     mounts:
       - name: d-conf-V1
-        path: etc/homo
+        path: etc/aiicy
         readonly: true
 volumes:
   - name: a-conf-V1
@@ -79,27 +79,27 @@ var cfgV3 = `
 version: V3
 services:
   - name: a
-    image: 'homo-a:latest'
+    image: 'aiicy-a:latest'
     replica: 0
     mounts:
       - name: a-conf-V1
-        path: etc/homo
+        path: etc/aiicy
         readonly: true
   - name: b
-    image: 'homo-b:0.1.4'
+    image: 'aiicy-b:0.1.4'
     replica: 1
     mounts:
       - name: b-conf-V1
-        path: etc/homo
+        path: etc/aiicy
         readonly: true
       - name: b-data-V1
-        path: var/db/homo/data
+        path: var/db/aiicy/data
   - name: d
-    image: 'homo-d:latest'
+    image: 'aiicy-d:latest'
     replica: 1
     mounts:
       - name: d-conf-V1
-        path: etc/homo
+        path: etc/aiicy
         readonly: true
 volumes:
   - name: a-conf-V1
@@ -115,25 +115,25 @@ version: V4
 `
 
 func Test_diffServices(t *testing.T) {
-	var V1 homo.AppConfig
+	var V1 aiicy.AppConfig
 	err := utils.UnmarshalYAML([]byte(cfgV1), &V1)
 	assert.NoError(t, err)
 
-	var V2 homo.AppConfig
+	var V2 aiicy.AppConfig
 	err = utils.UnmarshalYAML([]byte(cfgV2), &V2)
 	assert.NoError(t, err)
 
-	var V3 homo.AppConfig
+	var V3 aiicy.AppConfig
 	err = utils.UnmarshalYAML([]byte(cfgV3), &V3)
 	assert.NoError(t, err)
 
-	var V4 homo.AppConfig
+	var V4 aiicy.AppConfig
 	err = utils.UnmarshalYAML([]byte(cfgV4), &V4)
 	assert.NoError(t, err)
 
 	type args struct {
-		cur homo.AppConfig
-		old homo.AppConfig
+		cur aiicy.AppConfig
+		old aiicy.AppConfig
 	}
 	tests := []struct {
 		name string
@@ -199,26 +199,26 @@ func Test_diffServices(t *testing.T) {
 }
 
 func TestServiceSort(t *testing.T) {
-	services := map[string]homo.ComposeService{}
-	services["a"] = homo.ComposeService{
+	services := map[string]aiicy.ComposeService{}
+	services["a"] = aiicy.ComposeService{
 		DependsOn: []string{},
 	}
-	services["b"] = homo.ComposeService{
+	services["b"] = aiicy.ComposeService{
 		DependsOn: []string{"a"},
 	}
-	services["c"] = homo.ComposeService{
+	services["c"] = aiicy.ComposeService{
 		DependsOn: []string{"a", "b"},
 	}
-	services["d"] = homo.ComposeService{
+	services["d"] = aiicy.ComposeService{
 		DependsOn: []string{"b", "c"},
 	}
-	services["e"] = homo.ComposeService{
+	services["e"] = aiicy.ComposeService{
 		DependsOn: []string{"c", "a", "b"},
 	}
-	services["f"] = homo.ComposeService{
+	services["f"] = aiicy.ComposeService{
 		DependsOn: []string{"b", "c"},
 	}
-	services["h"] = homo.ComposeService{
+	services["h"] = aiicy.ComposeService{
 		DependsOn: []string{"d", "f"},
 	}
 	order := ServiceSort(services)

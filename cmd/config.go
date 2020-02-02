@@ -9,9 +9,9 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/countstarlight/homo/master"
-	"github.com/countstarlight/homo/sdk/homo-go"
-	"github.com/countstarlight/homo/utils"
+	"github.com/aiicy/aiicy/master"
+	"github.com/aiicy/aiicy/sdk/aiicy-go"
+	"github.com/aiicy/aiicy/utils"
 	"log"
 	"os"
 	"os/exec"
@@ -51,7 +51,7 @@ var (
 )
 
 const (
-	AppName = "Homo"
+	AppName = "Aiicy"
 )
 
 // compile variables
@@ -80,7 +80,7 @@ func init() {
 	AppPath = strings.Replace(AppPath, "\\", "/", -1)
 }
 
-const defaultConfFile = "etc/homo/conf.yml"
+const defaultConfFile = "etc/aiicy/conf.yml"
 
 func LoadConfig() (*master.Config, error) {
 	if ConfFile == "" {
@@ -104,7 +104,7 @@ func LoadConfig() (*master.Config, error) {
 	if err != nil {
 		return cfg, fmt.Errorf("failed to get absolute path of work directory: %s", err.Error())
 	}
-	utils.SetEnv(homo.EnvKeyWorkDir, workDir)
+	utils.SetEnv(aiicy.EnvKeyWorkDir, workDir)
 
 	if err = os.Chdir(workDir); err != nil {
 		return cfg, fmt.Errorf("failed to change work directory: %s", err.Error())

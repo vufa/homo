@@ -2,7 +2,7 @@ package engine
 
 import (
 	"errors"
-	"github.com/countstarlight/homo/sdk/homo-go"
+	"github.com/aiicy/aiicy/sdk/aiicy-go"
 	"io"
 	"time"
 )
@@ -26,11 +26,11 @@ type Engine interface {
 	io.Closer
 	Name() string
 	Recover()
-	Prepare(homo.ComposeAppConfig)
+	Prepare(aiicy.ComposeAppConfig)
 	SetInstanceStats(serviceName, instanceName string, partialStats PartialStats, persist bool)
 	DelInstanceStats(serviceName, instanceName string, persist bool)
 	DelServiceStats(serviceName string, persist bool)
-	Run(string, homo.ComposeService, map[string]homo.ComposeVolume) (Service, error)
+	Run(string, aiicy.ComposeService, map[string]aiicy.ComposeVolume) (Service, error)
 }
 
 // Options engine options

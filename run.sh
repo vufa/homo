@@ -12,21 +12,21 @@ HelpApp()
 PullDocker()
 {
     if [ "$1" = "a" -o "$1" = "ali" ]; then
-        docker pull registry.cn-hangzhou.aliyuncs.com/codist/homo:latest
+        docker pull registry.cn-hangzhou.aliyuncs.com/codist/aiicy:latest
     else
-        docker pull countstarlight/homo:latest
+        docker pull countstarlight/aiicy:latest
     fi
 }
 
 RunDocker()
 {
     DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-    docker run --name=homo --rm $2 \
-           -v "$DIR"/conf:/home/homo/homo/conf \
-           -v "$DIR"/sphinx/en-us:/home/homo/homo/sphinx/en-us \
-           -v "$DIR"/sphinx/cmusphinx-zh-cn-5.2:/home/homo/homo/sphinx/cmusphinx-zh-cn-5.2 \
-           -v "$DIR"/nlu/models:/home/homo/homo/nlu/models \
-           -v "$DIR"/nlu/data/rasa:/home/homo/homo/nlu/data/rasa \
+    docker run --name=aiicy --rm $2 \
+           -v "$DIR"/conf:/home/aiicy/aiicy/conf \
+           -v "$DIR"/sphinx/en-us:/home/aiicy/aiicy/sphinx/en-us \
+           -v "$DIR"/sphinx/cmusphinx-zh-cn-5.2:/home/aiicy/aiicy/sphinx/cmusphinx-zh-cn-5.2 \
+           -v "$DIR"/nlu/models:/home/aiicy/aiicy/nlu/models \
+           -v "$DIR"/nlu/data/rasa:/home/aiicy/aiicy/nlu/data/rasa \
            -v /tmp/.X11-unix:/tmp/.X11-unix \
            --device /dev/snd \
            --device /dev/dri \
@@ -36,32 +36,32 @@ RunDocker()
 
 RunDockerHub()
 {
-    if [[ "$(docker images -q countstarlight/homo:latest 2> /dev/null)" == "" ]]; then
-    echo -e "\033[33m提示: 没有在本地找到镜像 countstarlight/homo:latest 开始从docker hub 获取(使用 '-a' 从阿里云拉取并运行镜像)\033[0m"
+    if [[ "$(docker images -q countstarlight/aiicy:latest 2> /dev/null)" == "" ]]; then
+    echo -e "\033[33m提示: 没有在本地找到镜像 countstarlight/aiicy:latest 开始从docker hub 获取(使用 '-a' 从阿里云拉取并运行镜像)\033[0m"
     PullDocker
     fi
     xhost +SI:localuser:$(id -un)
-    RunDocker countstarlight/homo:latest
+    RunDocker countstarlight/aiicy:latest
 }
 
 RunDockerAli()
 {
-    if [[ "$(docker images -q registry.cn-hangzhou.aliyuncs.com/codist/homo:latest 2> /dev/null)" == "" ]]; then
-        echo -e "\033[33m提示: 没有在本地找到镜像 registry.cn-hangzhou.aliyuncs.com/codist/homo:latest 开始从阿里云获取\033[0m"
+    if [[ "$(docker images -q registry.cn-hangzhou.aliyuncs.com/codist/aiicy:latest 2> /dev/null)" == "" ]]; then
+        echo -e "\033[33m提示: 没有在本地找到镜像 registry.cn-hangzhou.aliyuncs.com/codist/aiicy:latest 开始从阿里云获取\033[0m"
         PullDocker "a"
     fi
     xhost +SI:localuser:$(id -un)
-    RunDocker registry.cn-hangzhou.aliyuncs.com/codist/homo:latest "" ""
+    RunDocker registry.cn-hangzhou.aliyuncs.com/codist/aiicy:latest "" ""
 }
 
 DebugDocker()
 {
     if [ "$1" = "a" -o "$1" = "ali" ]; then
-        RunDocker registry.cn-hangzhou.aliyuncs.com/codist/homo:latest "-itd" "/bin/bash"
+        RunDocker registry.cn-hangzhou.aliyuncs.com/codist/aiicy:latest "-itd" "/bin/bash"
     else
-        RunDocker countstarlight/homo:latest "-itd" "/bin/bash"
+        RunDocker countstarlight/aiicy:latest "-itd" "/bin/bash"
     fi
-    docker exec -it homo /bin/bash
+    docker exec -it aiicy /bin/bash
 }
 
 if [ -z "$1" ]; then

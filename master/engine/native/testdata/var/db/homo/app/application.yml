@@ -5,7 +5,7 @@ services:
     replica: 1
     mounts:
       - name: cmd-bin
-        path: lib/homo/cmd
+        path: lib/aiicy/cmd
 volumes:
   - name: cmd-bin
-    path: var/db/homo/cmd
+    path: var/db/aiicy/cmd

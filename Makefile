@@ -1,6 +1,7 @@
 PREFIX?=/usr/local
 MODE?=native
 MODULES?=hub function function-python3
+APPS?=nlu
 SRC_FILES:=$(shell find main.go cmd master logger sdk protocol utils -type f -name '*.go')
 PLATFORM_ALL:=darwin/amd64 linux/amd64 linux/arm64 linux/386 linux/arm/v7 linux/arm/v6 linux/arm/v5 linux/ppc64le linux/s390x
 
@@ -11,8 +12,8 @@ VERSION:=$(if $(GIT_TAG),$(GIT_TAG),$(GIT_REV))
 GO_OS:=$(shell go env GOOS)
 GO_ARCH:=$(shell go env GOARCH)
 GO_ARM:=$(shell go env GOARM)
-GO_FLAGS?=-mod=vendor -v -ldflags "-X 'github.com/countstarlight/homo/cmd.Revision=$(GIT_REV)' -X 'github.com/countstarlight/homo/cmd.Version=$(VERSION)'"
-GO_FLAGS_STATIC=-mod=vendor -v -ldflags '-X "github.com/countstarlight/homo/cmd.Revision=$(GIT_REV)" -X "github.com/countstarlight/homo/cmd.Version=$(VERSION)"  -linkmode external -w -extldflags "-static"'
+GO_FLAGS?=-mod=vendor -v -ldflags "-X 'github.com/aiicy/aiicy/cmd.Revision=$(GIT_REV)' -X 'github.com/aiicy/aiicy/cmd.Version=$(VERSION)'"
+GO_FLAGS_STATIC=-mod=vendor -v -ldflags '-X "github.com/aiicy/aiicy/cmd.Revision=$(GIT_REV)" -X "github.com/aiicy/aiicy/cmd.Version=$(VERSION)"  -linkmode external -w -extldflags "-static"'
 GO_TEST_FLAGS?=-race -short -covermode=atomic -coverprofile=coverage.out
 GO_TEST_PKGS?=$(shell go list ./...)
 
@@ -29,34 +30,38 @@ else ifeq ($(PLATFORMS),all)
 endif
 
 OUTPUT:=out
-OUTPUT_DIRS:=$(PLATFORMS:%=$(OUTPUT)/%/homo)
-OUTPUT_BINS:=$(OUTPUT_DIRS:%=%/bin/homo)
+OUTPUT_DIRS:=$(PLATFORMS:%=$(OUTPUT)/%/aiicy)
+OUTPUT_BINS:=$(OUTPUT_DIRS:%=%/bin/aiicy)
 
-OUTPUT_MODS:=$(MODULES:%=homo-%)
-IMAGE_MODS:=$(MODULES:%=image/homo-%) # a little tricky to add prefix 'image/' in order to distinguish from OUTPUT_MODS
-NATIVE_MODS:=$(MODULES:%=native/homo-%) # a little tricky to add prefix 'native/' in order to distinguish from OUTPUT_MODS
+OUTPUT_MODS:=$(MODULES:%=aiicy-%)
+IMAGE_MODS:=$(MODULES:%=image/aiicy-%) # a little tricky to add prefix 'image/' in order to distinguish from OUTPUT_MODS
+NATIVE_MODS:=$(MODULES:%=native/aiicy-%) # a little tricky to add prefix 'native/' in order to distinguish from OUTPUT_MODS
+OUTPUT_APPS:=$(APPS:%=application/%)
 
-.PHONY: all $(OUTPUT_MODS)
-all: homo $(OUTPUT_MODS)
+.PHONY: all $(OUTPUT_MODS) $(OUTPUT_APPS)
+all: aiicy $(OUTPUT_MODS) $(OUTPUT_APPS)
 
-homo: $(OUTPUT_BINS)
+aiicy: $(OUTPUT_BINS)
 
 $(OUTPUT_BINS): $(SRC_FILES)
 	@echo "BUILD $@"
 	@mkdir -p $(dir $@)
-	@# homo failed to collect cpu related data on darwin if set 'CGO_ENABLED=0' in compilation
-	@$(shell echo $(@:$(OUTPUT)/%/homo/bin/homo=%)  | sed 's:/v:/:g' | awk -F '/' '{print "GO111MODULE=on GOOS="$$1" GOARCH="$$2" GOARM="$$3" go build"}') -o $@ ${GO_FLAGS} .
+	@# aiicy failed to collect cpu related data on darwin if set 'CGO_ENABLED=0' in compilation
+	@$(shell echo $(@:$(OUTPUT)/%/aiicy/bin/aiicy=%)  | sed 's:/v:/:g' | awk -F '/' '{print "GO111MODULE=on GOOS="$$1" GOARCH="$$2" GOARM="$$3" go build"}') -o $@ ${GO_FLAGS} .
 
 $(OUTPUT_MODS):
 	@${MAKE} -C $@
 
+$(OUTPUT_APPS):
+	@${MAKE} -C $@
+
 .PHONY: build
 build: $(SRC_FILES)
-	@echo "BUILD homo"
+	@echo "BUILD aiicy"
 ifneq ($(GO_OS),darwin)
-	@GO111MODULE=on CGO_ENABLED=1 go build -o homo $(GO_FLAGS_STATIC) .
+	@GO111MODULE=on CGO_ENABLED=1 go build -o aiicy $(GO_FLAGS_STATIC) .
 else
-	@GO111MODULE=on CGO_ENABLED=1 go build -o homo $(GO_FLAGS) .
+	@GO111MODULE=on CGO_ENABLED=1 go build -o aiicy $(GO_FLAGS) .
 endif
 
 .PHONY: rebuild
@@ -70,18 +75,18 @@ test:
 .PHONY: install $(NATIVE_MODS)
 install: all
 	@install -d -m 0755 ${PREFIX}/bin
-	@install -m 0755 $(OUTPUT)/$(if $(GO_ARM),$(GO_OS)/$(GO_ARCH)/$(GO_ARM),$(GO_OS)/$(GO_ARCH))/homo/bin/homo ${PREFIX}/bin/
+	@install -m 0755 $(OUTPUT)/$(if $(GO_ARM),$(GO_OS)/$(GO_ARCH)/$(GO_ARM),$(GO_OS)/$(GO_ARCH))/aiicy/bin/aiicy ${PREFIX}/bin/
 ifeq ($(MODE),native)
 	@${MAKE} $(NATIVE_MODS)
 endif
 	@#@tar cf - -C example/$(MODE) etc var | tar xvf - -C ${PREFIX}/
-	@ln -s ${CURDIR}/example/$(MODE)/etc ${PREFIX}/etc
-	@ln -s ${CURDIR}/example/$(MODE)/var/db/homo/* ${PREFIX}/var/db/homo/
+	@tar cf - -C example/$(MODE) etc | tar xvf - -C ${PREFIX}/
+	@ln -s ${CURDIR}/example/$(MODE)/var/db/aiicy/* ${PREFIX}/var/db/aiicy/
 
 $(NATIVE_MODS):
-	@install -d -m 0755 ${PREFIX}/var/db/homo/$(notdir $@)/bin
-	@install -m 0755 $(OUTPUT)/$(if $(GO_ARM),$(GO_OS)/$(GO_ARCH)/$(GO_ARM),$(GO_OS)/$(GO_ARCH))/$(notdir $@)/bin/* ${PREFIX}/var/db/homo/$(notdir $@)/bin/
-	@install -m 0755 $(OUTPUT)/$(if $(GO_ARM),$(GO_OS)/$(GO_ARCH)/$(GO_ARM),$(GO_OS)/$(GO_ARCH))/$(notdir $@)/package.yml ${PREFIX}/var/db/homo/$(notdir $@)/
+	@install -d -m 0755 ${PREFIX}/var/db/aiicy/$(notdir $@)/bin
+	@install -m 0755 $(OUTPUT)/$(if $(GO_ARM),$(GO_OS)/$(GO_ARCH)/$(GO_ARM),$(GO_OS)/$(GO_ARCH))/$(notdir $@)/bin/* ${PREFIX}/var/db/aiicy/$(notdir $@)/bin/
+	@install -m 0755 $(OUTPUT)/$(if $(GO_ARM),$(GO_OS)/$(GO_ARCH)/$(GO_ARM),$(GO_OS)/$(GO_ARCH))/$(notdir $@)/package.yml ${PREFIX}/var/db/aiicy/$(notdir $@)/
 
 .PHONY: deps
 deps:

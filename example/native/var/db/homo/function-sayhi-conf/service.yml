@@ -1,7 +1,7 @@
 functions:
   - name: 'python3-sayhi'
     handler: 'index.handler'
-    codedir: 'var/db/homo/function-sayhi'
+    codedir: 'var/db/aiicy/function-sayhi'
 logger:
-  path: var/log/homo/service.log
+  path: var/log/aiicy/service.log
   level: "debug"

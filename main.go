@@ -8,8 +8,8 @@
 package main
 
 import (
-	"github.com/countstarlight/homo/cmd"
-	_ "github.com/countstarlight/homo/master/engine/native"
+	"github.com/aiicy/aiicy/cmd"
+	_ "github.com/aiicy/aiicy/master/engine/native"
 	_ "github.com/mattn/go-sqlite3"
 )
 

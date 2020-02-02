@@ -1,8 +1,8 @@
 FROM debian:stretch
 
-WORKDIR /home/homo
+WORKDIR /home/aiicy
 
-COPY . /home/homo/homo/
+COPY . /home/aiicy/aiicy/
 
 COPY docker/entrypoint /usr/bin/entrypoint
 
@@ -19,7 +19,7 @@ ENV GOLANG_VERSION 1.12.6
 ENV GOLANG_TAR_BALL go$GOLANG_VERSION.linux-amd64.tar.gz
 ENV GOLANG_DOWNLOAD_URL https://golang.org/dl/$GOLANG_TAR_BALL
 ENV GOLANG_DOWNLOAD_SHA256 dbcf71a3c1ea53b8d54ef1b48c85a39a6c9a935d01fc8291ff2b92028e59913c
-ENV GOPATH /home/homo/go
+ENV GOPATH /home/aiicy/go
 ENV PATH $GOPATH/bin:/usr/local/go/bin:$PATH
 
 # supervisor config
@@ -41,12 +41,12 @@ RUN locale-gen
 
 ENV LANG zh_CN.UTF-8
 
-# Add user homo to sudo
-RUN useradd -m homo && echo "homo:homo" | chpasswd && adduser homo sudo
+# Add user aiicy to sudo
+RUN useradd -m aiicy && echo "aiicy:aiicy" | chpasswd && adduser aiicy sudo
 
 # Install PocketSphinx
 RUN \
-    cd homo && \
+    cd aiicy && \
     make deps && \
     sudo ldconfig
 
@@ -60,9 +60,9 @@ RUN mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 777 "$GOPATH"
 
 RUN go env
 
-# Build homo webview
+# Build aiicy webview
 RUN \
-    cd homo && \
+    cd aiicy && \
     make gen && \
     make webview
 
@@ -87,18 +87,18 @@ RUN curl https://bootstrap.pypa.io/get-pip.py | sudo -H python3.6
 # Install python dependencies
 RUN \
     pip install virtualenv && \
-    cd homo/nlu && \
+    cd aiicy/nlu && \
     virtualenv --python=python3.6 env3.6 && \
     source env3.6/bin/activate && \
     pip install -r requirements.txt
 
-RUN chown homo:homo -R "/home/homo"
+RUN chown aiicy:aiicy -R "/home/aiicy"
 
-USER homo
+USER aiicy
 
-ENV HOME /home/homo
+ENV HOME /home/aiicy
 
-VOLUME ["/home/homo/homo/conf", "/home/homo/homo/sphinx/en-us", "/home/homo/homo/sphinx/cmusphinx-zh-cn-5.2", "/home/homo/homo/nlu/data/rasa", "/home/homo/homo/nlu/models"]
+VOLUME ["/home/aiicy/aiicy/conf", "/home/aiicy/aiicy/sphinx/en-us", "/home/aiicy/aiicy/sphinx/cmusphinx-zh-cn-5.2", "/home/aiicy/aiicy/nlu/data/rasa", "/home/aiicy/aiicy/nlu/models"]
 
 ENTRYPOINT ["/usr/bin/entrypoint"]
 

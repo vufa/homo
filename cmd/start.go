@@ -9,35 +9,35 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/countstarlight/homo/logger"
-	"github.com/countstarlight/homo/master"
-	"github.com/countstarlight/homo/sdk/homo-go"
-	"github.com/countstarlight/homo/utils"
+	"github.com/aiicy/aiicy/logger"
+	"github.com/aiicy/aiicy/master"
+	"github.com/aiicy/aiicy/sdk/aiicy-go"
+	"github.com/aiicy/aiicy/utils"
 	"github.com/urfave/cli/v2"
 	"go.uber.org/zap"
 )
 
 var flags = []cli.Flag{
 	&cli.BoolFlag{
-		EnvVars:     []string{"HOMO_DEBUG"},
+		EnvVars:     []string{"AIICY_DEBUG"},
 		Name:        "debug",
 		Aliases:     []string{"d"},
-		Usage:       "start homo in debug mode",
+		Usage:       "start aiicy in debug mode",
 		Destination: &DebugMode,
 	},
 	&cli.StringFlag{
-		EnvVars:     []string{"HOMO_CONFIG_FILE"},
+		EnvVars:     []string{"AIICY_CONFIG_FILE"},
 		Name:        "config",
 		Aliases:     []string{"c"},
 		DefaultText: defaultConfFile,
-		Usage:       "set homo config file path",
+		Usage:       "set aiicy config file path",
 		Destination: &ConfFile,
 	},
 	&cli.StringFlag{
-		EnvVars:     []string{homo.EnvKeyWorkDir},
+		EnvVars:     []string{aiicy.EnvKeyWorkDir},
 		Name:        "workdir",
 		Aliases:     []string{"w"},
-		Usage:       "set homo work directory",
+		Usage:       "set aiicy work directory",
 		Destination: &workDir,
 	},
 }
@@ -51,24 +51,24 @@ func startInternal(c *cli.Context) error {
 	if DebugMode {
 		cfg.Logger.Level = "debug"
 		cfg.OTALog.Level = "debug"
-		log = logger.New(cfg.Logger, "homo", "master")
-		log.Info("homo running in debug mode")
+		log = logger.New(cfg.Logger, "aiicy", "master")
+		log.Info("aiicy running in debug mode")
 	} else {
-		log = logger.New(cfg.Logger, "homo", "master")
+		log = logger.New(cfg.Logger, "aiicy", "master")
 	}
 	isOTA := utils.IsFile(cfg.OTALog.Path)
 	if isOTA {
-		log = logger.New(cfg.OTALog, "type", homo.OTAMST)
+		log = logger.New(cfg.OTALog, "type", aiicy.OTAMST)
 	}
 	m, err := master.New(workDir, *cfg, Version, Revision)
 	if err != nil {
-		log.Errorw("failed to start master", zap.Error(err), zap.String(homo.OTAKeyStep, homo.OTARollingBack))
+		log.Errorw("failed to start master", zap.Error(err), zap.String(aiicy.OTAKeyStep, aiicy.OTARollingBack))
 		/*rberr := master.RollBackMST()
 		if rberr != nil {
-			log.Errorf("failed to roll back %s", rberr, zap.String(homo.OTAKeyStep, homo.OTAFailure))
+			log.Errorf("failed to roll back %s", rberr, zap.String(aiicy.OTAKeyStep, aiicy.OTAFailure))
 			return fmt.Errorf("failed to start master: %s; failed to roll back: %s", err.Error(), rberr.Error())
 		}
-		log.Infof("master is restarting", zap.String(homo.OTAKeyStep, homo.OTARestarting))*/
+		log.Infof("master is restarting", zap.String(aiicy.OTAKeyStep, aiicy.OTARestarting))*/
 		return fmt.Errorf("failed to start master: %s", err.Error())
 	}
 	return m.Wait()

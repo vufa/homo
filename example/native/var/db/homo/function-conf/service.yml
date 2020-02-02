@@ -4,7 +4,7 @@ hub:
   password: hahaha
   keepalive: -1 # no ping/pong
 logger:
-  path: var/log/homo/hub.log
+  path: var/log/aiicy/hub.log
   level: 'debug'
   mode: 'console'
   format: 'text'

@@ -2,16 +2,16 @@ package native
 
 import (
 	"fmt"
-	"github.com/countstarlight/homo/sdk/homo-go"
+	"github.com/aiicy/aiicy/sdk/aiicy-go"
 	"go.uber.org/zap"
 	"os"
 	"path"
 	"strings"
 	"time"
 
-	"github.com/countstarlight/homo/logger"
-	"github.com/countstarlight/homo/master/engine"
-	"github.com/countstarlight/homo/utils"
+	"github.com/aiicy/aiicy/logger"
+	"github.com/aiicy/aiicy/master/engine"
+	"github.com/aiicy/aiicy/utils"
 	cmap "github.com/orcaman/concurrent-map"
 	"github.com/shirou/gopsutil/process"
 )
@@ -54,7 +54,7 @@ func (e *nativeEngine) Recover() {
 }
 
 // Prepare prepares all images
-func (e *nativeEngine) Prepare(homo.ComposeAppConfig) {
+func (e *nativeEngine) Prepare(aiicy.ComposeAppConfig) {
 	// do nothing in native mode
 }
 
@@ -96,8 +96,8 @@ func (e *nativeEngine) clean() {
 }
 
 // Run new service
-func (e *nativeEngine) Run(name string, cfg homo.ComposeService, _ map[string]homo.ComposeVolume) (engine.Service, error) {
-	spwd := path.Join(e.pwd, "var", "run", "homo", "services", name)
+func (e *nativeEngine) Run(name string, cfg aiicy.ComposeService, _ map[string]aiicy.ComposeVolume) (engine.Service, error) {
+	spwd := path.Join(e.pwd, "var", "run", "aiicy", "services", name)
 	err := os.RemoveAll(spwd)
 	if err != nil {
 		return nil, err
@@ -109,7 +109,7 @@ func (e *nativeEngine) Run(name string, cfg homo.ComposeService, _ map[string]ho
 	}
 	var pkg packageConfig
 	image := strings.Replace(strings.TrimSpace(cfg.Image), ":", "/", -1)
-	pkgDir := path.Join(spwd, "lib", "homo", image)
+	pkgDir := path.Join(spwd, "lib", "aiicy", image)
 	err = utils.LoadYAML(path.Join(pkgDir, packageConfigPath), &pkg)
 	if err != nil {
 		os.RemoveAll(spwd)
@@ -142,7 +142,7 @@ func (e *nativeEngine) Close() error {
 	return nil
 }
 
-func mountAll(epwd, spwd string, ms []homo.ServiceVolume) error {
+func mountAll(epwd, spwd string, ms []aiicy.ServiceVolume) error {
 	for _, m := range ms {
 		if len(m.Source) == 0 {
 			return fmt.Errorf("host path is empty")
@@ -154,16 +154,16 @@ func mountAll(epwd, spwd string, ms []homo.ServiceVolume) error {
 			return err
 		}
 	}
-	sock := utils.GetEnv(homo.EnvKeyMasterAPISocket)
+	sock := utils.GetEnv(aiicy.EnvKeyMasterAPISocket)
 	if sock != "" {
-		err := mount(sock, path.Join(spwd, homo.DefaultSockFile))
+		err := mount(sock, path.Join(spwd, aiicy.DefaultSockFile))
 		if err != nil {
 			return err
 		}
 	}
-	grpcSock := utils.GetEnv(homo.EnvKeyMasterGRPCAPISocket)
+	grpcSock := utils.GetEnv(aiicy.EnvKeyMasterGRPCAPISocket)
 	if grpcSock != "" {
-		return mount(grpcSock, path.Join(spwd, homo.DefaultGRPCSockFile))
+		return mount(grpcSock, path.Join(spwd, aiicy.DefaultGRPCSockFile))
 	}
 	return nil
 }

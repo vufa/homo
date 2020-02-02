@@ -3,7 +3,7 @@ package database
 import (
 	"database/sql"
 
-	"github.com/countstarlight/homo/sdk/homo-go/api"
+	"github.com/aiicy/aiicy/sdk/aiicy-go/api"
 )
 
 var placeholderValue = "(?)"

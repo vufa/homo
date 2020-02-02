@@ -1,95 +1,95 @@
 version: v1
 services:
   - name: localhub
-    image: homo-hub
+    image: aiicy-hub
     replica: 1
     mounts:
       - name: localhub-conf
-        path: etc/homo
+        path: etc/aiicy
         readonly: true
       - name: localhub-cert
-        path: var/db/homo/cert
+        path: var/db/aiicy/cert
         readonly: true
       - name: localhub-data
-        path: var/db/homo/data
+        path: var/db/aiicy/data
       - name: localhub-log
-        path: var/log/homo
+        path: var/log/aiicy
       # native process mode only
-      - name: homo-hub-bin
-        path: lib/homo/homo-hub
+      - name: aiicy-hub-bin
+        path: lib/aiicy/aiicy-hub
         readonly: true
   - name: function
-    image: homo-function
+    image: aiicy-function
     replica: 1
     mounts:
       - name: function-conf
-        path: etc/homo
+        path: etc/aiicy
         readonly: true
       - name: function-log
-        path: var/log/homo
+        path: var/log/aiicy
       # native process mode only
-      - name: homo-function-bin
-        path: lib/homo/homo-function
+      - name: aiicy-function-bin
+        path: lib/aiicy/aiicy-function
         readonly: true
   - name: function-python3-sayhi
-    image: homo-function-python3
+    image: aiicy-function-python3
     replica: 0
     mounts:
       # function-sayhi
       - name: function-sayhi-conf
-        path: etc/homo
+        path: etc/aiicy
         readonly: true
       - name: function-sayhi-code
-        path: var/db/homo/function-sayhi
+        path: var/db/aiicy/function-sayhi
         readonly: true
       # native process mode only
-      - name: homo-function-python3-bin
-        path: lib/homo/homo-function-python3
+      - name: aiicy-function-python3-bin
+        path: lib/aiicy/aiicy-function-python3
         readonly: true
   - name: application-nlu
-    image: homo-function-python3
+    image: aiicy-function-python3
     replica: 0
     mounts:
       # application-nlu
       - name: application-nlu-conf
-        path: etc/homo
+        path: etc/aiicy
         readonly: true
       - name: application-nlu-code
-        path: var/db/homo/application-nlu
+        path: var/db/aiicy/application-nlu
         readonly: true
       # native process mode only
-      - name: homo-function-python3-bin
-        path: lib/homo/homo-function-python3
+      - name: aiicy-function-python3-bin
+        path: lib/aiicy/aiicy-function-python3
         readonly: true
 volumes:
   # hub
   - name: localhub-conf
-    path: var/db/homo/localhub-conf
+    path: var/db/aiicy/localhub-conf
   - name: localhub-data
-    path: var/db/homo/localhub-data
+    path: var/db/aiicy/localhub-data
   - name: localhub-cert
-    path: var/db/homo/localhub-cert-only-for-test
+    path: var/db/aiicy/localhub-cert-only-for-test
   - name: localhub-log
-    path: var/db/homo/localhub-log
+    path: var/db/aiicy/localhub-log
   # function
   - name: function-conf
-    path: var/db/homo/function-conf
+    path: var/db/aiicy/function-conf
   - name: function-log
-    path: var/db/homo/function-log
+    path: var/db/aiicy/function-log
   # function-sayhi
   - name: function-sayhi-conf
-    path: var/db/homo/function-sayhi-conf
+    path: var/db/aiicy/function-sayhi-conf
   - name: function-sayhi-code
-    path: var/db/homo/function-sayhi-code
+    path: var/db/aiicy/function-sayhi-code
   # application-nlu
   - name: application-nlu-conf
-    path: var/db/homo/application-nlu-conf
+    path: var/db/aiicy/application-nlu-conf
   - name: application-nlu-code
-    path: var/db/homo/application-nlu-code
+    path: var/db/aiicy/application-nlu-code
   # bin, native process mode only
-  - name: homo-hub-bin
-    path: var/db/homo/homo-hub
-  - name: homo-function-bin
-    path: var/db/homo/homo-function
-  - name: homo-function-python3-bin
-    path: var/db/homo/homo-function-python3
+  - name: aiicy-hub-bin
+    path: var/db/aiicy/aiicy-hub
+  - name: aiicy-function-bin
+    path: var/db/aiicy/aiicy-function
+  - name: aiicy-function-python3-bin
+    path: var/db/aiicy/aiicy-function-python3

@@ -2,7 +2,7 @@ package mqtt
 
 import (
 	"github.com/256dpi/gomqtt/transport"
-	"github.com/countstarlight/homo/utils"
+	"github.com/aiicy/aiicy/utils"
 	"net/url"
 )
 

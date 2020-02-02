@@ -3,10 +3,10 @@ package master
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/countstarlight/homo/logger"
-	"github.com/countstarlight/homo/master/engine"
-	"github.com/countstarlight/homo/sdk/homo-go"
-	"github.com/countstarlight/homo/utils"
+	"github.com/aiicy/aiicy/logger"
+	"github.com/aiicy/aiicy/master/engine"
+	"github.com/aiicy/aiicy/sdk/aiicy-go"
+	"github.com/aiicy/aiicy/utils"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"os"
@@ -16,7 +16,7 @@ import (
 )
 
 type infoStats struct {
-	homo.Inspect
+	aiicy.Inspect
 	services engine.ServicesStats
 	file     string
 	sync.RWMutex
@@ -26,8 +26,8 @@ func newInfoStats(pwd, mode, version, revision, file string) *infoStats {
 	return &infoStats{
 		file:     file,
 		services: engine.ServicesStats{},
-		Inspect: homo.Inspect{
-			Software: homo.Software{
+		Inspect: aiicy.Inspect{
+			Software: aiicy.Software{
 				OS:          runtime.GOOS,
 				Arch:        runtime.GOARCH,
 				GoVersion:   runtime.Version(),
@@ -36,7 +36,7 @@ func newInfoStats(pwd, mode, version, revision, file string) *infoStats {
 				BinVersion:  version,
 				GitRevision: revision,
 			},
-			Hardware: homo.Hardware{
+			Hardware: aiicy.Hardware{
 				HostInfo: utils.GetHostInfo(),
 				NetInfo:  utils.GetNetInfo(),
 			},
@@ -127,10 +127,10 @@ func (is *infoStats) getError() string {
 	return is.Inspect.Error
 }
 
-// func genVolumesStats(cfg []homo.VolumeInfo) homo.Volumes {
-// 	volumes := homo.Volumes{}
+// func genVolumesStats(cfg []aiicy.VolumeInfo) aiicy.Volumes {
+// 	volumes := aiicy.Volumes{}
 // 	for _, item := range cfg {
-// 		volumes = append(volumes, homo.VolumeStatus{
+// 		volumes = append(volumes, aiicy.VolumeStatus{
 // 			Name:    item.Name,
 // 			Version: item.Meta.Version,
 // 		})
@@ -190,9 +190,9 @@ func (is *infoStats) serializeStats() ([]byte, error) {
 	defer is.Unlock()
 
 	result := is.Inspect
-	result.Services = homo.Services{}
+	result.Services = aiicy.Services{}
 	for serviceName, serviceStats := range is.services {
-		service := homo.NewServiceStatus(serviceName)
+		service := aiicy.NewServiceStatus(serviceName)
 		for _, instanceStats := range serviceStats {
 			service.Instances = append(service.Instances, map[string]interface{}(instanceStats))
 		}
@@ -201,7 +201,7 @@ func (is *infoStats) serializeStats() ([]byte, error) {
 	return json.Marshal(result)
 }
 
-// InspectSystem inspects info and stats of homo system
+// InspectSystem inspects info and stats of aiicy system
 func (m *Master) InspectSystem() ([]byte, error) {
 	defer logger.S.Debug("InspectSystem")
 	var wg sync.WaitGroup

@@ -10,7 +10,7 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/countstarlight/homo/utils"
+	"github.com/aiicy/aiicy/utils"
 	"github.com/creasty/defaults"
 	"github.com/docker/go-connections/sockets"
 )
@@ -52,7 +52,7 @@ func NewClient(c ClientInfo) (*Client, error) {
 			return nil, err
 		}
 		if url.Scheme == "unix" {
-			url.Host = "homo"
+			url.Host = "aiicy"
 		}
 		if url.Scheme != "http" && url.Scheme != "https" {
 			url.Scheme = "http"

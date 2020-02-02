@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/countstarlight/homo/utils"
+	"github.com/aiicy/aiicy/utils"
 	"github.com/urfave/cli/v2"
 	"runtime"
 )

@@ -3,7 +3,7 @@ package mqtt
 import (
 	"time"
 
-	"github.com/countstarlight/homo/utils"
+	"github.com/aiicy/aiicy/utils"
 )
 
 // TopicInfo with topic and qos

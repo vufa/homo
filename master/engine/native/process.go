@@ -7,8 +7,8 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/countstarlight/homo/master/engine"
-	"github.com/countstarlight/homo/utils"
+	"github.com/aiicy/aiicy/master/engine"
+	"github.com/aiicy/aiicy/utils"
 	"github.com/shirou/gopsutil/process"
 )
 

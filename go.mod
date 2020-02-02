@@ -1,4 +1,4 @@
-module github.com/countstarlight/homo
+module github.com/aiicy/aiicy
 
 go 1.13
 

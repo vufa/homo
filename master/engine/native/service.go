@@ -6,8 +6,8 @@ import (
 	"os"
 	"sync"
 
-	"github.com/countstarlight/homo/master/engine"
-	"github.com/countstarlight/homo/sdk/homo-go"
+	"github.com/aiicy/aiicy/master/engine"
+	"github.com/aiicy/aiicy/sdk/aiicy-go"
 	cmap "github.com/orcaman/concurrent-map"
 )
 
@@ -19,7 +19,7 @@ type packageConfig struct {
 
 type nativeService struct {
 	name      string
-	cfg       homo.ComposeService
+	cfg       aiicy.ComposeService
 	params    processConfigs
 	engine    *nativeEngine
 	instances cmap.ConcurrentMap
@@ -35,7 +35,7 @@ func (s *nativeService) Engine() engine.Engine {
 	return s.engine
 }
 
-func (s *nativeService) RestartPolicy() homo.RestartPolicyInfo {
+func (s *nativeService) RestartPolicy() aiicy.RestartPolicyInfo {
 	return s.cfg.Restart
 }
 

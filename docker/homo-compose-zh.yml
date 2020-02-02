@@ -1,6 +1,6 @@
 version: '2'
 services:
-  homo:
+  aiicy:
     build:
       context: ../
       dockerfile: docker/Dockerfile.zh

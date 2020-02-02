@@ -4,7 +4,7 @@ import (
 	"errors"
 	"io"
 
-	"github.com/countstarlight/homo/sdk/homo-go/api"
+	"github.com/aiicy/aiicy/sdk/aiicy-go/api"
 )
 
 // Factories of database

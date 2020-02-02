@@ -2,9 +2,9 @@ package master
 
 import (
 	"fmt"
-	"github.com/countstarlight/homo/logger"
-	"github.com/countstarlight/homo/sdk/homo-go"
-	"github.com/countstarlight/homo/utils"
+	"github.com/aiicy/aiicy/logger"
+	"github.com/aiicy/aiicy/sdk/aiicy-go"
+	"github.com/aiicy/aiicy/utils"
 	"github.com/inconshreveable/go-update"
 	"go.uber.org/zap"
 	"os"
@@ -14,15 +14,15 @@ import (
 )
 
 // TODO: need test
-var appDir = path.Join("var", "db", "homo")
-var appConfigFile = path.Join(appDir, homo.AppConfFileName)
-var appBackupFile = path.Join(appDir, homo.AppBackupFileName)
+var appDir = path.Join("var", "db", "aiicy")
+var appConfigFile = path.Join(appDir, aiicy.AppConfFileName)
+var appBackupFile = path.Join(appDir, aiicy.AppBackupFileName)
 
 // UpdateSystem updates application or master
 func (m *Master) UpdateSystem(trace, tp, target string) (err error) {
 	switch tp {
-	case homo.OTAMST:
-		err = m.UpdateMST(trace, target, homo.DefaultBinBackupFile)
+	case aiicy.OTAMST:
+		err = m.UpdateMST(trace, target, aiicy.DefaultBinBackupFile)
 	default:
 		err = m.UpdateAPP(trace, target)
 	}
@@ -39,19 +39,19 @@ func (m *Master) UpdateAPP(trace, target string) error {
 	log := m.log
 	isOTA := target != "" || utils.IsFile(m.cfg.OTALog.Path)
 	if isOTA {
-		log = logger.New(m.cfg.OTALog, homo.OTAKeyTrace, trace, homo.OTAKeyType, homo.OTAAPP)
-		log.With(homo.OTAKeyStep, homo.OTAUpdating).Info("app is updating")
+		log = logger.New(m.cfg.OTALog, aiicy.OTAKeyTrace, trace, aiicy.OTAKeyType, aiicy.OTAAPP)
+		log.With(aiicy.OTAKeyStep, aiicy.OTAUpdating).Info("app is updating")
 	}
 
 	cur, old, err := m.loadAPPConfig(target)
 	if err != nil {
-		log.With(homo.OTAKeyStep, homo.OTARollingBack).Errorw("failed to reload config", zap.Error(err))
+		log.With(aiicy.OTAKeyStep, aiicy.OTARollingBack).Errorw("failed to reload config", zap.Error(err))
 		rberr := m.rollBackAPP()
 		if rberr != nil {
-			log.With(homo.OTAKeyStep, homo.OTAFailure).Errorw("failed to roll back", zap.Error(rberr))
+			log.With(aiicy.OTAKeyStep, aiicy.OTAFailure).Errorw("failed to roll back", zap.Error(rberr))
 			return fmt.Errorf("failed to reload config: %s; failed to roll back: %s", err.Error(), rberr.Error())
 		}
-		log.With(homo.OTAKeyStep, homo.OTARolledBack).Infof("app is rolled back")
+		log.With(aiicy.OTAKeyStep, aiicy.OTARolledBack).Infof("app is rolled back")
 		return fmt.Errorf("failed to reload config: %s", err.Error())
 	}
 
@@ -64,10 +64,10 @@ func (m *Master) UpdateAPP(trace, target string) error {
 	// start all updated or added services
 	err = m.startServices(cur)
 	if err != nil {
-		log.With(homo.OTAKeyStep, homo.OTARollingBack).Errorw("failed to start app", zap.Error(err))
+		log.With(aiicy.OTAKeyStep, aiicy.OTARollingBack).Errorw("failed to start app", zap.Error(err))
 		rberr := m.rollBackAPP()
 		if rberr != nil {
-			log.With(homo.OTAKeyStep, homo.OTAFailure).Errorw("failed to roll back", zap.Error(rberr))
+			log.With(aiicy.OTAKeyStep, aiicy.OTAFailure).Errorw("failed to roll back", zap.Error(rberr))
 			return fmt.Errorf("failed to start app: %s; failed to roll back: %s", err.Error(), rberr.Error())
 		}
 		// stop all updated or added services
@@ -75,21 +75,21 @@ func (m *Master) UpdateAPP(trace, target string) error {
 		// start all removed or updated services
 		rberr = m.startServices(old)
 		if rberr != nil {
-			log.With(homo.OTAKeyStep, homo.OTAFailure).Errorw("failed to roll back", zap.Error(rberr))
+			log.With(aiicy.OTAKeyStep, aiicy.OTAFailure).Errorw("failed to roll back", zap.Error(rberr))
 			return fmt.Errorf("failed to restart old app: %s; failed to roll back: %s", err.Error(), rberr.Error())
 		}
 		m.commitAPP(old.AppVersion)
-		log.With(homo.OTAKeyStep, homo.OTARolledBack).Info("app is rolled back")
+		log.With(aiicy.OTAKeyStep, aiicy.OTARolledBack).Info("app is rolled back")
 		return fmt.Errorf("failed to start app: %s", err.Error())
 	}
 	m.commitAPP(cur.AppVersion)
 	if isOTA {
-		log.With(homo.OTAKeyStep, homo.OTAUpdated).Info("app is updated")
+		log.With(aiicy.OTAKeyStep, aiicy.OTAUpdated).Info("app is updated")
 	}
 	return nil
 }
 
-func (m *Master) loadAPPConfig(target string) (cur, old homo.ComposeAppConfig, err error) {
+func (m *Master) loadAPPConfig(target string) (cur, old aiicy.ComposeAppConfig, err error) {
 	if target != "" {
 		// backup
 		if utils.IsFile(appConfigFile) {
@@ -113,20 +113,20 @@ func (m *Master) loadAPPConfig(target string) (cur, old homo.ComposeAppConfig, e
 			err = utils.CopyFile(target, appConfigFile)
 		} else {
 			// copy {target}/application.yml to application.yml
-			err = utils.CopyFile(path.Join(target, homo.AppConfFileName), appConfigFile)
+			err = utils.CopyFile(path.Join(target, aiicy.AppConfFileName), appConfigFile)
 		}
 		if err != nil {
 			return
 		}
 	}
 	if utils.IsFile(appConfigFile) {
-		cur, err = homo.LoadComposeAppConfigCompatible(appConfigFile)
+		cur, err = aiicy.LoadComposeAppConfigCompatible(appConfigFile)
 		if err != nil {
 			return
 		}
 	}
 	if utils.IsFile(appBackupFile) {
-		old, err = homo.LoadComposeAppConfigCompatible(appBackupFile)
+		old, err = aiicy.LoadComposeAppConfigCompatible(appBackupFile)
 		if err != nil {
 			return
 		}
@@ -156,33 +156,33 @@ func (m *Master) commitAPP(ver string) {
 
 // UpdateMST updates master
 func (m *Master) UpdateMST(trace, target, backup string) (err error) {
-	log := logger.New(m.cfg.OTALog, homo.OTAKeyTrace, trace, homo.OTAKeyType, homo.OTAMST)
+	log := logger.New(m.cfg.OTALog, aiicy.OTAKeyTrace, trace, aiicy.OTAKeyType, aiicy.OTAMST)
 
 	if err = m.check(target); err != nil {
-		log.With(homo.OTAKeyStep, homo.OTAFailure).Errorw("failed to check master", zap.Error(err))
+		log.With(aiicy.OTAKeyStep, aiicy.OTAFailure).Errorw("failed to check master", zap.Error(err))
 		return fmt.Errorf("failed to check master: %s", err.Error())
 	}
 
-	log.With(homo.OTAKeyStep, homo.OTAUpdating).Info("master is updating")
+	log.With(aiicy.OTAKeyStep, aiicy.OTAUpdating).Info("master is updating")
 	if err = apply(target, backup); err != nil {
-		log.With(homo.OTAKeyStep, homo.OTARollingBack).Errorw("failed to apply master", zap.Error(err))
+		log.With(aiicy.OTAKeyStep, aiicy.OTARollingBack).Errorw("failed to apply master", zap.Error(err))
 		rberr := RollBackMST()
 		if rberr != nil {
-			log.With(homo.OTAKeyStep, homo.OTAFailure).Errorw("failed to roll back", zap.Error(rberr))
+			log.With(aiicy.OTAKeyStep, aiicy.OTAFailure).Errorw("failed to roll back", zap.Error(rberr))
 			return fmt.Errorf("failed to apply master: %s; failed to roll back: %s", err.Error(), rberr.Error())
 		}
-		log.With(homo.OTAKeyStep, homo.OTARolledBack).Info("master is rolled back")
+		log.With(aiicy.OTAKeyStep, aiicy.OTARolledBack).Info("master is rolled back")
 		return fmt.Errorf("failed to apply master: %s", err.Error())
 	}
 
-	log.With(homo.OTAKeyStep, homo.OTARestarting).Info("master is restarting")
+	log.With(aiicy.OTAKeyStep, aiicy.OTARestarting).Info("master is restarting")
 	return m.Close()
 }
 
 // RollBackMST rolls back master
 func RollBackMST() error {
 	// backward compatibility
-	backup := homo.DefaultBinBackupFile
+	backup := aiicy.DefaultBinBackupFile
 	if !utils.FileExists(backup) {
 		return nil
 	}
@@ -218,7 +218,7 @@ func (m *Master) check(target string) error {
 	if err != nil {
 		return fmt.Errorf("check result: %s", err.Error())
 	}
-	if !strings.Contains(string(out), homo.CheckOK) {
+	if !strings.Contains(string(out), aiicy.CheckOK) {
 		return fmt.Errorf("check result: OK expected, but get %s", string(out))
 	}
 	return nil

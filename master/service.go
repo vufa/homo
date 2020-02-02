@@ -2,8 +2,8 @@ package master
 
 import (
 	"fmt"
-	"github.com/countstarlight/homo/master/engine"
-	"github.com/countstarlight/homo/sdk/homo-go"
+	"github.com/aiicy/aiicy/master/engine"
+	"github.com/aiicy/aiicy/sdk/aiicy-go"
 	"github.com/docker/distribution/uuid"
 	"reflect"
 	"sync"
@@ -19,7 +19,7 @@ func (m *Master) Auth(username, password string) bool {
 	return ok && p == password
 }
 
-func (m *Master) startServices(cur homo.ComposeAppConfig) error {
+func (m *Master) startServices(cur aiicy.ComposeAppConfig) error {
 	for _, name := range ServiceSort(cur.Services) {
 		s := cur.Services[name]
 		if _, ok := m.services.Get(name); ok {
@@ -30,8 +30,8 @@ func (m *Master) startServices(cur homo.ComposeAppConfig) error {
 		}
 		token := uuid.Generate().String()
 		m.accounts.Set(name, token)
-		s.Environment.Envs[homo.EnvKeyServiceName] = name
-		s.Environment.Envs[homo.EnvKeyServiceToken] = token
+		s.Environment.Envs[aiicy.EnvKeyServiceName] = name
+		s.Environment.Envs[aiicy.EnvKeyServiceToken] = token
 		nxt, err := m.engine.Run(name, s, cur.Volumes)
 		if err != nil {
 			m.log.Infof("failed to start service (%s)", name)
@@ -97,7 +97,7 @@ func (m *Master) StopInstance(service, instance string) error {
 }
 
 // DiffServices returns the services not changed
-func diffServices(cur, old homo.ComposeAppConfig) map[string]struct{} {
+func diffServices(cur, old aiicy.ComposeAppConfig) map[string]struct{} {
 	// find the volumes updated
 	updateVolumes := make(map[string]struct{})
 	for name, c := range cur.Volumes {
@@ -141,7 +141,7 @@ func diffServices(cur, old homo.ComposeAppConfig) map[string]struct{} {
 }
 
 // ServiceSort sort service
-func ServiceSort(services map[string]homo.ComposeService) []string {
+func ServiceSort(services map[string]aiicy.ComposeService) []string {
 	g := map[string][]string{}
 	inDegrees := map[string]int{}
 	res := []string{}

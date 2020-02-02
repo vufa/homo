@@ -3,8 +3,8 @@ package mqtt
 import (
 	"fmt"
 	"github.com/256dpi/gomqtt/packet"
-	"github.com/countstarlight/homo/logger"
-	"github.com/countstarlight/homo/utils"
+	"github.com/aiicy/aiicy/logger"
+	"github.com/aiicy/aiicy/utils"
 	"github.com/jpillora/backoff"
 	"go.uber.org/zap"
 	"time"

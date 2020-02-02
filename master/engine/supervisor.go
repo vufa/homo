@@ -5,7 +5,7 @@ import (
 	"go.uber.org/zap"
 	"time"
 
-	"github.com/countstarlight/homo/sdk/homo-go"
+	"github.com/aiicy/aiicy/sdk/aiicy-go"
 	"github.com/jpillora/backoff"
 )
 
@@ -38,17 +38,17 @@ func Supervising(instance Instance, log *zap.SugaredLogger) error {
 			return nil
 		case err := <-s:
 			switch p.Policy {
-			case homo.RestartOnFailure:
+			case aiicy.RestartOnFailure:
 				// TODO: to test
 				if err == nil {
 					return nil
 				}
 				_engine.SetInstanceStats(serviceName, instanceName, NewPartialStatsByStatus(Restarting), true)
 				goto RESTART
-			case homo.RestartAlways:
+			case aiicy.RestartAlways:
 				_engine.SetInstanceStats(serviceName, instanceName, NewPartialStatsByStatus(Restarting), true)
 				goto RESTART
-			case homo.RestartNo:
+			case aiicy.RestartNo:
 				// TODO: to test
 				return nil
 			default:
