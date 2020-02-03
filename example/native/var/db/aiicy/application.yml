@@ -31,15 +31,19 @@ services:
       - name: aiicy-function-bin
         path: lib/aiicy/aiicy-function
         readonly: true
-  - name: application-nlu
+  - name: function-python3
     image: aiicy-function-python3
     replica: 0
     mounts:
-      # application-nlu
-      - name: application-nlu-conf
+      - name: function-python3-conf
         path: etc/aiicy
         readonly: true
-      - name: application-nlu-code
+      # function-sayhi
+      - name: function-sayhi
+        path: var/db/aiicy/function-sayhi
+        readonly: true
+      # application-nlu
+      - name: application-nlu
         path: var/db/aiicy/application-nlu
         readonly: true
       # native process mode only
@@ -61,11 +65,14 @@ volumes:
     path: var/db/aiicy/function-conf
   - name: function-log
     path: var/db/aiicy/function-log
+  - name: function-python3-conf
+    path: var/db/aiicy/function-python3-conf
+  # function-sayhi
+  - name: function-sayhi
+    path: var/db/aiicy/function-sayhi
   # application-nlu
-  - name: application-nlu-conf
-    path: var/db/aiicy/application-nlu-conf
-  - name: application-nlu-code
-    path: var/db/aiicy/application-nlu-code
+  - name: application-nlu
+    path: var/db/aiicy/application-nlu
   # bin, native process mode only
   - name: aiicy-hub-bin
     path: var/db/aiicy/aiicy-hub

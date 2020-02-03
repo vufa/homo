@@ -15,6 +15,13 @@ logger:
   backup:
     max: 15
 rules:
+  - clientid: func-python3-sayhi-1
+    subscribe:
+      topic: t
+    function:
+      name: python3-sayhi
+    publish:
+      topic: t/py3hi
   - clientid: application-nlu-1
     subscribe:
       topic: t
@@ -23,5 +30,7 @@ rules:
     publish:
       topic: t/nlu
 functions:
+  - name: python3-sayhi
+    service: function-python3
   - name: application-nlu
-    service: application-nlu
+    service: function-python3

@@ -2,8 +2,8 @@
 # source: github.com/aiicy/aiicy/sdk/aiicy-go/templates/Makefile-python
 
 MODULE:=application-nlu
-BIN_FILE:=index.py
-BIN_CMD=install -m 0755 $(SRC_FILES) $(dir $@) && cd $(dir $@)
+BIN_FILE:=nlu.py
+#BIN_CMD=install -m 0755 $(SRC_FILES) $(dir $@) && cd $(dir $@)
 COPY_DIR:=.
 PLATFORM_ALL:=darwin/amd64 linux/amd64 linux/arm64 linux/386 linux/arm/v7
 GIT_TAG:=$(shell git tag --contains HEAD)
@@ -27,33 +27,24 @@ XFLAGS?=--load
 XPLATFORMS:=$(shell echo $(filter-out darwin/amd64,$(PLATFORMS)) | sed 's: :,:g')
 
 CONF_FILE=service.yml
-SRC_FILES:=index.py
 MODEL_FILE:=$(shell find models/ -type f -printf '%T@ %p\n' | sort -n | tail -1 | cut -f2- -d" ")
 
 OUTPUT:=../../out
 #OUTPUT_MODS:=$(PLATFORMS:%=$(OUTPUT)/%/$(MODULE))
-OUTPUT_CODE:=$(OUTPUT:%=%/var/db/aiicy/$(MODULE))-code
-OUTPUT_CONF:=$(OUTPUT:%=%/var/db/aiicy/$(MODULE))-conf
-OUTPUT_BINS:=$(OUTPUT_CODE:%=%/$(BIN_FILE))
-OUTPUT_CONF_FILES:=$(OUTPUT_CONF:%=%/$(CONF_FILE))
+OUTPUT_MODS:=$(OUTPUT:%=%/var/db/aiicy/$(MODULE))
+OUTPUT_BINS:=$(OUTPUT_MODS:%=%/$(BIN_FILE))
 
 .PHONY: all
-all: $(OUTPUT_BINS) $(OUTPUT_CONF_FILES)
+all: $(OUTPUT_BINS)
 
-$(OUTPUT_BINS): $(SRC_FILES)
+$(OUTPUT_BINS): $(BIN_FILE)
 	@echo "BUILD $@"
 	@install -d -m 0755 $(dir $@)
 	@$(if $(strip $(MODEL_FILE)),,echo -e "\033[0;31mcan't find nlu model file in models/\033[0m" && exit 1)
 	@rm -rf tmp && mkdir tmp && tar xvzf $(MODEL_FILE) -C tmp/
-	@ln -s $(abspath tmp/nlu) $(OUTPUT_CODE)/models
-	@ln -s $(abspath data) $(OUTPUT_CODE)/data
-	@ln -s $(abspath $(SRC_FILES)) $(OUTPUT_CODE)/
-	@#$(BIN_CMD)
-
-$(OUTPUT_CONF_FILES): $(CONF_FILE)
-	@echo "BUILD $@"
-	@install -d -m 0755 $(dir $@)
-	@ln -s $(abspath $(CONF_FILE)) $(OUTPUT_CONF)/
+	@ln -s $(abspath tmp/nlu) $(OUTPUT_MODS)/models
+	@ln -s $(abspath data) $(OUTPUT_MODS)/data
+	@ln -s $(abspath $(BIN_FILE)) $(OUTPUT_MODS)/
 	@#$(BIN_CMD)
 
 .PHONY: image
@@ -76,7 +67,6 @@ rebuild: clean all
 
 .PHONY: clean
 clean:
-	@find $(OUTPUT) -type d -name $(MODULE)-code | xargs rm -rf
-	@find $(OUTPUT) -type d -name $(MODULE)-conf | xargs rm -rf
+	@find $(OUTPUT) -type d -name $(MODULE) | xargs rm -rf
 
 

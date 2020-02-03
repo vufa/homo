@@ -119,7 +119,7 @@ func (f *Function) Close() error {
 func (f *Function) MakeObject(_ context.Context) (*pool.PooledObject, error) {
 	select {
 	case id := <-f.ids:
-		f.log.Infof("instance created")
+		f.log.Info("instance created")
 		i, err := f.p.StartInstance(id)
 		if err != nil {
 			select {
