@@ -4,7 +4,7 @@ English | [简体中文](README_CN.md)
 
 <p align="center">
   <a href="https://aiicy.org/" target="_blank" rel="noopener noreferrer">
-    <img width="100" src="https://aiicy.codist.me/images/logo_hu1e64b12a9afabce8f1e60a8cde1eed5c_14303_0x70_resize_lanczos_2.png" alt="Aiicy logo">
+    <img width="100" src="https://aiicy.org/img/logo.png" alt="Aiicy logo">
   </a>
 </p>
 <p align="center">
