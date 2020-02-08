@@ -5,19 +5,19 @@ grpc server for python3 function
 """
 
 import argparse
-import importlib
-import os
-import sys
-import time
-import grpc
-import yaml
 import json
-import signal
-from concurrent import futures
-import function_pb2
-import function_pb2_grpc
 import logging
 import logging.handlers
+import os
+import signal
+import sys
+import time
+from concurrent import futures
+from importlib.machinery import SourceFileLoader
+
+import function_pb2_grpc
+import grpc
+import yaml
 
 _ONE_DAY_IN_SECONDS = 60 * 60 * 24
 
@@ -52,7 +52,7 @@ class mo(function_pb2_grpc.FunctionServicer):
             raise Exception('config invalid, missing functions')
 
         self.log = get_logger(self.config)
-        self.functions, self.code_dirs = get_functions(self.config['functions'])
+        self.modules = load_modules(self.config['functions'])
         self.server = get_grpc_server(self.config['server'])
         function_pb2_grpc.add_FunctionServicer_to_server(self, self.server)
 
@@ -78,7 +78,7 @@ class mo(function_pb2_grpc.FunctionServicer):
         call request
         """
 
-        if request.FunctionName not in self.functions:
+        if request.FunctionName not in self.modules:
             raise Exception('function not found')
 
         ctx = {}
@@ -98,8 +98,10 @@ class mo(function_pb2_grpc.FunctionServicer):
 
         try:
             # TODO: need set work dir
-            os.chdir(os.path.join(os.getcwd(), self.code_dirs[request.FunctionName]))
-            msg = self.functions[request.FunctionName](msg, ctx)
+            curr_path = os.getcwd()
+            os.chdir(os.path.join(curr_path, self.modules[request.FunctionName].get_codedir()))
+            msg = self.modules[request.FunctionName].handler(msg, ctx)
+            os.chdir(curr_path)
         except BaseException as err:
             self.log.error(err, exc_info=True)
             raise Exception("[UserCodeInvoke] ", err)
@@ -123,12 +125,11 @@ class mo(function_pb2_grpc.FunctionServicer):
         pass
 
 
-def get_functions(c):
+def load_modules(c):
     """
-    get functions
+    load modules
     """
     fs = {}
-    co = {}
     for fc in c:
         if 'name' not in fc or 'handler' not in fc or 'codedir' not in fc:
             raise Exception(
@@ -136,10 +137,15 @@ def get_functions(c):
         sys.path.append(fc['codedir'])
         module_handler = fc['handler'].split('.')
         handler_name = module_handler.pop()
-        module = importlib.import_module('.'.join(module_handler))
-        fs[fc['name']] = getattr(module, handler_name)
-        co[fc['name']] = fc['codedir']
-    return fs, co
+        curr_path = os.getcwd()
+        os.chdir(os.path.join(curr_path, fc['codedir']))
+        py_mod = SourceFileLoader(handler_name, module_handler.pop() + ".py").load_module()
+        # TODO: should create instance in subprocess
+        module = getattr(py_mod, handler_name)(fc['codedir'])
+        fs[fc['name']] = module
+        os.chdir(curr_path)
+    return fs
+
 
 def get_grpc_server(c):
     """
@@ -249,8 +255,10 @@ if __name__ == '__main__':
     m.Load(args.c)
     m.Start()
 
+
     def exit(signum, frame):
         sys.exit(0)
+
 
     signal.signal(signal.SIGINT, exit)
     signal.signal(signal.SIGTERM, exit)
@@ -258,7 +266,7 @@ if __name__ == '__main__':
     try:
         while True:
             time.sleep(_ONE_DAY_IN_SECONDS)
-    except BaseException as err:
+    except Exception as err:
         m.log.debug(err)
     finally:
         m.Close()

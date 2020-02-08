@@ -13,7 +13,7 @@ English | [简体中文](README_CN.md)
   </a>
 </p>
 
-The design of service management, instance control, runtime system, etc.  comes from [baetyl](https://github.com/baetyl/baetyl), it's license at [LICENSES/baetyl](LICENSES/baetyl).
+The design of service management and instance control comes from [baetyl](https://github.com/baetyl/baetyl), it's license at [LICENSES/baetyl](LICENSES/baetyl).
 
 <!-- TOC -->
 
