@@ -2,11 +2,11 @@
 
 HelpApp()
 {
-	echo " 附加命令:"
-	echo " -p/--pull      获取/更新 镜像，默认从docker hub获取，使用 '-p a' 或 '-p ali' 从阿里云获取"
-	echo " -a/--aliyun    运行阿里云Docker镜像(默认运行docker hub镜像)"
-	echo " -d/--debug     用于调试，使用Docker容器内的bash，默认调试docker hub镜像，使用 '-d a' 或 '-d ali' 调试阿里云镜像"
-	echo " -h/--help      显示此帮助信息"
+	echo " Usage:"
+	echo " -p/--pull      Get/Update image from docker hub by default, using '-p a' or '-p ali' to get from Alibaba Cloud"
+	echo " -a/--aliyun    Launch Alibaba Cloud Docker image (launch docker hub image by default)"
+	echo " -d/--debug     For debugging, use bash in Docker container, debug docker hub image by default, '-d a' or '-d ali' for debugging Alibaba Cloud image"
+	echo " -h/--help      show help"
 }
 
 PullDocker()
