@@ -10,8 +10,6 @@ services:
       - name: localhub-cert
         path: var/db/aiicy/cert
         readonly: true
-      - name: localhub-data
-        path: var/db/aiicy/data
       - name: localhub-log
         path: var/log/aiicy
       # native process mode only
@@ -53,20 +51,18 @@ services:
 volumes:
   # hub
   - name: localhub-conf
-    path: var/db/aiicy/localhub-conf
-  - name: localhub-data
-    path: var/db/aiicy/localhub-data
+    path: var/db/aiicy/hub
   - name: localhub-cert
-    path: var/db/aiicy/localhub-cert-only-for-test
+    path: var/db/aiicy/hub-cert-only-for-test
   - name: localhub-log
-    path: var/db/aiicy/localhub-log
+    path: var/db/aiicy/hub-log
   # function
   - name: function-conf
-    path: var/db/aiicy/function-conf
+    path: var/db/aiicy/function
   - name: function-log
     path: var/db/aiicy/function-log
   - name: function-python3-conf
-    path: var/db/aiicy/function-python3-conf
+    path: var/db/aiicy/function-python3
   # function-sayhi
   - name: function-sayhi
     path: var/db/aiicy/function-sayhi

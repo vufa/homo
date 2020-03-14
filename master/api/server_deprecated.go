@@ -3,10 +3,10 @@ package api
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/aiicy/aiicy/logger"
 	"github.com/aiicy/aiicy/master/engine"
 	"github.com/aiicy/aiicy/protocol/http"
 	"github.com/aiicy/aiicy/utils"
-	"go.uber.org/zap"
 	"strconv"
 )
 
@@ -31,7 +31,7 @@ type Server struct {
 }
 
 // New creates new api server
-func New(c http.ServerInfo, m Master, log *zap.SugaredLogger) (*Server, error) {
+func New(c http.ServerInfo, m Master, log *logger.Logger) (*Server, error) {
 	svr, err := http.NewServer(c, m.Auth, log)
 	if err != nil {
 		return nil, err

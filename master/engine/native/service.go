@@ -2,7 +2,7 @@ package native
 
 import (
 	"fmt"
-	"go.uber.org/zap"
+	"github.com/aiicy/aiicy/logger"
 	"os"
 	"sync"
 
@@ -24,7 +24,7 @@ type nativeService struct {
 	engine    *nativeEngine
 	instances cmap.ConcurrentMap
 	wdir      string
-	log       *zap.SugaredLogger
+	log       *logger.Logger
 }
 
 func (s *nativeService) Name() string {

@@ -3,8 +3,8 @@ package rule
 import (
 	"github.com/aiicy/aiicy/aiicy-hub/common"
 	"github.com/aiicy/aiicy/aiicy-hub/router"
+	"github.com/aiicy/aiicy/logger"
 	"github.com/aiicy/aiicy/utils"
-	"go.uber.org/zap"
 	"sync/atomic"
 	"time"
 )
@@ -17,10 +17,10 @@ type sink struct {
 	trieq0  *router.Trie
 	trieq1  *router.Trie
 	tomb    utils.Tomb
-	log     *zap.SugaredLogger
+	log     *logger.Logger
 }
 
-func newSink(id string, b broker, r *router.Trie, msgchan *msgchan, log *zap.SugaredLogger) *sink {
+func newSink(id string, b broker, r *router.Trie, msgchan *msgchan, log *logger.Logger) *sink {
 	s := &sink{
 		id:      id,
 		broker:  b,
@@ -78,7 +78,7 @@ func (s *sink) stop() {
 
 func (s *sink) wait() {
 	err := s.tomb.Wait()
-	s.log.Debugw("sink stopped", zap.Error(err))
+	s.log.Debugw("sink stopped", logger.Error(err))
 }
 
 func (s *sink) goRoutingQ0() error {
@@ -117,7 +117,7 @@ func (s *sink) goRoutingQ1() error {
 		}
 		msgs, err = s.broker.FetchQ1(s.getOffset(), maxBatchSize)
 		if err != nil {
-			s.log.Errorw("failed to fetch message", zap.Error(err))
+			s.log.Errorw("failed to fetch message", logger.Error(err))
 			select {
 			case <-s.tomb.Dying():
 				return nil

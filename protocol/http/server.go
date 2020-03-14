@@ -2,8 +2,8 @@ package http
 
 import (
 	"context"
+	"github.com/aiicy/aiicy/logger"
 	"github.com/aiicy/aiicy/utils"
-	"go.uber.org/zap"
 	"io/ioutil"
 	"net"
 	"net/http"
@@ -30,11 +30,11 @@ type Server struct {
 	addr   string
 	auth   func(u, p string) bool
 	router *mux.Router
-	log    *zap.SugaredLogger
+	log    *logger.Logger
 }
 
 // NewServer creates a new http server
-func NewServer(c ServerInfo, a func(u, p string) bool, log *zap.SugaredLogger) (*Server, error) {
+func NewServer(c ServerInfo, a func(u, p string) bool, log *logger.Logger) (*Server, error) {
 	defaults.Set(&c)
 
 	uri, err := utils.ParseURL(c.Address)

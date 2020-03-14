@@ -6,7 +6,6 @@ import (
 	"github.com/aiicy/aiicy/logger"
 	"github.com/aiicy/aiicy/utils"
 	"github.com/jpillora/backoff"
-	"go.uber.org/zap"
 	"time"
 )
 
@@ -19,11 +18,11 @@ type Dispatcher struct {
 	channel chan packet.Generic
 	backoff *backoff.Backoff
 	tomb    utils.Tomb
-	log     *zap.SugaredLogger
+	log     *logger.Logger
 }
 
 // NewDispatcher creates a new dispatcher
-func NewDispatcher(cc ClientInfo, log *zap.SugaredLogger) *Dispatcher {
+func NewDispatcher(cc ClientInfo, log *logger.Logger) *Dispatcher {
 	if log == nil {
 		log = logger.S
 	}
@@ -102,7 +101,7 @@ func (d *Dispatcher) supervisor(handler Handler) error {
 
 		client, err := NewClient(d.config, handler, d.log)
 		if err != nil {
-			d.log.Errorw("failed to create new client", zap.Error(err))
+			d.log.Errorw("failed to create new client", logger.Error(err))
 			continue
 		}
 

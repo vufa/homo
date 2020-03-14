@@ -7,8 +7,8 @@ import (
 	"github.com/aiicy/aiicy/aiicy-hub/config"
 	"github.com/aiicy/aiicy/aiicy-hub/persist"
 	"github.com/aiicy/aiicy/aiicy-hub/rule"
+	"github.com/aiicy/aiicy/logger"
 	cmap "github.com/orcaman/concurrent-map"
-	"go.uber.org/zap"
 )
 
 // Manager session manager
@@ -19,11 +19,11 @@ type Manager struct {
 	flow     common.Flow
 	conf     *config.Message
 	rules    *rule.Manager
-	log      *zap.SugaredLogger
+	log      *logger.Logger
 }
 
 // NewManager creates a session manager
-func NewManager(conf *config.Config, flow common.Flow, rules *rule.Manager, pf *persist.Factory, log *zap.SugaredLogger) (*Manager, error) {
+func NewManager(conf *config.Config, flow common.Flow, rules *rule.Manager, pf *persist.Factory, log *logger.Logger) (*Manager, error) {
 	sessionDB, err := pf.NewDB("session.db")
 	if err != nil {
 		return nil, err
@@ -69,6 +69,6 @@ func (m *Manager) remove(id string) {
 	m.sessions.Remove(id)
 	err := m.rules.RemoveRule(id)
 	if err != nil {
-		m.log.Debugw("failed to remove rule", zap.Error(err))
+		m.log.Debugw("failed to remove rule", logger.Error(err))
 	}
 }

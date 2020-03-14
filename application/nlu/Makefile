@@ -56,7 +56,8 @@ image: $(OUTPUT_BINS)
 
 .PHONY: train
 train:
-	@rasa train --config configs/zh.yml --data data/zh/
+	@mkdir -p models/zh
+	@rasa train --config configs/zh.yml --data data/zh/ --out models/zh
 
 .PHONY: gen
 gen:

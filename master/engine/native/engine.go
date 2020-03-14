@@ -3,7 +3,6 @@ package native
 import (
 	"fmt"
 	"github.com/aiicy/aiicy/sdk/aiicy-go"
-	"go.uber.org/zap"
 	"os"
 	"path"
 	"strings"
@@ -39,7 +38,7 @@ type nativeEngine struct {
 	engine.InfoStats
 	pwd   string // work directory
 	grace time.Duration
-	log   *zap.SugaredLogger
+	log   *logger.Logger
 }
 
 // Name of engine
@@ -72,12 +71,12 @@ func (e *nativeEngine) clean() {
 				name := instance.Process.Name
 				p, err := process.NewProcess(id)
 				if err != nil {
-					e.log.Warn(fmt.Sprintf("[%s][%s] failed to get old process (%d)", sn, in, id), zap.Error(err))
+					e.log.Warn(fmt.Sprintf("[%s][%s] failed to get old process (%d)", sn, in, id), logger.Error(err))
 					continue
 				}
 				pn, err := p.Name()
 				if err != nil {
-					e.log.Warn(fmt.Sprintf("[%s][%s] failed to get name of old process (%d)", sn, in, id), zap.Error(err))
+					e.log.Warn(fmt.Sprintf("[%s][%s] failed to get name of old process (%d)", sn, in, id), logger.Error(err))
 					continue
 				}
 				if pn != name {

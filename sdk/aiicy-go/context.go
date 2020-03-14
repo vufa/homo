@@ -14,7 +14,6 @@ import (
 	"github.com/aiicy/aiicy/protocol/mqtt"
 	"github.com/aiicy/aiicy/sdk/aiicy-go/api"
 	"github.com/aiicy/aiicy/utils"
-	"go.uber.org/zap"
 	"io"
 	"os"
 	"os/signal"
@@ -116,7 +115,7 @@ type Context interface {
 	// you can specify the Client ID and the topic information of the subscription.
 	NewHubClient(string, []mqtt.TopicInfo) (*mqtt.Dispatcher, error)
 	// returns logger interface
-	Log() *zap.SugaredLogger
+	Log() *logger.Logger
 	// check running mode
 	IsNative() bool
 	// waiting to exit, receiving SIGTERM and SIGINT signals
@@ -166,7 +165,7 @@ type ctx struct {
 	in  string // instance name
 	md  string // running mode
 	cfg ServiceConfig
-	log *zap.SugaredLogger
+	log *logger.Logger
 	*Client
 }
 
@@ -185,7 +184,7 @@ func newContext(s Service) (*ctx, error) {
 	log := logger.New(cfg.Logger, "service", sn, "instance", in)
 	cli, err := NewEnvClient()
 	if err != nil {
-		log.Errorw(fmt.Sprintf("[%s][%s] failed to create master client", sn, in), zap.Error(err))
+		log.Errorw(fmt.Sprintf("[%s][%s] failed to create master client", sn, in), logger.Error(err))
 	}
 	return &ctx{
 		sn:     sn,
@@ -222,7 +221,7 @@ func (c *ctx) Config() *ServiceConfig {
 	return &c.cfg
 }
 
-func (c *ctx) Log() *zap.SugaredLogger {
+func (c *ctx) Log() *logger.Logger {
 	return c.log
 }
 

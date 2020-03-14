@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"github.com/aiicy/aiicy/logger"
-	"go.uber.org/zap"
 	"io/ioutil"
 	"os"
 	"strings"
@@ -23,7 +22,7 @@ func LoadYAML(path string, out interface{}) error {
 	}
 	res, err := ParseEnv(data)
 	if err != nil {
-		logger.S.Errorw("config parse error", zap.Error(err))
+		logger.S.Errorw("config parse error", logger.Error(err))
 		res = data
 	}
 	return UnmarshalYAML(res, out)

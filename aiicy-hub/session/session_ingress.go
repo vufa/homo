@@ -5,10 +5,10 @@ import (
 	"github.com/256dpi/gomqtt/packet"
 	"github.com/aiicy/aiicy/aiicy-hub/auth"
 	"github.com/aiicy/aiicy/aiicy-hub/common"
+	"github.com/aiicy/aiicy/logger"
 	"github.com/aiicy/aiicy/protocol/mqtt"
 	"github.com/aiicy/aiicy/utils"
 	"github.com/docker/distribution/uuid"
-	"go.uber.org/zap"
 )
 
 // Handle handles mqtt connection
@@ -21,7 +21,7 @@ func (s *session) Handle() {
 			if !s.tomb.Alive() {
 				return
 			}
-			s.log.Warnw("failed to reveive message", zap.Error(err))
+			s.log.Warnw("failed to reveive message", logger.Error(err))
 			s.close(true)
 			return
 		}

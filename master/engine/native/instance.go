@@ -2,7 +2,7 @@ package native
 
 import (
 	"fmt"
-	"go.uber.org/zap"
+	"github.com/aiicy/aiicy/logger"
 	"os"
 
 	"github.com/aiicy/aiicy/master/engine"
@@ -32,18 +32,18 @@ type nativeInstance struct {
 	params  processConfigs
 	proc    *os.Process
 	tomb    utils.Tomb
-	log     *zap.SugaredLogger
+	log     *logger.Logger
 }
 
 func (s *nativeService) newInstance(name string, params processConfigs) (*nativeInstance, error) {
 	log := s.log.With("instance", name)
 	p, err := s.engine.startProcess(params)
 	if err != nil {
-		log.Warn("failed to start instance", zap.Error(err))
+		log.Warn("failed to start instance", logger.Error(err))
 		// retry
 		p, err = s.engine.startProcess(params)
 		if err != nil {
-			log.Warn("failed to start instance again", zap.Error(err))
+			log.Warn("failed to start instance again", logger.Error(err))
 			return nil, err
 		}
 	}
@@ -104,7 +104,7 @@ func (i *nativeInstance) Wait(s chan<- error) {
 func (i *nativeInstance) Restart() error {
 	p, err := i.service.engine.startProcess(i.params)
 	if err != nil {
-		i.log.Error("failed to restart instance", zap.Error(err))
+		i.log.Error("failed to restart instance", logger.Error(err))
 		return err
 	}
 	i.proc = p

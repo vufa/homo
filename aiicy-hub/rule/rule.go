@@ -3,7 +3,7 @@ package rule
 import (
 	"github.com/aiicy/aiicy/aiicy-hub/common"
 	"github.com/aiicy/aiicy/aiicy-hub/router"
-	"go.uber.org/zap"
+	"github.com/aiicy/aiicy/logger"
 	"strconv"
 	"sync"
 )
@@ -25,10 +25,10 @@ type rulebase struct {
 	broker  broker
 	msgchan *msgchan
 	once    sync.Once
-	log     *zap.SugaredLogger
+	log     *logger.Logger
 }
 
-func newRuleBase(id string, persistent bool, b broker, r *router.Trie, publish, republish common.Publish, log *zap.SugaredLogger) *rulebase {
+func newRuleBase(id string, persistent bool, b broker, r *router.Trie, publish, republish common.Publish, log *logger.Logger) *rulebase {
 	logRule := log.With("rule", id)
 	rb := &rulebase{
 		id:     id,
@@ -53,17 +53,17 @@ func newRuleBase(id string, persistent bool, b broker, r *router.Trie, publish, 
 	return rb
 }
 
-func newRuleQos0(b broker, r *router.Trie, log *zap.SugaredLogger) *rulebase {
+func newRuleQos0(b broker, r *router.Trie, log *logger.Logger) *rulebase {
 	return newRuleBase(common.RuleMsgQ0, false, b, r, nil, nil, log)
 }
 
-func newRuleTopic(b broker, r *router.Trie, log *zap.SugaredLogger) *rulebase {
+func newRuleTopic(b broker, r *router.Trie, log *logger.Logger) *rulebase {
 	rb := newRuleBase(common.RuleTopic, true, b, r, nil, nil, log)
 	rb.msgchan.publish = rb.publish
 	return rb
 }
 
-func newRuleSess(id string, p bool, b broker, r *router.Trie, publish, republish common.Publish, log *zap.SugaredLogger) base {
+func newRuleSess(id string, p bool, b broker, r *router.Trie, publish, republish common.Publish, log *logger.Logger) base {
 	return newRuleBase(id, p, b, r, publish, republish, log)
 }
 
@@ -122,7 +122,7 @@ func (r *rulebase) remove(id, topic string) {
 func (r *rulebase) persist(sid uint64) {
 	err := r.broker.PersistOffset(r.id, sid)
 	if err != nil {
-		r.log.Errorw("failed to persist offset", zap.Error(err))
+		r.log.Errorw("failed to persist offset", logger.Error(err))
 	}
 }
 

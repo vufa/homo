@@ -14,7 +14,6 @@ import (
 	"github.com/aiicy/aiicy/sdk/aiicy-go"
 	"github.com/aiicy/aiicy/utils"
 	"github.com/urfave/cli/v2"
-	"go.uber.org/zap"
 )
 
 var flags = []cli.Flag{
@@ -47,7 +46,7 @@ func startInternal(c *cli.Context) error {
 	if err != nil {
 		return err
 	}
-	var log *zap.SugaredLogger
+	var log *logger.Logger
 	if DebugMode {
 		cfg.Logger.Level = "debug"
 		cfg.OTALog.Level = "debug"
@@ -62,13 +61,13 @@ func startInternal(c *cli.Context) error {
 	}
 	m, err := master.New(workDir, *cfg, Version, Revision)
 	if err != nil {
-		log.Errorw("failed to start master", zap.Error(err), zap.String(aiicy.OTAKeyStep, aiicy.OTARollingBack))
+		log.Errorw("failed to start master", logger.Error(err), logger.String(aiicy.OTAKeyStep, aiicy.OTARollingBack))
 		/*rberr := master.RollBackMST()
 		if rberr != nil {
-			log.Errorf("failed to roll back %s", rberr, zap.String(aiicy.OTAKeyStep, aiicy.OTAFailure))
+			log.Errorf("failed to roll back %s", rberr, logger.String(aiicy.OTAKeyStep, aiicy.OTAFailure))
 			return fmt.Errorf("failed to start master: %s; failed to roll back: %s", err.Error(), rberr.Error())
 		}
-		log.Infof("master is restarting", zap.String(aiicy.OTAKeyStep, aiicy.OTARestarting))*/
+		log.Infof("master is restarting", logger.String(aiicy.OTAKeyStep, aiicy.OTARestarting))*/
 		return fmt.Errorf("failed to start master: %s", err.Error())
 	}
 	return m.Wait()

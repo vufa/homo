@@ -2,6 +2,7 @@ package session
 
 import (
 	"fmt"
+	"github.com/aiicy/aiicy/logger"
 	"sync"
 
 	"github.com/256dpi/gomqtt/packet"
@@ -10,7 +11,6 @@ import (
 	"github.com/aiicy/aiicy/aiicy-hub/common"
 	"github.com/aiicy/aiicy/aiicy-hub/router"
 	"github.com/aiicy/aiicy/utils"
-	"go.uber.org/zap"
 )
 
 // session session of a client
@@ -24,7 +24,7 @@ type session struct {
 	subs     map[string]packet.Subscription
 	manager  *Manager
 	pids     *common.PacketIDS
-	log      *zap.SugaredLogger
+	log      *logger.Logger
 	once     sync.Once
 	tomb     utils.Tomb
 	sync.Mutex
@@ -78,14 +78,14 @@ func (s *session) saveWillMessage(p *packet.Connect) error {
 func (s *session) sendWillMessage() {
 	msg, err := s.manager.recorder.getWill(s.id)
 	if err != nil {
-		s.log.Errorw("failed to get will message", zap.Error(err))
+		s.log.Errorw("failed to get will message", logger.Error(err))
 	}
 	if msg == nil {
 		return
 	}
 	err = s.retainMessage(msg)
 	if err != nil {
-		s.log.Error("failed to retain will message", zap.Error(err))
+		s.log.Error("failed to retain will message", logger.Error(err))
 	}
 	s.manager.flow(common.NewMessage(uint32(msg.QOS), msg.Topic, msg.Payload, s.clientID))
 }

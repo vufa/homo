@@ -19,6 +19,18 @@ import (
 
 var S *zap.SugaredLogger
 
+type Logger = zap.SugaredLogger
+
+type Field = zap.Field
+
+func Error(err error) Field {
+	return zap.Error(err)
+}
+
+func String(key string, val string) Field {
+	return zap.String(key, val)
+}
+
 func init() {
 	// Print log when start
 	S = New(LogInfo{Level: "debug"})

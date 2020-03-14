@@ -2,7 +2,7 @@ package broker
 
 import (
 	"fmt"
-	"go.uber.org/zap"
+	"github.com/aiicy/aiicy/logger"
 	"time"
 
 	"github.com/aiicy/aiicy/aiicy-hub/common"
@@ -150,13 +150,13 @@ func (b *Broker) persistMessages(msgs []*common.Message) (empty []*common.Messag
 	for i, m := range msgs {
 		vs[i], err = proto.Marshal(&m.Persisted)
 		if err != nil {
-			b.log.Error("failed to marshal persisted message", zap.Error(err))
+			b.log.Error("failed to marshal persisted message", logger.Error(err))
 			return
 		}
 	}
 	err = b.msgQ1DB.BatchPutV(vs)
 	if err != nil {
-		b.log.Error(fmt.Sprintf("failed to persist %d message(s)", l), zap.Error(err))
+		b.log.Error(fmt.Sprintf("failed to persist %d message(s)", l), logger.Error(err))
 		return
 	}
 	b.log.Debugf("%d message(s) persisted", l)
@@ -174,7 +174,7 @@ func (b *Broker) persistOffsets(offsets map[string]uint64) (empty map[string]uin
 	}
 	err := b.offsetDB.BatchPut(kvs)
 	if err != nil {
-		b.log.Error(fmt.Sprintf("failed to persist %d offset(s)", len(offsets)), zap.Error(err))
+		b.log.Error(fmt.Sprintf("failed to persist %d offset(s)", len(offsets)), logger.Error(err))
 	} else {
 		b.log.Debugf("%d offset(s) persisted: %v", len(offsets), offsets)
 	}

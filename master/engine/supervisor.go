@@ -2,7 +2,7 @@ package engine
 
 import (
 	"fmt"
-	"go.uber.org/zap"
+	"github.com/aiicy/aiicy/logger"
 	"time"
 
 	"github.com/aiicy/aiicy/sdk/aiicy-go"
@@ -10,7 +10,7 @@ import (
 )
 
 // Supervising supervise an instance
-func Supervising(instance Instance, log *zap.SugaredLogger) error {
+func Supervising(instance Instance, log *logger.Logger) error {
 	service := instance.Service()
 	_engine := service.Engine()
 	serviceName := service.Name()

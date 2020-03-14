@@ -17,7 +17,6 @@ import (
 	"github.com/aiicy/aiicy/logger"
 	"github.com/aiicy/aiicy/sdk/aiicy-go"
 	"github.com/urfave/cli/v2"
-	"go.uber.org/zap"
 	"os"
 )
 
@@ -30,38 +29,38 @@ type mo struct {
 	broker   *broker.Broker
 	servers  *server.Manager
 	factory  *persist.Factory
-	log      *zap.SugaredLogger
+	log      *logger.Logger
 }
 
 func (m *mo) start() error {
 	err := m.ctx.LoadConfig(m.cfgPath, &m.cfg)
 	if err != nil {
-		m.log.Errorw("failed to load config:", zap.Error(err))
+		m.log.Errorw("failed to load config:", logger.Error(err))
 		return err
 	}
 	m.factory, err = persist.NewFactory(m.cfg.Storage.Dir)
 	if err != nil {
-		m.log.Errorw("failed to new factory:", zap.Error(err))
+		m.log.Errorw("failed to new factory:", logger.Error(err))
 		return err
 	}
 	m.broker, err = broker.NewBroker(&m.cfg, m.factory, m.ctx.ReportInstance, m.log)
 	if err != nil {
-		m.log.Errorw("failed to new broker:", zap.Error(err))
+		m.log.Errorw("failed to new broker:", logger.Error(err))
 		return err
 	}
 	m.Rules, err = rule.NewManager(m.cfg.Subscriptions, m.broker, m.ctx.ReportInstance, m.log)
 	if err != nil {
-		m.log.Errorw("failed to new rule manager:", zap.Error(err))
+		m.log.Errorw("failed to new rule manager:", logger.Error(err))
 		return err
 	}
 	m.Sessions, err = session.NewManager(&m.cfg, m.broker.Flow, m.Rules, m.factory, m.log)
 	if err != nil {
-		m.log.Errorw("failed to new session manager:", zap.Error(err))
+		m.log.Errorw("failed to new session manager:", logger.Error(err))
 		return err
 	}
 	m.servers, err = server.NewManager(m.cfg.Listen, m.cfg.Certificate, m.Sessions.Handle, m.log)
 	if err != nil {
-		m.log.Errorw("failed to new server manager:", zap.Error(err))
+		m.log.Errorw("failed to new server manager:", logger.Error(err))
 		return err
 	}
 	m.Rules.Start()

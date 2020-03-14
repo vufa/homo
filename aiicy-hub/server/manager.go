@@ -2,9 +2,9 @@ package server
 
 import (
 	"github.com/256dpi/gomqtt/transport"
+	"github.com/aiicy/aiicy/logger"
 	"github.com/aiicy/aiicy/protocol/mqtt"
 	"github.com/aiicy/aiicy/utils"
-	"go.uber.org/zap"
 )
 
 // Handle handles connection
@@ -15,11 +15,11 @@ type Manager struct {
 	servers []transport.Server
 	handle  Handle
 	tomb    utils.Tomb
-	log     *zap.SugaredLogger
+	log     *logger.Logger
 }
 
 // NewManager creates a server manager
-func NewManager(addrs []string, cert utils.Certificate, handle Handle, log *zap.SugaredLogger) (*Manager, error) {
+func NewManager(addrs []string, cert utils.Certificate, handle Handle, log *logger.Logger) (*Manager, error) {
 	launcher, err := mqtt.NewLauncher(cert)
 	if err != nil {
 		return nil, err
@@ -51,7 +51,7 @@ func (m *Manager) Start() {
 					if !m.tomb.Alive() {
 						return nil
 					}
-					m.log.Errorw("failed to accept connection", zap.Error(err))
+					m.log.Errorw("failed to accept connection", logger.Error(err))
 					continue
 				}
 				go m.handle(conn)

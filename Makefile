@@ -38,8 +38,8 @@ IMAGE_MODS:=$(MODULES:%=image/aiicy-%) # a little tricky to add prefix 'image/' 
 NATIVE_MODS:=$(MODULES:%=native/aiicy-%) # a little tricky to add prefix 'native/' in order to distinguish from OUTPUT_MODS
 OUTPUT_APPS:=$(APPS:%=application/%)
 
-.PHONY: all $(OUTPUT_MODS) $(OUTPUT_APPS)
-all: aiicy $(OUTPUT_MODS) $(OUTPUT_APPS)
+.PHONY: all $(OUTPUT_MODS)
+all: aiicy $(OUTPUT_MODS)
 
 aiicy: $(OUTPUT_BINS)
 
@@ -54,6 +54,9 @@ $(OUTPUT_MODS):
 
 $(OUTPUT_APPS):
 	@${MAKE} -C $@
+
+.PHONY: apps $(OUTPUT_APPS)
+apps: $(OUTPUT_APPS)
 
 .PHONY: build
 build: $(SRC_FILES)
@@ -79,9 +82,9 @@ install: all
 ifeq ($(MODE),native)
 	@${MAKE} $(NATIVE_MODS)
 endif
-	@#@tar cf - -C example/$(MODE) etc var | tar xvf - -C ${PREFIX}/
-	@tar cf - -C example/$(MODE) etc | tar xvf - -C ${PREFIX}/
-	@ln -s ${CURDIR}/example/$(MODE)/var/db/aiicy/* ${PREFIX}/var/db/aiicy/
+	@#@tar cf - -C conf/$(MODE) etc var | tar xvf - -C ${PREFIX}/
+	@tar cf - -C conf/$(MODE) etc | tar xvf - -C ${PREFIX}/
+	@ln -s ${CURDIR}/conf/$(MODE)/var/db/aiicy/* ${PREFIX}/var/db/aiicy/
 
 $(NATIVE_MODS):
 	@install -d -m 0755 ${PREFIX}/var/db/aiicy/$(notdir $@)/bin

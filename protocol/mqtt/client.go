@@ -8,7 +8,6 @@ import (
 	"github.com/aiicy/aiicy/logger"
 	"github.com/aiicy/aiicy/utils"
 	"github.com/creasty/defaults"
-	"go.uber.org/zap"
 	"gopkg.in/tomb.v2"
 	"io"
 	"sync"
@@ -25,11 +24,11 @@ type Client struct {
 	handler         Handler
 	finish          sync.Once
 	tomb            utils.Tomb
-	log             *zap.SugaredLogger
+	log             *logger.Logger
 }
 
 // NewClient returns a new client
-func NewClient(cc ClientInfo, handler Handler, log *zap.SugaredLogger) (*Client, error) {
+func NewClient(cc ClientInfo, handler Handler, log *logger.Logger) (*Client, error) {
 	defaults.Set(&cc)
 	if log == nil {
 		log = logger.S

@@ -5,9 +5,9 @@ import (
 	"github.com/aiicy/aiicy/aiicy-hub/common"
 	"github.com/aiicy/aiicy/aiicy-hub/config"
 	"github.com/aiicy/aiicy/aiicy-hub/router"
+	"github.com/aiicy/aiicy/logger"
 	"github.com/aiicy/aiicy/utils"
 	cmap "github.com/orcaman/concurrent-map"
-	"go.uber.org/zap"
 	"sync/atomic"
 	"time"
 )
@@ -31,11 +31,11 @@ type Manager struct {
 	trieq0 *router.Trie
 	rules  cmap.ConcurrentMap
 	tomb   utils.Tomb
-	log    *zap.SugaredLogger
+	log    *logger.Logger
 }
 
 // NewManager creates a new rule manager
-func NewManager(c []config.Subscription, b broker, r report, log *zap.SugaredLogger) (*Manager, error) {
+func NewManager(c []config.Subscription, b broker, r report, log *logger.Logger) (*Manager, error) {
 	m := &Manager{
 		broker: b,
 		report: r,
@@ -66,7 +66,7 @@ func (m *Manager) Start() {
 		r := item.Val.(base)
 		// r.log.Info("To start rule")
 		if err := r.start(); err != nil {
-			m.log.Infow(fmt.Sprintf("failed to start rule (%s)", r.uid()), zap.Error(err))
+			m.log.Infow(fmt.Sprintf("failed to start rule (%s)", r.uid()), logger.Error(err))
 		}
 	}
 }

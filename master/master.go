@@ -16,7 +16,6 @@ import (
 	"github.com/aiicy/aiicy/sdk/aiicy-go"
 	grpcapi "github.com/aiicy/aiicy/sdk/aiicy-go/api"
 	cmap "github.com/orcaman/concurrent-map"
-	"go.uber.org/zap"
 	"os"
 	"os/signal"
 	"path"
@@ -36,7 +35,7 @@ type Master struct {
 	accounts  cmap.ConcurrentMap
 	infostats *infoStats
 	sig       chan os.Signal
-	log       *zap.SugaredLogger
+	log       *logger.Logger
 }
 
 // New creates a new master

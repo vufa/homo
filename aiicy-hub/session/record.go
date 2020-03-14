@@ -6,19 +6,19 @@ import (
 	"github.com/256dpi/gomqtt/packet"
 	"github.com/aiicy/aiicy/aiicy-hub/common"
 	"github.com/aiicy/aiicy/aiicy-hub/persist"
-	"go.uber.org/zap"
+	"github.com/aiicy/aiicy/logger"
 	"sync"
 )
 
 // recorder records session info
 type recorder struct {
 	db  persist.Database
-	log *zap.SugaredLogger
+	log *logger.Logger
 	sync.Mutex
 }
 
 // NewRecorder creates a recorder
-func newRecorder(db persist.Database, log *zap.SugaredLogger) *recorder {
+func newRecorder(db persist.Database, log *logger.Logger) *recorder {
 	return &recorder{
 		db:  db,
 		log: log.With("session", "recorder"),
@@ -114,7 +114,7 @@ func (c *recorder) setRetained(topic string, msg *packet.Message) error {
 	}
 	err = c.db.BucketPut(common.BucketNameDotRetained, []byte(topic), value)
 	if err != nil {
-		c.log.Errorw(fmt.Sprintf("failed to persist retain message: topic=%s", topic), zap.Error(err))
+		c.log.Errorw(fmt.Sprintf("failed to persist retain message: topic=%s", topic), logger.Error(err))
 		return fmt.Errorf("failed to persist retain message: %s", err.Error())
 	}
 	c.log.Debugf("retain message persisited: topic=%s", topic)
@@ -125,7 +125,7 @@ func (c *recorder) setRetained(topic string, msg *packet.Message) error {
 func (c *recorder) getRetained() ([]*packet.Message, error) {
 	l, err := c.db.BucketList(common.BucketNameDotRetained)
 	if err != nil {
-		c.log.Errorw("failed to get retaind message", zap.Error(err))
+		c.log.Errorw("failed to get retaind message", logger.Error(err))
 		return nil, fmt.Errorf("failed to get retain message: %s", err.Error())
 	}
 	result := make([]*packet.Message, 0)
@@ -133,7 +133,7 @@ func (c *recorder) getRetained() ([]*packet.Message, error) {
 		var msg packet.Message
 		err := json.Unmarshal(v, &msg)
 		if err != nil {
-			c.log.Warnw("failed to unmarshal retain message", zap.Error(err))
+			c.log.Warnw("failed to unmarshal retain message", logger.Error(err))
 		}
 		result = append(result, &msg)
 	}
@@ -145,7 +145,7 @@ func (c *recorder) getRetained() ([]*packet.Message, error) {
 func (c *recorder) removeRetained(topic string) error {
 	err := c.db.BucketDelete(common.BucketNameDotRetained, []byte(topic))
 	if err != nil {
-		c.log.Errorw(fmt.Sprintf("failed to remove retain message: topic=%s", topic), zap.Error(err))
+		c.log.Errorw(fmt.Sprintf("failed to remove retain message: topic=%s", topic), logger.Error(err))
 		return fmt.Errorf("failed to remove retain message: %s", err.Error())
 	}
 	c.log.Debugf("retain message removed: topic=%s", topic)
@@ -160,7 +160,7 @@ func (c *recorder) setWill(id string, msg *packet.Message) error {
 	}
 	err = c.db.BucketPut(common.BucketNameDotWill, []byte(id), value)
 	if err != nil {
-		c.log.Errorw(fmt.Sprintf("failed to persist will message: topic=%s, id=%s", msg.Topic, id), zap.Error(err))
+		c.log.Errorw(fmt.Sprintf("failed to persist will message: topic=%s, id=%s", msg.Topic, id), logger.Error(err))
 		return fmt.Errorf("failed to persist will message: %s", err.Error())
 	}
 	c.log.Debugf("will message persisted: topic=%s, id=%s", msg.Topic, id)
@@ -171,7 +171,7 @@ func (c *recorder) setWill(id string, msg *packet.Message) error {
 func (c *recorder) getWill(id string) (*packet.Message, error) {
 	data, err := c.db.BucketGet(common.BucketNameDotWill, []byte(id))
 	if err != nil {
-		c.log.Errorw(fmt.Sprintf("failed to get will message: id=%s", id), zap.Error(err))
+		c.log.Errorw(fmt.Sprintf("failed to get will message: id=%s", id), logger.Error(err))
 		return nil, fmt.Errorf("failed to get will message: %s", err.Error())
 	}
 	if len(data) == 0 {
@@ -190,7 +190,7 @@ func (c *recorder) getWill(id string) (*packet.Message, error) {
 func (c *recorder) removeWill(id string) error {
 	err := c.db.BucketDelete(common.BucketNameDotWill, []byte(id))
 	if err != nil {
-		c.log.Errorw(fmt.Sprintf("failed to remove will message: id=%s", id), zap.Error(err))
+		c.log.Errorw(fmt.Sprintf("failed to remove will message: id=%s", id), logger.Error(err))
 		return fmt.Errorf("failed to remove will message: %s", err.Error())
 	}
 	c.log.Debugf("will message removed: id=%s", id)

@@ -6,11 +6,11 @@ package aiicy
 
 import (
 	context "context"
+	"github.com/aiicy/aiicy/logger"
 	mqtt "github.com/aiicy/aiicy/protocol/mqtt"
 	aiicy_go "github.com/aiicy/aiicy/sdk/aiicy-go"
 	api "github.com/aiicy/aiicy/sdk/aiicy-go/api"
 	gomock "github.com/golang/mock/gomock"
-	zap "go.uber.org/zap"
 	os "os"
 	reflect "reflect"
 )
@@ -213,10 +213,10 @@ func (mr *MockContextMockRecorder) LoadConfig(arg0, arg1 interface{}) *gomock.Ca
 }
 
 // Log mocks base method
-func (m *MockContext) Log() *zap.SugaredLogger {
+func (m *MockContext) Log() *logger.Logger {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Log")
-	ret0, _ := ret[0].(*zap.SugaredLogger)
+	ret0, _ := ret[0].(*logger.Logger)
 	return ret0
 }
 

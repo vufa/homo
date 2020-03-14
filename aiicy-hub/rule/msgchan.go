@@ -3,9 +3,9 @@ package rule
 import (
 	"fmt"
 	"github.com/aiicy/aiicy/aiicy-hub/common"
+	"github.com/aiicy/aiicy/logger"
 	"github.com/aiicy/aiicy/utils"
 	"github.com/jpillora/backoff"
-	"go.uber.org/zap"
 	"time"
 )
 
@@ -27,11 +27,11 @@ type msgchan struct {
 	publish          common.Publish
 	republish        common.Publish
 	republishBackoff *backoff.Backoff
-	log              *zap.SugaredLogger
+	log              *logger.Logger
 }
 
 // newMsgChan creates a new message channel
-func newMsgChan(l0, l1 int, publish, republish common.Publish, republishTimeout time.Duration, quitTimeout time.Duration, persist func(uint64), log *zap.SugaredLogger) *msgchan {
+func newMsgChan(l0, l1 int, publish, republish common.Publish, republishTimeout time.Duration, quitTimeout time.Duration, persist func(uint64), log *logger.Logger) *msgchan {
 	backoff := &backoff.Backoff{
 		Min:    time.Millisecond * 100,
 		Max:    republishTimeout,
@@ -78,21 +78,21 @@ func (c *msgchan) close(force bool) {
 	}
 	err := c.msgtomb.Wait()
 	if err != nil {
-		c.log.Debugw("message channel closed", zap.Error(err))
+		c.log.Debugw("message channel closed", logger.Error(err))
 	}
 	if !force {
 		c.acktomb.Kill(nil)
 	}
 	err = c.acktomb.Wait()
 	if err != nil {
-		c.log.Debugw("message channel closed", zap.Error(err))
+		c.log.Debugw("message channel closed", logger.Error(err))
 	}
 }
 
 // PutQ0 put message published with qos=0
 func (c *msgchan) putQ0(msg *common.Message) {
 	if !c.msgtomb.Alive() {
-		c.log.Errorw("failed to put message (qos=0)", zap.Error(errMsgChanClosed))
+		c.log.Errorw("failed to put message (qos=0)", logger.Error(errMsgChanClosed))
 		return
 	}
 	select {
@@ -106,7 +106,7 @@ func (c *msgchan) putQ0(msg *common.Message) {
 func (c *msgchan) putQ1(msg *common.Message) {
 	select {
 	case <-c.msgtomb.Dying():
-		c.log.Errorw("failed to put message (qos=1)", zap.Error(errMsgChanClosed))
+		c.log.Errorw("failed to put message (qos=1)", logger.Error(errMsgChanClosed))
 	case c.msgq1 <- msg:
 	}
 }

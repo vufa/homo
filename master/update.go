@@ -6,7 +6,6 @@ import (
 	"github.com/aiicy/aiicy/sdk/aiicy-go"
 	"github.com/aiicy/aiicy/utils"
 	"github.com/inconshreveable/go-update"
-	"go.uber.org/zap"
 	"os"
 	"os/exec"
 	"path"
@@ -45,10 +44,10 @@ func (m *Master) UpdateAPP(trace, target string) error {
 
 	cur, old, err := m.loadAPPConfig(target)
 	if err != nil {
-		log.With(aiicy.OTAKeyStep, aiicy.OTARollingBack).Errorw("failed to reload config", zap.Error(err))
+		log.With(aiicy.OTAKeyStep, aiicy.OTARollingBack).Errorw("failed to reload config", logger.Error(err))
 		rberr := m.rollBackAPP()
 		if rberr != nil {
-			log.With(aiicy.OTAKeyStep, aiicy.OTAFailure).Errorw("failed to roll back", zap.Error(rberr))
+			log.With(aiicy.OTAKeyStep, aiicy.OTAFailure).Errorw("failed to roll back", logger.Error(rberr))
 			return fmt.Errorf("failed to reload config: %s; failed to roll back: %s", err.Error(), rberr.Error())
 		}
 		log.With(aiicy.OTAKeyStep, aiicy.OTARolledBack).Infof("app is rolled back")
@@ -64,10 +63,10 @@ func (m *Master) UpdateAPP(trace, target string) error {
 	// start all updated or added services
 	err = m.startServices(cur)
 	if err != nil {
-		log.With(aiicy.OTAKeyStep, aiicy.OTARollingBack).Errorw("failed to start app", zap.Error(err))
+		log.With(aiicy.OTAKeyStep, aiicy.OTARollingBack).Errorw("failed to start app", logger.Error(err))
 		rberr := m.rollBackAPP()
 		if rberr != nil {
-			log.With(aiicy.OTAKeyStep, aiicy.OTAFailure).Errorw("failed to roll back", zap.Error(rberr))
+			log.With(aiicy.OTAKeyStep, aiicy.OTAFailure).Errorw("failed to roll back", logger.Error(rberr))
 			return fmt.Errorf("failed to start app: %s; failed to roll back: %s", err.Error(), rberr.Error())
 		}
 		// stop all updated or added services
@@ -75,7 +74,7 @@ func (m *Master) UpdateAPP(trace, target string) error {
 		// start all removed or updated services
 		rberr = m.startServices(old)
 		if rberr != nil {
-			log.With(aiicy.OTAKeyStep, aiicy.OTAFailure).Errorw("failed to roll back", zap.Error(rberr))
+			log.With(aiicy.OTAKeyStep, aiicy.OTAFailure).Errorw("failed to roll back", logger.Error(rberr))
 			return fmt.Errorf("failed to restart old app: %s; failed to roll back: %s", err.Error(), rberr.Error())
 		}
 		m.commitAPP(old.AppVersion)
@@ -150,7 +149,7 @@ func (m *Master) commitAPP(ver string) {
 	// remove application.yml.old
 	err := os.RemoveAll(appBackupFile)
 	if err != nil {
-		logger.S.Errorw(fmt.Sprintf("failed to remove backup file (%s)", appBackupFile), zap.Error(err))
+		logger.S.Errorw(fmt.Sprintf("failed to remove backup file (%s)", appBackupFile), logger.Error(err))
 	}
 }
 
@@ -159,16 +158,16 @@ func (m *Master) UpdateMST(trace, target, backup string) (err error) {
 	log := logger.New(m.cfg.OTALog, aiicy.OTAKeyTrace, trace, aiicy.OTAKeyType, aiicy.OTAMST)
 
 	if err = m.check(target); err != nil {
-		log.With(aiicy.OTAKeyStep, aiicy.OTAFailure).Errorw("failed to check master", zap.Error(err))
+		log.With(aiicy.OTAKeyStep, aiicy.OTAFailure).Errorw("failed to check master", logger.Error(err))
 		return fmt.Errorf("failed to check master: %s", err.Error())
 	}
 
 	log.With(aiicy.OTAKeyStep, aiicy.OTAUpdating).Info("master is updating")
 	if err = apply(target, backup); err != nil {
-		log.With(aiicy.OTAKeyStep, aiicy.OTARollingBack).Errorw("failed to apply master", zap.Error(err))
+		log.With(aiicy.OTAKeyStep, aiicy.OTARollingBack).Errorw("failed to apply master", logger.Error(err))
 		rberr := RollBackMST()
 		if rberr != nil {
-			log.With(aiicy.OTAKeyStep, aiicy.OTAFailure).Errorw("failed to roll back", zap.Error(rberr))
+			log.With(aiicy.OTAKeyStep, aiicy.OTAFailure).Errorw("failed to roll back", logger.Error(rberr))
 			return fmt.Errorf("failed to apply master: %s; failed to roll back: %s", err.Error(), rberr.Error())
 		}
 		log.With(aiicy.OTAKeyStep, aiicy.OTARolledBack).Info("master is rolled back")
@@ -188,11 +187,11 @@ func RollBackMST() error {
 	}
 	err := apply(backup, "")
 	if err != nil {
-		logger.S.Errorw("failed to apply backup master", zap.Error(err))
+		logger.S.Errorw("failed to apply backup master", logger.Error(err))
 	}
 	err = os.RemoveAll(backup)
 	if err != nil {
-		logger.S.Errorw(fmt.Sprintf("failed to remove backup file (%s)", backup), zap.Error(err))
+		logger.S.Errorw(fmt.Sprintf("failed to remove backup file (%s)", backup), logger.Error(err))
 	}
 	return nil
 }

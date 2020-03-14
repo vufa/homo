@@ -2,7 +2,7 @@ package native
 
 import (
 	"fmt"
-	"go.uber.org/zap"
+	"github.com/aiicy/aiicy/logger"
 	"os"
 	"syscall"
 	"time"
@@ -35,7 +35,7 @@ func (e *nativeEngine) startProcess(cfg processConfigs) (*os.Process, error) {
 		},
 	)
 	if err != nil {
-		e.log.Warn("failed to start process", zap.Error(err))
+		e.log.Warn("failed to start process", logger.Error(err))
 		return nil, err
 	}
 	e.log.Debugf("process (%d) started", p.Pid)
@@ -45,7 +45,7 @@ func (e *nativeEngine) startProcess(cfg processConfigs) (*os.Process, error) {
 func (e *nativeEngine) waitProcess(p *os.Process) error {
 	ps, err := p.Wait()
 	if err != nil {
-		e.log.Warn(fmt.Sprintf("failed to wait process (%d)", p.Pid), zap.Error(err))
+		e.log.Warn(fmt.Sprintf("failed to wait process (%d)", p.Pid), logger.Error(err))
 		return err
 	}
 	e.log.Debugf("process (%d) %s", p.Pid, ps.String())
@@ -74,7 +74,7 @@ func (e *nativeEngine) stopProcess(p *os.Process) error {
 		e.log.Warnf("timed out to wait process (%d)", p.Pid)
 		err = p.Kill()
 		if err != nil {
-			e.log.Warn(fmt.Sprintf("failed to kill process (%d)", p.Pid), zap.Error(err))
+			e.log.Warn(fmt.Sprintf("failed to kill process (%d)", p.Pid), logger.Error(err))
 		}
 		return fmt.Errorf("timed out to wait process (%d)", p.Pid)
 	case err := <-done:

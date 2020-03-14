@@ -3,11 +3,11 @@ package main
 import (
 	"context"
 	"fmt"
+	"github.com/aiicy/aiicy/logger"
 	"github.com/aiicy/aiicy/sdk/aiicy-go"
 	"github.com/aiicy/aiicy/utils"
 	pool "github.com/jolestar/go-commons-pool"
 	"github.com/jpillora/backoff"
-	"go.uber.org/zap"
 	"strings"
 	"time"
 )
@@ -18,12 +18,12 @@ type Function struct {
 	cfg  FunctionInfo
 	ids  chan uint32
 	pool *pool.ObjectPool
-	log  *zap.SugaredLogger
+	log  *logger.Logger
 	tomb utils.Tomb
 }
 
 // NewFunction creates a new function
-func NewFunction(cfg FunctionInfo, p Producer, log *zap.SugaredLogger) *Function {
+func NewFunction(cfg FunctionInfo, p Producer, log *logger.Logger) *Function {
 	f := &Function{
 		p:   p,
 		cfg: cfg,

@@ -2,7 +2,7 @@ package broker
 
 import (
 	"fmt"
-	"go.uber.org/zap"
+	"github.com/aiicy/aiicy/logger"
 	"time"
 
 	"github.com/aiicy/aiicy/aiicy-hub/common"
@@ -35,11 +35,11 @@ type Broker struct {
 	config *config.Config
 	report Report
 	tomb   utils.Tomb
-	log    *zap.SugaredLogger
+	log    *logger.Logger
 }
 
 // NewBroker NewBroker
-func NewBroker(c *config.Config, pf *persist.Factory, report Report, log *zap.SugaredLogger) (b *Broker, err error) {
+func NewBroker(c *config.Config, pf *persist.Factory, report Report, log *logger.Logger) (b *Broker, err error) {
 	msgqos1DB, err := pf.NewDB("msgqos1.db")
 	if err != nil {
 		return nil, err
@@ -207,5 +207,5 @@ func (b *Broker) Close() {
 	b.log.Infof("broker closing")
 	b.tomb.Kill(nil)
 	err := b.tomb.Wait()
-	b.log.Infof("broker closed", zap.Error(err))
+	b.log.Infof("broker closed", logger.Error(err))
 }

@@ -4,10 +4,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/256dpi/gomqtt/packet"
+	"github.com/aiicy/aiicy/logger"
 	"github.com/aiicy/aiicy/protocol/mqtt"
 	"github.com/aiicy/aiicy/sdk/aiicy-go"
 	"github.com/docker/distribution/uuid"
-	"go.uber.org/zap"
 	"time"
 )
 
@@ -15,10 +15,10 @@ type ruler struct {
 	cfg RuleInfo
 	fun *Function
 	hub *mqtt.Dispatcher
-	log *zap.SugaredLogger
+	log *logger.Logger
 }
 
-func newRuler(ri RuleInfo, c *mqtt.Dispatcher, f *Function, log *zap.SugaredLogger) *ruler {
+func newRuler(ri RuleInfo, c *mqtt.Dispatcher, f *Function, log *logger.Logger) *ruler {
 	return &ruler{
 		cfg: ri,
 		hub: c,
