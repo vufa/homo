@@ -2,12 +2,13 @@ package rule
 
 import (
 	"fmt"
-	"github.com/aiicy/aiicy/logger"
 	"os"
 	"sync"
 	"sync/atomic"
 	"testing"
 	"time"
+
+	"github.com/aiicy/aiicy-go/logger"
 
 	bb "github.com/aiicy/aiicy/aiicy-hub/broker"
 	"github.com/aiicy/aiicy/aiicy-hub/common"

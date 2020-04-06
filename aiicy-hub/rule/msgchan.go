@@ -2,11 +2,12 @@ package rule
 
 import (
 	"fmt"
+	"time"
+
+	"github.com/aiicy/aiicy-go/logger"
 	"github.com/aiicy/aiicy/aiicy-hub/common"
-	"github.com/aiicy/aiicy/logger"
 	"github.com/aiicy/aiicy/utils"
 	"github.com/jpillora/backoff"
-	"time"
 )
 
 var errMsgChanClosed = fmt.Errorf("message channel is closed")

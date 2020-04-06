@@ -2,8 +2,9 @@ package broker
 
 import (
 	"fmt"
-	"github.com/aiicy/aiicy/logger"
 	"time"
+
+	"github.com/aiicy/aiicy-go/logger"
 
 	"github.com/aiicy/aiicy/aiicy-hub/common"
 	"github.com/aiicy/aiicy/aiicy-hub/config"

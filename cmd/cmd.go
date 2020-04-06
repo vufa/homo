@@ -8,9 +8,10 @@
 package cmd
 
 import (
-	"github.com/aiicy/aiicy/logger"
-	"github.com/urfave/cli/v2"
 	"os"
+
+	"github.com/aiicy/aiicy-go/logger"
+	"github.com/urfave/cli/v2"
 )
 
 // Execute execute

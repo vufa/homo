@@ -9,17 +9,18 @@ package master
 
 import (
 	"fmt"
-	"github.com/aiicy/aiicy/logger"
+	"os"
+	"os/signal"
+	"path"
+	"syscall"
+
+	"github.com/aiicy/aiicy-go/logger"
 	"github.com/aiicy/aiicy/master/api"
 	"github.com/aiicy/aiicy/master/database"
 	"github.com/aiicy/aiicy/master/engine"
 	"github.com/aiicy/aiicy/sdk/aiicy-go"
 	grpcapi "github.com/aiicy/aiicy/sdk/aiicy-go/api"
 	cmap "github.com/orcaman/concurrent-map"
-	"os"
-	"os/signal"
-	"path"
-	"syscall"
 )
 
 // Master master manages all modules and connects with cloud

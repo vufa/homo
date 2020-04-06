@@ -8,16 +8,17 @@
 package main
 
 import (
+	"os"
+
+	"github.com/aiicy/aiicy-go/logger"
 	"github.com/aiicy/aiicy/aiicy-hub/broker"
 	"github.com/aiicy/aiicy/aiicy-hub/config"
 	"github.com/aiicy/aiicy/aiicy-hub/persist"
 	"github.com/aiicy/aiicy/aiicy-hub/rule"
 	"github.com/aiicy/aiicy/aiicy-hub/server"
 	"github.com/aiicy/aiicy/aiicy-hub/session"
-	"github.com/aiicy/aiicy/logger"
 	"github.com/aiicy/aiicy/sdk/aiicy-go"
 	"github.com/urfave/cli/v2"
-	"os"
 )
 
 type mo struct {

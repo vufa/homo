@@ -6,11 +6,11 @@ package aiicy
 
 import (
 	context "context"
-	"github.com/aiicy/aiicy/logger"
 	mqtt "github.com/aiicy/aiicy/protocol/mqtt"
-	aiicy_go "github.com/aiicy/aiicy/sdk/aiicy-go"
+	aiicy "github.com/aiicy/aiicy/sdk/aiicy-go"
 	api "github.com/aiicy/aiicy/sdk/aiicy-go/api"
 	gomock "github.com/golang/mock/gomock"
+	zap "go.uber.org/zap"
 	os "os"
 	reflect "reflect"
 )
@@ -53,10 +53,10 @@ func (mr *MockContextMockRecorder) Close() *gomock.Call {
 }
 
 // Config mocks base method
-func (m *MockContext) Config() *aiicy_go.ServiceConfig {
+func (m *MockContext) Config() *aiicy.ServiceConfig {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Config")
-	ret0, _ := ret[0].(*aiicy_go.ServiceConfig)
+	ret0, _ := ret[0].(*aiicy.ServiceConfig)
 	return ret0
 }
 
@@ -140,10 +140,10 @@ func (mr *MockContextMockRecorder) GetKVConext(arg0, arg1 interface{}) *gomock.C
 }
 
 // InspectSystem mocks base method
-func (m *MockContext) InspectSystem() (*aiicy_go.Inspect, error) {
+func (m *MockContext) InspectSystem() (*aiicy.Inspect, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "InspectSystem")
-	ret0, _ := ret[0].(*aiicy_go.Inspect)
+	ret0, _ := ret[0].(*aiicy.Inspect)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -213,10 +213,10 @@ func (mr *MockContextMockRecorder) LoadConfig(arg0, arg1 interface{}) *gomock.Ca
 }
 
 // Log mocks base method
-func (m *MockContext) Log() *logger.Logger {
+func (m *MockContext) Log() *zap.SugaredLogger {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Log")
-	ret0, _ := ret[0].(*logger.Logger)
+	ret0, _ := ret[0].(*zap.SugaredLogger)
 	return ret0
 }
 

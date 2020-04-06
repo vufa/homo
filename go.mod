@@ -6,6 +6,7 @@ require (
 	github.com/256dpi/gomqtt v0.14.1
 	github.com/Microsoft/go-winio v0.4.14 // indirect
 	github.com/StackExchange/wmi v0.0.0-20190523213315-cbe66965904d // indirect
+	github.com/aiicy/aiicy-go v0.0.0-20200401164018-6b04bc10a20a
 	github.com/containerd/containerd v1.3.2
 	github.com/creasty/defaults v1.3.0
 	github.com/deckarep/golang-set v1.7.1
@@ -26,12 +27,13 @@ require (
 	github.com/opencontainers/go-digest v1.0.0-rc1 // indirect
 	github.com/opencontainers/image-spec v1.0.1 // indirect
 	github.com/orcaman/concurrent-map v0.0.0-20190826125027-8c72a8bb44f6
+	github.com/pkg/errors v0.9.1 // indirect
 	github.com/shirou/gopsutil v2.19.12+incompatible
 	github.com/sirupsen/logrus v1.4.2 // indirect
-	github.com/stretchr/testify v1.4.0
+	github.com/stretchr/testify v1.5.1
 	github.com/urfave/cli/v2 v2.1.1
 	go.etcd.io/bbolt v1.3.3 // indirect
-	go.uber.org/zap v1.13.0
+	go.uber.org/zap v1.14.1
 	golang.org/x/net v0.0.0-20200114155413-6afb5195e5aa
 	google.golang.org/grpc v1.26.0
 	gopkg.in/natefinch/lumberjack.v2 v2.0.0

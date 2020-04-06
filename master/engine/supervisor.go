@@ -2,8 +2,9 @@ package engine
 
 import (
 	"fmt"
-	"github.com/aiicy/aiicy/logger"
 	"time"
+
+	"github.com/aiicy/aiicy-go/logger"
 
 	"github.com/aiicy/aiicy/sdk/aiicy-go"
 	"github.com/jpillora/backoff"

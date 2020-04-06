@@ -2,11 +2,12 @@ package mqtt
 
 import (
 	"fmt"
+	"time"
+
 	"github.com/256dpi/gomqtt/packet"
-	"github.com/aiicy/aiicy/logger"
+	"github.com/aiicy/aiicy-go/logger"
 	"github.com/aiicy/aiicy/utils"
 	"github.com/jpillora/backoff"
-	"time"
 )
 
 // ErrDispatcherClosed is returned if the dispatcher is closed

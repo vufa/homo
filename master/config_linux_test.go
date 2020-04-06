@@ -11,7 +11,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/aiicy/aiicy/logger"
+	"github.com/aiicy/aiicy-go/logger"
 	"github.com/aiicy/aiicy/protocol/http"
 	"github.com/aiicy/aiicy/sdk/aiicy-go"
 	"github.com/aiicy/aiicy/sdk/aiicy-go/api"

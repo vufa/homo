@@ -2,12 +2,12 @@ package session
 
 import (
 	"github.com/256dpi/gomqtt/transport"
+	"github.com/aiicy/aiicy-go/logger"
 	"github.com/aiicy/aiicy/aiicy-hub/auth"
 	"github.com/aiicy/aiicy/aiicy-hub/common"
 	"github.com/aiicy/aiicy/aiicy-hub/config"
 	"github.com/aiicy/aiicy/aiicy-hub/persist"
 	"github.com/aiicy/aiicy/aiicy-hub/rule"
-	"github.com/aiicy/aiicy/logger"
 	cmap "github.com/orcaman/concurrent-map"
 )
 

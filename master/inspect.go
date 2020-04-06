@@ -3,16 +3,17 @@ package master
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/aiicy/aiicy/logger"
-	"github.com/aiicy/aiicy/master/engine"
-	"github.com/aiicy/aiicy/sdk/aiicy-go"
-	"github.com/aiicy/aiicy/utils"
-	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"os"
 	"runtime"
 	"sync"
 	"time"
+
+	"github.com/aiicy/aiicy-go/logger"
+	"github.com/aiicy/aiicy/master/engine"
+	"github.com/aiicy/aiicy/sdk/aiicy-go"
+	"github.com/aiicy/aiicy/utils"
+	"gopkg.in/yaml.v2"
 )
 
 type infoStats struct {

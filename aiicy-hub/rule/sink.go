@@ -1,12 +1,13 @@
 package rule
 
 import (
-	"github.com/aiicy/aiicy/aiicy-hub/common"
-	"github.com/aiicy/aiicy/aiicy-hub/router"
-	"github.com/aiicy/aiicy/logger"
-	"github.com/aiicy/aiicy/utils"
 	"sync/atomic"
 	"time"
+
+	"github.com/aiicy/aiicy-go/logger"
+	"github.com/aiicy/aiicy/aiicy-hub/common"
+	"github.com/aiicy/aiicy/aiicy-hub/router"
+	"github.com/aiicy/aiicy/utils"
 )
 
 type sink struct {

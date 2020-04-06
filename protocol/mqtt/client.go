@@ -2,16 +2,17 @@ package mqtt
 
 import (
 	"fmt"
-	"github.com/256dpi/gomqtt/client"
-	"github.com/256dpi/gomqtt/packet"
-	"github.com/256dpi/gomqtt/transport"
-	"github.com/aiicy/aiicy/logger"
-	"github.com/aiicy/aiicy/utils"
-	"github.com/creasty/defaults"
-	"gopkg.in/tomb.v2"
 	"io"
 	"sync"
 	"time"
+
+	"github.com/256dpi/gomqtt/client"
+	"github.com/256dpi/gomqtt/packet"
+	"github.com/256dpi/gomqtt/transport"
+	"github.com/aiicy/aiicy-go/logger"
+	"github.com/aiicy/aiicy/utils"
+	"github.com/creasty/defaults"
+	"gopkg.in/tomb.v2"
 )
 
 // A Client connects to a broker and handles the transmission of packets

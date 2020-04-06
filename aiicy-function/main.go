@@ -3,11 +3,12 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/aiicy/aiicy/logger"
+	"os"
+
+	"github.com/aiicy/aiicy-go/logger"
 	"github.com/aiicy/aiicy/protocol/mqtt"
 	"github.com/aiicy/aiicy/sdk/aiicy-go"
 	"github.com/urfave/cli/v2"
-	"os"
 )
 
 func main() {

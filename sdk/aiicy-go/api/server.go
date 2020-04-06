@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 	"syscall"
 
-	"github.com/aiicy/aiicy/logger"
+	"github.com/aiicy/aiicy-go/logger"
 	"github.com/aiicy/aiicy/utils"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"

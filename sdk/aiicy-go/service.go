@@ -8,9 +8,10 @@
 package aiicy
 
 import (
-	"github.com/aiicy/aiicy/logger"
 	"os"
 	"runtime/debug"
+
+	"github.com/aiicy/aiicy-go/logger"
 )
 
 type Service struct {

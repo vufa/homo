@@ -10,19 +10,20 @@ package aiicy
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/aiicy/aiicy/logger"
-	"github.com/aiicy/aiicy/protocol/mqtt"
-	"github.com/aiicy/aiicy/utils"
-	"github.com/docker/go-units"
 	"reflect"
 	"strings"
 	"time"
+
+	"github.com/aiicy/aiicy-go/logger"
+	"github.com/aiicy/aiicy/protocol/mqtt"
+	"github.com/aiicy/aiicy/utils"
+	"github.com/docker/go-units"
 )
 
 // ServiceConfig base config of service
 type ServiceConfig struct {
-	Hub    mqtt.ClientInfo `yaml:"hub" json:"hub"`
-	Logger logger.LogInfo  `yaml:"logger" json:"logger"`
+	Hub    mqtt.ClientInfo  `yaml:"hub" json:"hub"`
+	Logger logger.LogConfig `yaml:"logger" json:"logger"`
 }
 
 // RestartPolicies

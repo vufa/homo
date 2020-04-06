@@ -2,8 +2,9 @@ package session
 
 import (
 	"fmt"
-	"github.com/aiicy/aiicy/logger"
 	"sync"
+
+	"github.com/aiicy/aiicy-go/logger"
 
 	"github.com/256dpi/gomqtt/packet"
 	"github.com/256dpi/gomqtt/transport"

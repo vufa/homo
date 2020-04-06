@@ -2,11 +2,12 @@ package server
 
 import (
 	"fmt"
-	"github.com/aiicy/aiicy/logger"
 	"net"
 	"sync/atomic"
 	"testing"
 	"time"
+
+	"github.com/aiicy/aiicy-go/logger"
 
 	"github.com/256dpi/gomqtt/packet"
 	"github.com/256dpi/gomqtt/transport"

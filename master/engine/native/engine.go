@@ -2,13 +2,14 @@ package native
 
 import (
 	"fmt"
-	"github.com/aiicy/aiicy/sdk/aiicy-go"
 	"os"
 	"path"
 	"strings"
 	"time"
 
-	"github.com/aiicy/aiicy/logger"
+	"github.com/aiicy/aiicy/sdk/aiicy-go"
+
+	"github.com/aiicy/aiicy-go/logger"
 	"github.com/aiicy/aiicy/master/engine"
 	"github.com/aiicy/aiicy/utils"
 	cmap "github.com/orcaman/concurrent-map"
@@ -29,7 +30,7 @@ func New(stats engine.InfoStats, opts engine.Options) (engine.Engine, error) {
 		InfoStats: stats,
 		pwd:       opts.Pwd,
 		grace:     opts.Grace,
-		log:       logger.New(logger.LogInfo{Level: "debug"}, "engine", NAME),
+		log:       logger.New(logger.LogConfig{Level: "debug"}, "engine", NAME),
 	}
 	return e, nil
 }

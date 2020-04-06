@@ -2,14 +2,15 @@ package master
 
 import (
 	"fmt"
-	"github.com/aiicy/aiicy/logger"
-	"github.com/aiicy/aiicy/sdk/aiicy-go"
-	"github.com/aiicy/aiicy/utils"
-	"github.com/inconshreveable/go-update"
 	"os"
 	"os/exec"
 	"path"
 	"strings"
+
+	"github.com/aiicy/aiicy-go/logger"
+	"github.com/aiicy/aiicy/sdk/aiicy-go"
+	"github.com/aiicy/aiicy/utils"
+	"github.com/inconshreveable/go-update"
 )
 
 // TODO: need test

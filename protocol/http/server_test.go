@@ -1,8 +1,9 @@
 package http
 
 import (
-	"github.com/aiicy/aiicy/logger"
 	"testing"
+
+	"github.com/aiicy/aiicy-go/logger"
 
 	"github.com/stretchr/testify/assert"
 )

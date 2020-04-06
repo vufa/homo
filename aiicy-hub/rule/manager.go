@@ -2,14 +2,15 @@ package rule
 
 import (
 	"fmt"
+	"sync/atomic"
+	"time"
+
+	"github.com/aiicy/aiicy-go/logger"
 	"github.com/aiicy/aiicy/aiicy-hub/common"
 	"github.com/aiicy/aiicy/aiicy-hub/config"
 	"github.com/aiicy/aiicy/aiicy-hub/router"
-	"github.com/aiicy/aiicy/logger"
 	"github.com/aiicy/aiicy/utils"
 	cmap "github.com/orcaman/concurrent-map"
-	"sync/atomic"
-	"time"
 )
 
 const (

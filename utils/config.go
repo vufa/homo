@@ -3,11 +3,12 @@ package utils
 import (
 	"bytes"
 	"encoding/json"
-	"github.com/aiicy/aiicy/logger"
 	"io/ioutil"
 	"os"
 	"strings"
 	"text/template"
+
+	"github.com/aiicy/aiicy-go/logger"
 
 	"github.com/docker/go-units"
 	"gopkg.in/validator.v2"

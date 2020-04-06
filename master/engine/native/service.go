@@ -2,9 +2,10 @@ package native
 
 import (
 	"fmt"
-	"github.com/aiicy/aiicy/logger"
 	"os"
 	"sync"
+
+	"github.com/aiicy/aiicy-go/logger"
 
 	"github.com/aiicy/aiicy/master/engine"
 	"github.com/aiicy/aiicy/sdk/aiicy-go"

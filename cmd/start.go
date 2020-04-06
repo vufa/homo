@@ -9,7 +9,8 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/aiicy/aiicy/logger"
+
+	"github.com/aiicy/aiicy-go/logger"
 	"github.com/aiicy/aiicy/master"
 	"github.com/aiicy/aiicy/sdk/aiicy-go"
 	"github.com/aiicy/aiicy/utils"

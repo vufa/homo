@@ -8,7 +8,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/aiicy/aiicy/logger"
+	"github.com/aiicy/aiicy-go/logger"
 
 	"github.com/256dpi/gomqtt/packet"
 	bb "github.com/aiicy/aiicy/aiicy-hub/broker"

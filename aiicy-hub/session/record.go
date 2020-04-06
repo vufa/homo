@@ -3,11 +3,12 @@ package session
 import (
 	"encoding/json"
 	"fmt"
+	"sync"
+
 	"github.com/256dpi/gomqtt/packet"
+	"github.com/aiicy/aiicy-go/logger"
 	"github.com/aiicy/aiicy/aiicy-hub/common"
 	"github.com/aiicy/aiicy/aiicy-hub/persist"
-	"github.com/aiicy/aiicy/logger"
-	"sync"
 )
 
 // recorder records session info

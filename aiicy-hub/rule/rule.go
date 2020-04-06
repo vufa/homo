@@ -1,11 +1,12 @@
 package rule
 
 import (
-	"github.com/aiicy/aiicy/aiicy-hub/common"
-	"github.com/aiicy/aiicy/aiicy-hub/router"
-	"github.com/aiicy/aiicy/logger"
 	"strconv"
 	"sync"
+
+	"github.com/aiicy/aiicy-go/logger"
+	"github.com/aiicy/aiicy/aiicy-hub/common"
+	"github.com/aiicy/aiicy/aiicy-hub/router"
 )
 
 type base interface {

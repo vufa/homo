@@ -2,11 +2,12 @@ package session
 
 import (
 	"fmt"
-	"github.com/aiicy/aiicy/logger"
 	"os"
 	"strings"
 	"testing"
 	"time"
+
+	"github.com/aiicy/aiicy-go/logger"
 
 	"github.com/256dpi/gomqtt/packet"
 	"github.com/aiicy/aiicy/aiicy-hub/persist"

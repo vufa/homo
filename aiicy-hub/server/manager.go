@@ -2,7 +2,7 @@ package server
 
 import (
 	"github.com/256dpi/gomqtt/transport"
-	"github.com/aiicy/aiicy/logger"
+	"github.com/aiicy/aiicy-go/logger"
 	"github.com/aiicy/aiicy/protocol/mqtt"
 	"github.com/aiicy/aiicy/utils"
 )

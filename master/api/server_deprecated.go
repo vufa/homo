@@ -3,11 +3,12 @@ package api
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/aiicy/aiicy/logger"
+	"strconv"
+
+	"github.com/aiicy/aiicy-go/logger"
 	"github.com/aiicy/aiicy/master/engine"
 	"github.com/aiicy/aiicy/protocol/http"
 	"github.com/aiicy/aiicy/utils"
-	"strconv"
 )
 
 // Master master interface

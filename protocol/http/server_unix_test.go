@@ -3,9 +3,10 @@
 package http
 
 import (
-	"github.com/aiicy/aiicy/logger"
 	"os"
 	"testing"
+
+	"github.com/aiicy/aiicy-go/logger"
 
 	"github.com/stretchr/testify/assert"
 )

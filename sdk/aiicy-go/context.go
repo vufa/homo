@@ -10,14 +10,15 @@ package aiicy
 import (
 	"context"
 	"fmt"
-	"github.com/aiicy/aiicy/logger"
-	"github.com/aiicy/aiicy/protocol/mqtt"
-	"github.com/aiicy/aiicy/sdk/aiicy-go/api"
-	"github.com/aiicy/aiicy/utils"
 	"io"
 	"os"
 	"os/signal"
 	"syscall"
+
+	"github.com/aiicy/aiicy-go/logger"
+	"github.com/aiicy/aiicy/protocol/mqtt"
+	"github.com/aiicy/aiicy/sdk/aiicy-go/api"
+	"github.com/aiicy/aiicy/utils"
 )
 
 //go:generate mockgen -destination=mock/context.go -package=aiicy github.com/aiicy/aiicy/sdk/aiicy-go Context
