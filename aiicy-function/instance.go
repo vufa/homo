@@ -11,7 +11,7 @@ import (
 type Instance interface {
 	ID() uint32
 	Name() string
-	Call(msg *aiicy.FunctionMessage) (*aiicy.FunctionMessage, error)
+	Call(msg *FunctionMessage) (*FunctionMessage, error)
 	io.Closer
 }
 
@@ -59,7 +59,7 @@ func (p *producer) StartInstance(id uint32) (Instance, error) {
 	fcc.Message.Length.Max = p.cfg.Message.Length.Max
 	fcc.Timeout = p.cfg.Timeout
 	fcc.Backoff = p.cfg.Backoff
-	cli, err := aiicy.NewFClient(fcc)
+	cli, err := NewFClient(fcc)
 	if err != nil {
 		p.ctx.StopInstance(p.cfg.Service, name)
 		return nil, err
@@ -80,7 +80,7 @@ func (p *producer) StopInstance(i Instance) error {
 type instance struct {
 	id   uint32
 	name string
-	*aiicy.FClient
+	*FClient
 }
 
 // ID returns id

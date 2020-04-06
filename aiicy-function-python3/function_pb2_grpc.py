@@ -15,7 +15,7 @@ class FunctionStub(object):
       channel: A grpc.Channel.
     """
     self.Call = channel.unary_unary(
-        '/aiicy.Function/Call',
+        '/main.Function/Call',
         request_serializer=function__pb2.FunctionMessage.SerializeToString,
         response_deserializer=function__pb2.FunctionMessage.FromString,
         )
@@ -42,5 +42,5 @@ def add_FunctionServicer_to_server(servicer, server):
       ),
   }
   generic_handler = grpc.method_handlers_generic_handler(
-      'aiicy.Function', rpc_method_handlers)
+      'main.Function', rpc_method_handlers)
   server.add_generic_rpc_handlers((generic_handler,))

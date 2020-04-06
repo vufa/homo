@@ -1,6 +1,7 @@
-package aiicy
+package main
 
 import (
+	"github.com/aiicy/aiicy/sdk/aiicy-go"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 )
@@ -10,12 +11,12 @@ var callopt = grpc.FailFast(false)
 // FClient client of functions server
 type FClient struct {
 	cli  FunctionClient
-	cfg  FunctionClientConfig
+	cfg  aiicy.FunctionClientConfig
 	conn *grpc.ClientConn
 }
 
 // NewFClient creates a new client of functions server
-func NewFClient(cc FunctionClientConfig) (*FClient, error) {
+func NewFClient(cc aiicy.FunctionClientConfig) (*FClient, error) {
 	ctx, cel := context.WithTimeout(context.Background(), cc.Timeout)
 	defer cel()
 	conn, err := grpc.DialContext(

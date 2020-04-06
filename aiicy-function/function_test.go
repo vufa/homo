@@ -1,8 +1,9 @@
-package aiicy
+package main
 
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/aiicy/aiicy/sdk/aiicy-go"
 	"strings"
 	"testing"
 	"time"
@@ -15,7 +16,7 @@ import (
 func TestFunctionClient(t *testing.T) {
 	t.Skip("local test")
 
-	cc := FunctionClientConfig{
+	cc := aiicy.FunctionClientConfig{
 		Address: "127.0.0.1:50051",
 	}
 	err := utils.UnmarshalJSON([]byte("{\"address\":\"127.0.0.1:50051\"}"), &cc)
@@ -68,14 +69,14 @@ func TestFunctionCall(t *testing.T) {
 	}
 
 	// server 4m by default
-	sc := FunctionServerConfig{}
+	sc := aiicy.FunctionServerConfig{}
 	err := utils.UnmarshalJSON([]byte(`{"address":"127.0.0.1:0"}`), &sc)
 	assert.NoError(t, err)
 	svr, err := NewFServer(sc, call)
 	assert.NoError(t, err)
 
 	// client 4m by default
-	cc := FunctionClientConfig{}
+	cc := aiicy.FunctionClientConfig{}
 	err = utils.UnmarshalJSON([]byte("{\"address\":\""+svr.addr+"\"}"), &cc)
 	assert.NoError(t, err)
 	cli, err := NewFClient(cc)
@@ -110,7 +111,7 @@ func TestFunctionCall(t *testing.T) {
 	assert.NoError(t, err)
 
 	// client 6m
-	cc = FunctionClientConfig{Address: svr.addr, Timeout: time.Second}
+	cc = aiicy.FunctionClientConfig{Address: svr.addr, Timeout: time.Second}
 	cc.Message.Length.Max = 6 * 1024 * 1024
 	cli, err = NewFClient(cc)
 	assert.NoError(t, err)

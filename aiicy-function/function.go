@@ -4,13 +4,15 @@ import (
 	"context"
 	"fmt"
 	"github.com/aiicy/aiicy-go/logger"
-	"github.com/aiicy/aiicy/sdk/aiicy-go"
 	"github.com/aiicy/aiicy/utils"
 	pool "github.com/jolestar/go-commons-pool"
 	"github.com/jpillora/backoff"
 	"strings"
 	"time"
 )
+
+//go:generate protoc -I=. -I=$GOPATH/src --gogo_out=plugins=grpc:. function.proto
+//go:generate python3 -m grpc_tools.protoc -I. -I=$GOPATH/src --python_out=../aiicy-function-python3 --grpc_python_out=../aiicy-function-python3 function.proto
 
 // Function function
 type Function struct {
@@ -44,7 +46,7 @@ func NewFunction(cfg FunctionInfo, p Producer, log *logger.Logger) *Function {
 }
 
 // Call calls function to handle message and return result message
-func (f *Function) Call(msg *aiicy.FunctionMessage) (*aiicy.FunctionMessage, error) {
+func (f *Function) Call(msg *FunctionMessage) (*FunctionMessage, error) {
 	item, err := f.BorrowObjectWithRetry()
 	if err != nil {
 		return nil, err
@@ -53,7 +55,7 @@ func (f *Function) Call(msg *aiicy.FunctionMessage) (*aiicy.FunctionMessage, err
 }
 
 // CallAsync calls function to handle message and return result message
-func (f *Function) CallAsync(msg *aiicy.FunctionMessage, cb func(in, out *aiicy.FunctionMessage, err error)) error {
+func (f *Function) CallAsync(msg *FunctionMessage, cb func(in, out *FunctionMessage, err error)) error {
 	item, err := f.BorrowObjectWithRetry()
 	if err != nil {
 		return err
@@ -81,7 +83,7 @@ func (f *Function) BorrowObjectWithRetry() (interface{}, error) {
 	}
 }
 
-func (f *Function) call(i Instance, in *aiicy.FunctionMessage, c func(in, out *aiicy.FunctionMessage, err error)) (*aiicy.FunctionMessage, error) {
+func (f *Function) call(i Instance, in *FunctionMessage, c func(in, out *FunctionMessage, err error)) (*FunctionMessage, error) {
 	out, err := i.Call(in)
 	if err != nil {
 		f.log.Errorf("failed to talk with function instance: %s", err.Error())

@@ -8,7 +8,6 @@ import (
 	"github.com/256dpi/gomqtt/packet"
 	"github.com/aiicy/aiicy-go/logger"
 	"github.com/aiicy/aiicy/protocol/mqtt"
-	"github.com/aiicy/aiicy/sdk/aiicy-go"
 	"github.com/docker/distribution/uuid"
 )
 
@@ -33,7 +32,7 @@ func (rr *ruler) start() error {
 }
 
 func (rr *ruler) ProcessPublish(pkt *packet.Publish) error {
-	msg := &aiicy.FunctionMessage{
+	msg := &FunctionMessage{
 		ID:               uint64(pkt.ID),
 		QOS:              uint32(pkt.Message.QOS),
 		Topic:            pkt.Message.Topic,
@@ -57,7 +56,7 @@ func (rr *ruler) close() {
 	rr.hub.Close()
 }
 
-func (rr *ruler) callback(in, out *aiicy.FunctionMessage, err error) {
+func (rr *ruler) callback(in, out *FunctionMessage, err error) {
 	if err != nil {
 		for index := 1; index < rr.cfg.Retry.Max && err != nil; index++ {
 			rr.log.Debugf("function (%s) is retried %d time(s)", rr.fun.cfg.Name, index)

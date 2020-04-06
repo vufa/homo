@@ -67,7 +67,7 @@ func main() {
 					}
 				}
 				if cfg.Server.Address != "" {
-					svr, err := aiicy.NewFServer(cfg.Server, func(ctx context.Context, msg *aiicy.FunctionMessage) (*aiicy.FunctionMessage, error) {
+					svr, err := NewFServer(cfg.Server, func(ctx context.Context, msg *FunctionMessage) (*FunctionMessage, error) {
 						f, ok := functions[msg.FunctionName]
 						if !ok {
 							return nil, fmt.Errorf("function (%s) not found", msg.FunctionName)

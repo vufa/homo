@@ -1,7 +1,8 @@
-package aiicy
+package main
 
 import (
 	"fmt"
+	"github.com/aiicy/aiicy/sdk/aiicy-go"
 	"github.com/aiicy/aiicy/utils"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
@@ -16,13 +17,13 @@ type Call func(context.Context, *FunctionMessage) (*FunctionMessage, error)
 // FServer functions server to handle message
 type FServer struct {
 	addr string
-	cfg  FunctionServerConfig
+	cfg  aiicy.FunctionServerConfig
 	svr  *grpc.Server
 	call Call
 }
 
 // NewFServer creates a new functions server
-func NewFServer(c FunctionServerConfig, call Call) (*FServer, error) {
+func NewFServer(c aiicy.FunctionServerConfig, call Call) (*FServer, error) {
 	lis, err := net.Listen("tcp", c.Address)
 	if err != nil {
 		return nil, err

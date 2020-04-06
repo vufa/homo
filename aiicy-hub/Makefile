@@ -2,7 +2,7 @@
 # source: github.com/aiicy/aiicy/sdk/aiicy-go/templates/Makefile-go
 
 MODULE:=aiicy-hub
-SRC_FILES:=$(shell find . ../logger ../sdk ../protocol ../utils -type f -name '*.go')
+SRC_FILES:=$(shell find . ../sdk ../protocol ../utils -type f -name '*.go')
 BIN_FILE:=aiicy-hub
 BIN_CMD=$(shell echo $(@:$(OUTPUT)/%/$(MODULE)/bin/$(BIN_FILE)=%)  | sed 's:/v:/:g' | awk -F '/' '{print "GO111MODULE=on CGO_ENABLED=0 GOOS="$$1" GOARCH="$$2" GOARM="$$3" go build"}') -o $@ ${GO_FLAGS} .
 COPY_DIR:=../out

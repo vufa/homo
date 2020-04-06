@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package aiicy;
+package main;
 
 option (gogoproto.sizer_all) = true;
 option (gogoproto.marshaler_all) = true;
