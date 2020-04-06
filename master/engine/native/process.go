@@ -20,7 +20,11 @@ type processConfigs struct {
 }
 
 func (e *nativeEngine) startProcess(cfg processConfigs) (*os.Process, error) {
-	os.Chmod(cfg.exec, os.ModePerm)
+	err := os.Chmod(cfg.exec, os.ModePerm)
+	if err != nil {
+		e.log.Warn(fmt.Sprintf("chmod exec %s to %s failed", cfg.exec, os.ModePerm), logger.Error(err))
+		return nil, err
+	}
 	p, err := os.StartProcess(
 		cfg.exec,
 		cfg.argv,

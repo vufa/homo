@@ -1,0 +1,13 @@
+master:
+  address: http://0.0.0.0:1883
+logger:
+  path: var/log/aiicy/ui.log
+  level: 'debug'
+  mode: 'console'
+  format: 'text'
+  age:
+    max: 15
+  size:
+    max: 50
+  backup:
+    max: 15

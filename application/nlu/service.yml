@@ -1,7 +1,0 @@
-functions:
-  - name: 'application-nlu'
-    handler: 'index.handler'
-    codedir: 'var/db/aiicy/application-nlu'
-logger:
-  path: var/log/aiicy/service.log
-  level: "debug"

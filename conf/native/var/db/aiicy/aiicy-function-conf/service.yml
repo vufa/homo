@@ -1,0 +1,16 @@
+hub:
+  address: tcp://0.0.0.0:1883
+  username: test
+  password: hahaha
+  keepalive: -1 # no ping/pong
+logger:
+  path: var/log/aiicy/function.log
+  level: 'debug'
+  mode: 'console'
+  format: 'text'
+  age:
+    max: 15
+  size:
+    max: 50
+  backup:
+    max: 15

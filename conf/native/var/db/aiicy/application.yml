@@ -1,78 +1,16 @@
-version: v1
+version: "3"
+app_version: v2
 services:
-  - name: localhub
-    image: aiicy-hub
-    replica: 1
-    mounts:
-      - name: localhub-conf
-        path: etc/aiicy
-        readonly: true
-      - name: localhub-cert
-        path: var/db/aiicy/cert
-        readonly: true
-      - name: localhub-log
-        path: var/log/aiicy
-      # native process mode only
-      - name: aiicy-hub-bin
-        path: lib/aiicy/aiicy-hub
-        readonly: true
-  - name: function
+  aiicy-function:
     image: aiicy-function
     replica: 1
-    mounts:
-      - name: function-conf
-        path: etc/aiicy
-        readonly: true
-      - name: function-log
-        path: var/log/aiicy
-      # native process mode only
-      - name: aiicy-function-bin
-        path: lib/aiicy/aiicy-function
-        readonly: true
-  - name: function-python3
-    image: aiicy-function-python3
-    replica: 0
-    mounts:
-      - name: function-python3-conf
-        path: etc/aiicy
-        readonly: true
-      # function-sayhi
-      - name: function-sayhi
-        path: var/db/aiicy/function-sayhi
-        readonly: true
-      # application-nlu
-      - name: application-nlu
-        path: var/db/aiicy/application-nlu
-        readonly: true
-      # native process mode only
-      - name: aiicy-function-python3-bin
-        path: lib/aiicy/aiicy-function-python3
-        readonly: true
-volumes:
-  # hub
-  - name: localhub-conf
-    path: var/db/aiicy/hub
-  - name: localhub-cert
-    path: var/db/aiicy/hub-cert-only-for-test
-  - name: localhub-log
-    path: var/db/aiicy/hub-log
-  # function
-  - name: function-conf
-    path: var/db/aiicy/function
-  - name: function-log
-    path: var/db/aiicy/function-log
-  - name: function-python3-conf
-    path: var/db/aiicy/function-python3
-  # function-sayhi
-  - name: function-sayhi
-    path: var/db/aiicy/function-sayhi
-  # application-nlu
-  - name: application-nlu
-    path: var/db/aiicy/application-nlu
-  # bin, native process mode only
-  - name: aiicy-hub-bin
-    path: var/db/aiicy/aiicy-hub
-  - name: aiicy-function-bin
-    path: var/db/aiicy/aiicy-function
-  - name: aiicy-function-python3-bin
-    path: var/db/aiicy/aiicy-function-python3
+    volumes:
+    - var/db/aiicy/aiicy-function-conf:etc/aiicy:ro
+    - var/db/aiicy/aiicy-function:lib/aiicy/aiicy-function:ro
+  aiicy-hub:
+    image: aiicy-hub
+    replica: 1
+    volumes:
+    - var/db/aiicy/aiicy-hub-conf:etc/aiicy:ro
+    - var/db/aiicy/aiicy-hub:lib/aiicy/aiicy-hub:ro
+    - var/db/aiicy/hub-cert-only-for-test:var/db/aiicy/cert:ro

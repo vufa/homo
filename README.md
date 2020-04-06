@@ -55,4 +55,4 @@ The design of service management and instance control comes from [baetyl](https:
 
 [Apache 2.0](https://github.com/aiicy/aiicy/blob/master/LICENSE)
 
-Copyright (c) 2019-present, Codist
+Copyright (c) 2019-present Codist

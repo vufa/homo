@@ -1,0 +1,6 @@
+[submodule "application/aiicy-app-nlu"]
+	path = application/aiicy-app-nlu
+	url = https://github.com/countstarlight/aiicy-app-nlu.git
+[submodule "application/aiicy-app-sayhi"]
+	path = application/aiicy-app-sayhi
+	url = https://github.com/countstarlight/aiicy-app-sayhi.git

@@ -45,7 +45,7 @@ make install MODE=native PREFIX=out
 
 欢迎对Aiicy进行任何形式的贡献，包括文档，教程，博客文章，错误报告，问题，功能请求，功能实现，拉取请求，帮助管理问题等。
 
-有关对Aiicy做出贡献的完整指南，请参见 [贡献指南](https://aiicy.org/zh/docs/contributing/)。
+有关对Aiicy做出贡献的完整指南，请参见[贡献指南](https://aiicy.org/zh/docs/contributing/)。
 
 # 相关
 
@@ -55,4 +55,4 @@ make install MODE=native PREFIX=out
 
 [Apache 2.0](https://github.com/aiicy/aiicy/blob/master/LICENSE)
 
-Copyright (c) 2019-present, Codist
+Copyright (c) 2019-present Codist

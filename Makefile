@@ -82,9 +82,7 @@ install: all
 ifeq ($(MODE),native)
 	@${MAKE} $(NATIVE_MODS)
 endif
-	@#@tar cf - -C conf/$(MODE) etc var | tar xvf - -C ${PREFIX}/
-	@tar cf - -C conf/$(MODE) etc | tar xvf - -C ${PREFIX}/
-	@ln -s ${CURDIR}/conf/$(MODE)/var/db/aiicy/* ${PREFIX}/var/db/aiicy/
+	@tar cf - -C conf/$(MODE) etc var | tar xvf - -C ${PREFIX}/
 
 $(NATIVE_MODS):
 	@install -d -m 0755 ${PREFIX}/var/db/aiicy/$(notdir $@)/bin

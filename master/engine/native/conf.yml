@@ -1,0 +1,35 @@
+mode: native
+server:
+  address: unix://var/run/aiicy.sock
+database:
+  driver: sqlite3
+  path: var/lib/aiicy/db
+api:
+  address: unix://var/run/aiicy/api.sock
+logger:
+  path: var/log/aiicy/aiicy.log
+  level: 'debug'
+  mode: 'console'
+  format: 'text'
+  age:
+    max: 15
+  size:
+    max: 50
+  backup:
+    max: 15
+otalog:
+  path: var/db/aiicy/ota.log
+  level: 'debug'
+  mode: 'console'
+  format: 'text'
+  age:
+    max: 15
+  size:
+    max: 50
+  backup:
+    max: 15
+grace: 30s
+baidu:
+  asr_api: http://vop.baidu.com/server_api
+  tts_api: http://tsn.baidu.com/text2audio
+  voice_auth_url: https://openapi.baidu.com/oauth/2.0/token

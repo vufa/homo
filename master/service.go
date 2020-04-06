@@ -34,7 +34,7 @@ func (m *Master) startServices(cur aiicy.ComposeAppConfig) error {
 		s.Environment.Envs[aiicy.EnvKeyServiceToken] = token
 		nxt, err := m.engine.Run(name, s, cur.Volumes)
 		if err != nil {
-			m.log.Infof("failed to start service (%s)", name)
+			m.log.Warnf("failed to start service (%s)", name)
 			return err
 		}
 		m.services.Set(name, nxt)
